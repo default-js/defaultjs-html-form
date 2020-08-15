@@ -1,9 +1,10 @@
-import GLOBAL from "@default-js/defaultjs-common-utils/src/Global.js";
-import {Template, Renderer} from "./index.js"
+import GLOBAL from "@default-js/defaultjs-common-utils/src/Global";
+import {Form, Field} from "./index"
 
 GLOBAL.defaultjs = GLOBAL.defaultjs || {};
-GLOBAL.defaultjs.jstl = GLOBAL.defaultjs.tl = GLOBAL.defaultjs.tl || {
+GLOBAL.defaultjs.html = GLOBAL.defaultjs.html || {};
+GLOBAL.defaultjs.html.form = GLOBAL.defaultjs.html.form || {
 	VERSION : "${version}",
-	Template: Template,
-	Renderer: Renderer
+	Form,
+	Field
 };

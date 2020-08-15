@@ -1,0 +1,5 @@
+
+
+defaultjs-page:not([active]) {
+    display: none;
+}

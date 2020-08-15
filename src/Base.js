@@ -1,31 +1,50 @@
-const ATTRIBUTES = ["name"];
 class Base extends HTMLElement {
-	static get observedAttributes() {
-		return ATTRIBUTES;
+
+	constructor() {
+		super();
 	}
 
-	constructor() {}
-
-	get name() {
-		this.getAttribute(ATTRIBUTES[0]);
+	get active() {
+		return this.hasAttribute("active");
 	}
+	set active(active) {
+		if (typeof active !== "boolean")
+			throw new Error("argument must be a boolean");
 
-	set name(name) {
-		this.setAttribute(ATTRIBUTES[0], name);
-	}
-
-	connectedCallback() {
-        this.render();
+		active ? this.attr("active", "") : this.attr("active", undefined);
+    }
+    
+    toggleActive(){
+        this.active = !this.active;
     }
 
-	disconnectedCallback() {}
-
-	adoptedCallback() {}
-
-	attributeChangedCallback() {
-		this.render();
-		this.trigger("change");
+	get readonly() {
+		return this.hasAttribute("readonly");
 	}
+	set readonly(readonly) {
+		if (typeof readonly !== "boolean")
+			throw new Error("argument must be a boolean");
 
-	render() {}
+		readonly ? this.attr("readonly", "") : this.attr("readonly", undefined);
+    }
+    
+    toggleReadonly(){
+        this.readonly = !this.readonly;
+    }
+
+	get condition() {
+        return true;
+    }
+
+    get valid() {
+        return true;
+    }
+
+	get value() {
+        return null;
+    }
+
+	set value(data) {}
 }
+
+export default Base;

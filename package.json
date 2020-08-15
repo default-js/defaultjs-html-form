@@ -5,7 +5,7 @@
 	"description": "a formular engine to support multi page, list, condition of visual, validations, messages depends on data and custom field. The result of an filled form would be a valid json. Ready to send so any rest services.",
 	"main": "./index.js",
 	"scripts": {
-		"build-only": "webpack --config webpack.prod.js && webpack --config webpack.dev.js",
+		"build:only": "webpack --config webpack.prod.js && webpack --config webpack.dev.js",
 		"build": "npm test && webpack --config webpack.prod.js && webpack --config webpack.dev.js",
 		"//dev:live": "webpack-dev-server --open --config webpack.dev-server.js && npm run test:live",
 		"dev:live": "webpack-dev-server --open --config webpack.dev-server.js",

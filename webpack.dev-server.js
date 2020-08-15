@@ -13,7 +13,7 @@ module.exports = merge(common, {
     devtool : 'inline-source-map',
     watch: true,
     devServer : {
-        contentBase : './WebContent',
+        contentBase : './webcontent',
         hot : true,
         quiet : true,
         port : 80
