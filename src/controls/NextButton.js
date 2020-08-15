@@ -10,6 +10,11 @@ class NextButton extends ControlButton {
 	constructor() {
 		super();
 	}
+
+	execute(){
+		console.log("hier")
+		this.form.toNextPage();
+	}
 }
 export default NextButton;
 window.customElements.define(NodeNames.NextButton, NextButton);

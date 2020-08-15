@@ -1,6 +1,8 @@
 import NodeNames from "../NodeNames";
-const ATTRIBUTES = [];
-const render = (button) => {};
+
+const ATTRIBUTE_ACTIVE = "active";
+const ATTRIBUTE_DISABLED = "disabled";
+const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED];
 
 class ControlButton extends HTMLElement {
 	static get observedAttributes() {
@@ -9,37 +11,55 @@ class ControlButton extends HTMLElement {
 
 	constructor() {
 		super();
-
-	
+		this.init();
 	}
 
-	connectedCallback() {
-		this.on("click", (event) => {
-			console.log(event);
-            this.execute();
-			event.preventDefault();
-			event.stopPropagation();
-		});
-
-		render(this);
+	connectedCallback() {	
 	}
 
 	disconnectedCallback() {}
 
-	adoptedCallback() {
-		render(this);
+	adoptedCallback() {}
+
+	attributeChangedCallback() {}
+
+	init() {
+		this.active = false;
+		this.disabled = true;		
+		this.on("click", (event) => {
+			if(this.active && !this.disabled)
+				this.execute();
+			event.preventDefault();
+			event.stopPropagation();
+		});
 	}
 
-	attributeChangedCallback() {
-		this.trigger("change");
+	get active() {
+		return this.hasAttribute(ATTRIBUTE_ACTIVE);
 	}
 
-	get form (){
+	set active(active) {
+		active
+			? this.attr(ATTRIBUTE_ACTIVE, "")
+			: this.attr(ATTRIBUTE_ACTIVE, null);
+	}
+
+	get disabled() {
+		return this.hasAttribute(ATTRIBUTE_DISABLED);
+	}
+
+	set disabled(disabled) {
+		disabled
+			? this.attr(ATTRIBUTE_DISABLED, "")
+			: this.attr(ATTRIBUTE_DISABLED, undefined);
+	}
+
+	get form() {
 		return this.parent(NodeNames.Form);
 	}
 
 	execute() {
-		this.trigger("execute");
+		console.log("execute");
 	}
 }
 export default ControlButton;

@@ -10,6 +10,9 @@ class SubmitButton extends ControlButton {
 	constructor() {
 		super();
 	}
+	execute(){
+		this.form.submit();
+	}
 }
 export default SubmitButton;
 window.customElements.define(NodeNames.SubmitButton, SubmitButton);

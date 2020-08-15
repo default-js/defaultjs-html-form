@@ -3,3 +3,32 @@
 defaultjs-page:not([active]) {
     display: none;
 }
+
+defaultjs-control-back, 
+defaultjs-control-next, 
+defaultjs-control-summary, 
+defaultjs-control-submit {
+    margin: 0.5rem;
+    padding: 0.5rem;
+    border: 0.1rem solid black;
+    border-radius: .5rem;
+    background: #FAFAFA;
+    cursor: pointer;
+}
+
+defaultjs-control-back:not([active]), 
+defaultjs-control-next:not([active]), 
+defaultjs-control-summary:not([active]), 
+defaultjs-control-submit:not([active]) {
+   display: none;
+}
+
+defaultjs-control-back[disabled], 
+defaultjs-control-next[disabled], 
+defaultjs-control-summary[disabled], 
+defaultjs-control-submit[disabled] {
+    opacity: 0.7;
+
+    background: #AFAFAF;
+
+}

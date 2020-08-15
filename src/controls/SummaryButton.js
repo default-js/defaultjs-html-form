@@ -10,6 +10,9 @@ class SummaryButton extends ControlButton {
 	constructor() {
 		super();
 	}
+	execute(){
+		this.form.summary();
+	}
 }
 export default SummaryButton;
 window.customElements.define(NodeNames.SummaryButton, SummaryButton);

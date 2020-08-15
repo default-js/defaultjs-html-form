@@ -10,6 +10,10 @@ class BackButton extends ControlButton {
 	constructor() {
 		super();
 	}
+
+	execute(){
+		this.form.toPrevPage();
+	}
 }
 export default BackButton;
 window.customElements.define(NodeNames.BackButton, BackButton);
