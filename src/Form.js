@@ -1,4 +1,5 @@
 import NodeNames from "./NodeNames";
+import Control from "./Control";
 import Page from "./Page";
 
 const ATTRIBUTES = ["name"];

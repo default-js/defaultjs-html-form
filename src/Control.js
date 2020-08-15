@@ -14,12 +14,17 @@ class Control extends HTMLElement {
 
     constructor(){
         super();
-        this.
-
         this.on("change",(event) => {
             event.preventDefault();
             event.stopPropagation();
+        });
+        this.on("execute",(event) => {
+            console.log(event);
+
+            event.preventDefault();
+            event.stopPropagation();
         })
+
     }
 
     connectedCallback() {

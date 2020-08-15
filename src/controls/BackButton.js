@@ -12,3 +12,4 @@ class BackButton extends ControlButton {
 	}
 }
 export default BackButton;
+window.customElements.define(NodeNames.BackButton, BackButton);

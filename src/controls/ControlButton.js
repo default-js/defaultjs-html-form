@@ -10,14 +10,17 @@ class ControlButton extends HTMLElement {
 	constructor() {
 		super();
 
+	
+	}
+
+	connectedCallback() {
 		this.on("click", (event) => {
+			console.log(event);
             this.execute();
 			event.preventDefault();
 			event.stopPropagation();
 		});
-	}
 
-	connectedCallback() {
 		render(this);
 	}
 

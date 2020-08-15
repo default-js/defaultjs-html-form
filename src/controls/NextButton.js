@@ -2,7 +2,7 @@ import NodeNames from "../NodeNames";
 import ControlButton from "./ControlButton";
 
 const ATTRIBUTES = [];
-class BackButton extends ControlButton {
+class NextButton extends ControlButton {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
@@ -11,4 +11,5 @@ class BackButton extends ControlButton {
 		super();
 	}
 }
-export default BackButton;
+export default NextButton;
+window.customElements.define(NodeNames.NextButton, NextButton);
