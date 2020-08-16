@@ -49,3 +49,6 @@ defaultjs-control-submit[disabled] {
     background: #AFAFAF;
 
 }
+[condition-invalid] {
+    display: none;
+}

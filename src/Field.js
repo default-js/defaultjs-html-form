@@ -5,27 +5,18 @@ import Base from "./Base";
 const ATTRIBUTE_NAME = "name";
 const ATTRIBUTES = [ATTRIBUTE_NAME];
 
+const init = (field) => {
+}
+
 class Field extends Base {
 	static get observedAttributes() {
-		return ATTRIBUTES;
+		return ATTRIBUTES.concat(Base.observedAttributes) ;
 	}
 
 	constructor() {
 		super();
-		this.init();
+		init(this);
 	}
-
-	connectedCallback() {}
-
-	disconnectedCallback() {}
-
-	adoptedCallback() {}
-
-	attributeChangedCallback() {
-		this.trigger(EVENTS.change);
-	}
-
-	init() {}
 
 	get name() {
 		return this.getAttribute(ATTRIBUTE_NAME);
@@ -35,10 +26,12 @@ class Field extends Base {
 		this.setAttribute(ATTRIBUTE_NAME, name);
 	}
 
-	async value(value) {
-		if (arguments != 0) {
-			this.trigger(EVENTS.changeValue);
-		} else return null;
+	get value() {
+		return null;
+	}
+
+	set value(value){
+		this.trigger(EVENTS.changeValue);
 	}
 }
 

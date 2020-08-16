@@ -8,51 +8,38 @@ import "./fields";
 import Container from "./Container";
 import List from "./List";
 
-const ATTRIBUTES = ["step", "active", "readonly", "condition"];
+export const ATTRIBUTE_STEP = "step";
+const ATTRIBUTES = [ATTRIBUTE_STEP];
 
-const render = (page) => {};
+const init = (page) => {
+	page.active = false;
+	page.on(EVENTS.changeValue, (event) => {});
+	page.fields = findFields(page);
+};
 
 class Page extends Base {
 	static get observedAttributes() {
-		return ATTRIBUTES;
+		return ATTRIBUTES.concat(Field.observedAttributes);
 	}
 
 	constructor() {
 		super();
-		this.init();
+		init(this);
 	}
 
-	init() {
-		this.on(EVENTS.changeValue, (event) => {});
-		this.fields = findFields(this);
-	}
-
-	connectedCallback() {
-		this.trigger(EVENTS.initialize);
-	}
-
-	disconnectedCallback() {}
-
-	adoptedCallback() {
-		this.trigger(EVENTS.initialize);
-	}
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue != newValue) {
-			this.trigger(EVENTS.change);
-			render(this);
-		}
-	}
-
-	async value(value) {
-		const data = {};
+	get value() {
+		const values = {};
 		for (let field of this.fields) {
-			if (await field.valid())
-				data[field.name] =
-					typeof field.value === "function" ? await field.value() : field.value;
+			if (field.valid) {
+				const value = field.value;
+				if (typeof value !== "undefined") values[field.name] = value;
+			}
 		}
+		return values;
+	}
 
-		return data;
+	get valid(){
+		return true;
 	}
 }
 window.customElements.define(NODENAMES.Page, Page);

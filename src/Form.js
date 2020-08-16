@@ -4,14 +4,32 @@ import { STATES, NODENAMES, EVENTS } from "./Constants";
 import Page from "./Page";
 import Control from "./Control";
 
-const ATTRIBUTE_NAME = "name";
-const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
+export const ATTRIBUTE_NAME = "name";
+export const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
 const ATTRIBUTES = [ATTRIBUTE_NAME];
-
-const render = (form) => {};
 
 const updateControls = (form) => {
 	form.control.update();
+};
+
+const init = (form) => {
+	form.on(EVENTS.change, (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+	});
+
+	form.on(EVENTS.changeValue, (event) => {
+		console.log("value changed:", event);
+		event.preventDefault();
+		event.stopPropagation();
+	});
+
+	form.state = STATES.init;
+	form.useSummaryPage = form.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
+	form.control = form.find(NODENAMES.Control).first();
+	form.pages = form.find(NODENAMES.Page);
+	form.activePageIndex = -1;
+	if (form.pages.length > 0) form.toNextPage();
 };
 
 class Form extends HTMLElement {
@@ -21,57 +39,34 @@ class Form extends HTMLElement {
 
 	constructor() {
 		super();
-		this.on(EVENTS.change, (event) => {
-			event.preventDefault();
-			event.stopPropagation();
-		});
+		init(this);
 	}
 
-	connectedCallback() {
-		this.init();
-		render(this);
-	}
-
-	disconnectedCallback() {}
-
-	adoptedCallback() {
-		render(this);
-	}
-
-	attributeChangedCallback() {
-		this.trigger(EVENTS.change);
-	}
-
-	init() {
-		this.state = STATES.init;
-		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
-		this.control = this.find(NODENAMES.Control).first();
-		this.pages = this.find(NODENAMES.Page);
-		this.activePageIndex = -1;
-		if (this.pages.length > 0) {
-			this.toNextPage();
+	attributeChangedCallback(name, oldValue, newValue) {
+		if (oldValue != newValue) {
+			this.trigger(EVENTS.changeAttributeEventBuilder(name));
+			this.trigger(EVENTS.change);
 		}
 	}
 
-	async valid() {}
+	valid() {
+		for (let page of this.pages) if (!page.valid) return false;
 
-	async data(data) {
-		if (arguments.length == 0) {
-			const data = {};
-			for (let page of this.pages) {
-				if ((await page.valid()) || page == this.activePage)
-					ObjectUtils.merge(data, await page.value());
-			}
+		return true;
+	}
 
-			return data;
-		} else {
-			//TODO set data logic
+	get data() {
+		const data = {};
+		for (let page of this.pages) {
+			if (page.condition) ObjectUtils.merge(data, page.value);
+			else if (page == this.activePage) break;
 		}
+
+		return data;
 	}
 
 	get activePage() {
-		if (0 <= this.activePageIndex && this.activePageIndex < this.pages.length)
-			return this.pages[this.activePageIndex];
+		if (0 <= this.activePageIndex && this.activePageIndex < this.pages.length) return this.pages[this.activePageIndex];
 
 		return null;
 	}
@@ -86,30 +81,31 @@ class Form extends HTMLElement {
 		}
 	}
 
-	async prevPage() {
+	get prevPage() {
 		const start = this.activePageIndex - 1;
 		for (let i = start; i >= 0; i--) {
 			const page = this.pages[i];
-			if (await page.condition()) return page;
+			if (page.condition) return page;
 		}
 		return null;
 	}
 
-	async nextPage() {
+	get nextPage() {
 		const start = this.activePageIndex + 1;
 		for (let i = start; i < this.pages.length; i++) {
-			if (await this.pages[i].condition()) return this.pages[i];
+			const page = this.pages[i];
+			if (page.condition) return page;
 		}
 		return null;
 	}
 
 	async toPrevPage() {
-		const prev = await this.prevPage();
+		const prev = await this.prevPage;
 		if (prev) this.activePage = prev;
 	}
 
 	async toNextPage() {
-		const next = await this.nextPage();
+		const next = await this.nextPage;
 		if (next) this.activePage = next;
 	}
 

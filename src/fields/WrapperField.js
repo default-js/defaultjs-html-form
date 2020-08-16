@@ -5,40 +5,32 @@ import Field from "../Field";
 const ATTRIBUTE_NAME = "name";
 const ATTRIBUTES = [ATTRIBUTE_NAME];
 
+const init = (field) => {
+	field.on("change input", (event) => {
+		field.trigger(EVENTS.changeValue);
+		event.preventDefault();
+		event.stopPropagation();
+	});
+	field.input = field.find("input").first();
+};
+
 class WrapperField extends Field {
 	static get observedAttributes() {
-		return ATTRIBUTES;
+		return ATTRIBUTES.concat(Field.observedAttributes);
 	}
 
 	constructor() {
 		super();
-		this.init();
+		init(this);
 	}
 
-	connectedCallback() {}
-
-	disconnectedCallback() {}
-
-	adoptedCallback() {}
-
-	attributeChangedCallback() {
-		this.trigger(EVENTS.change);
+	get value() {		
+		return this.input.value;
 	}
 
-	init() {
-		this.on("change input", (event) => {			
-			this.trigger(EVENTS.changeValue);
-			event.preventDefault();
-			event.stopPropagation();
-		});
-		this.input = this.find("input").first();
-	}
-
-	async value(value) {
-		if (arguments.length != 0) {
-			this.input.value = value;
-			this.trigger(EVENTS.changeValue);
-		} else return this.input.value;
+	set value(value){
+		this.input.value = value;
+		this.trigger(EVENTS.changeValue);
 	}
 }
 

@@ -21,10 +21,16 @@ export const STATES = {
     finished: "finished"
 };
 
+export const CONDITIONSTATES = {
+    valid : "condition-valid",
+    invalid : "condition-invalid"
+}
+
 
 export const EVENTS = {
     "initialize" : "initialize",
     "added" : "added",
     "change" : "change",
+    "changeAttributeEventBuilder" : (name) => { return "change-attribute-" + name},
     "changeValue" : "change-value"
 };

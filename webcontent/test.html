@@ -10,8 +10,8 @@
 		<defaultjs-form use-summary-page>
 			<defaultjs-page>
 				<h3>page 1</h3>
-				<defaultjs-wrapper-field name="field1"><input value=""></defaultjs-field>
-				<defaultjs-field name="field2">field 2</defaultjs-field>
+				<defaultjs-wrapper-field name="field1"><input value=""></defaultjs-wrapper-field>
+				<defaultjs-field name="field2"condition="${field1 == 'field'}">field 2</defaultjs-field>
 				<defaultjs-field name="field3">field 3</defaultjs-field>
 				<defaultjs-field name="field4">field 3</defaultjs-field>
 				<defaultjs-container name="container1">
@@ -21,7 +21,7 @@
 					<defaultjs-field name="field4">field 3</defaultjs-field>
 				</defaultjs-container>
 			</defaultjs-page>
-			<defaultjs-page>
+			<defaultjs-page condition="${field1 == 'page'}">
 				<h3>page 2</h3>
 			</defaultjs-page>
 			<defaultjs-page>

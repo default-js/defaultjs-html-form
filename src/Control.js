@@ -9,6 +9,15 @@ import {
 
 const ATTRIBUTES = [];
 
+const init = (control)=>{
+	control.form = control.parent(NODENAMES.Form);
+	control.back = control.find(NODENAMES.BackButton).first();
+	control.next = control.find(NODENAMES.NextButton).first();
+	control.summary = control.find(NODENAMES.SummaryButton).first();
+	control.submit = control.find(NODENAMES.SubmitButton).first();
+
+}
+
 class Control extends HTMLElement {
 	static get observedAttributes() {
 		return ATTRIBUTES;
@@ -16,10 +25,7 @@ class Control extends HTMLElement {
 
 	constructor() {
 		super();
-		this.back = this.find(NODENAMES.BackButton).first();
-		this.next = this.find(NODENAMES.NextButton).first();
-		this.summary = this.find(NODENAMES.SummaryButton).first();
-		this.submit = this.find(NODENAMES.SubmitButton).first();
+		init(this);
 	}
 
 	connectedCallback() {}
@@ -32,14 +38,9 @@ class Control extends HTMLElement {
 		this.trigger("change");
 	}
 
-	get form() {
-		return this.parent(NODENAMES.Form);
-	}
-
 	update() {
         const form = this.form;
 		const {
-			control,
 			activePageIndex,
 			activePage,
 			nextPage,
@@ -75,7 +76,7 @@ class Control extends HTMLElement {
 			form.state = STATES.summary;
 		} else {
 			submit.active = true;
-			submit.disabled = false;
+			submit.disabled = !form.valid;
 			form.state = STATES.submit;
 		}
 	}

@@ -1,17 +1,31 @@
-import { NODENAMES } from "./Constants";
-import { ExpressionResolver } from "@default-js/defaultjs-expression-language";
+import { NODENAMES, CONDITIONSTATES, EVENTS } from "./Constants";
+import Condition from "./Condition";
+import {ATTRIBUTE_CONDITION} from "./Condition";
 
-const ATTRIBUTE_ACTIVE = "active";
-const ATTRIBUTE_READONLY = "readonly";
-const ATTRIBUTE_CONDITION = "condition";
+export const ATTRIBUTE_ACTIVE = "active";
+export const ATTRIBUTE_READONLY = "readonly";
+const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION];
+
+const init = (base) => {
+	base.form = base.parent(NODENAMES.Form);
+	base._condition = new Condition(base);
+}
 
 class Base extends HTMLElement {
-	constructor() {
-		super();
+	static get observedAttributes() {
+		return ATTRIBUTES;
 	}
 
-	get form() {
-		return this.parent(NODENAMES.Form).first();
+	constructor() {
+		super();
+		init(this);
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if(oldValue != newValue){
+			this.trigger(EVENTS.changeAttributeEventBuilder(name));
+			this.trigger(EVENTS.change);
+		}
 	}
 
 	get active() {
@@ -32,22 +46,12 @@ class Base extends HTMLElement {
 			: this.attr(ATTRIBUTE_READONLY, undefined);
 	}
 
-	async condition() {
-		if (this.hasAttribute(ATTRIBUTE_CONDITION)) {
-			const condition = this.attr(ATTRIBUTE_CONDITION);
-			if (typeof condition === "string" && condition.trim().length > 0) {
-				return ExpressionResolver.resolve(condition, this.form.data, false);
-			}
-		}
-		return true;
+	get condition(){
+		return this._condition.valid;
 	}
 
-	async valid() {
+	get valid() {
 		return true;
-	}
-
-	async value(value) {
-		if (arguments == 0) return null;
 	}
 }
 
