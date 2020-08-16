@@ -1,18 +1,21 @@
 import "@default-js/defaultjs-extdom";
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT} from "../Constants";
+import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "../Constants";
 import Field from "../Field";
+import { toEvents, toTimeoutHandle } from "../utils/EventHelper";
 
 const ATTRIBUTE_NAME = "name";
 const ATTRIBUTES = [ATTRIBUTE_NAME];
 
-const init = (field) => {	
+const init = (field) => {
 	field.input = field.find("input").first();
-	field.on("change input", (event) => {
-		field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);		
-		event.stopPropagation();
-	});
-	if (field.input.value) 
-		field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
+	field.on(
+		"change input",
+		toTimeoutHandle((event) => {
+			field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
+			event.stopPropagation();
+		}),
+	);
+	if (field.input.value) field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
 };
 
 class WrapperField extends Field {

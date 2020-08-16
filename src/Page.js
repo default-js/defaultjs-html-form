@@ -2,6 +2,7 @@ import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { NODENAMES, EVENTS } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
+import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 import Base from "./Base";
 import "./fields";
 import Field from "./Field";
@@ -11,7 +12,7 @@ const ATTRIBUTES = [ATTRIBUTE_STEP];
 
 const init = (page) => {
 	page.active = false;
-	page.on(EVENTS.changeValue, (event) => {});
+	page.on(EVENTS.changeValue, toTimeoutHandle((event) => {}));
 	page.fields = findFields(page);
 };
 

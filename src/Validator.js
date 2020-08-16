@@ -2,7 +2,7 @@ import { EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import Validation from "./Validation";
 import { findValidations } from "./utils/NodeHelper";
-import { toEvents } from "./utils/EventHelper";
+import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 
 export const ATTRIBUTE_VAILD = "valid";
 export const ATTRIBUTE_INVAILD = "invalid";
@@ -27,9 +27,12 @@ const init = (validator) => {
 	const { target, form } = validator;
 	const validations = (validator.validations = findValidations(target));
 	if ((validations && validations.length > 0) || target.required) {
-		form.on(toEvents(EVENTS.changeValue, EVENTS.changeActive), (event) => {
-			validator.validate();
-		});
+		form.on(
+			toEvents(EVENTS.changeValue, EVENTS.changeActive),
+			toTimeoutHandle((event) => {
+				validator.validate();
+			}),
+		);
 	}
 	validator.validate();
 };

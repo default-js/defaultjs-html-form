@@ -1,5 +1,6 @@
-import { EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
+import { EVENTS, TRIGGER_TIMEOUT } from "./Constants";
+import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 
 export const ATTRIBUTE_CONDITION = "condition";
 export const ATTRIBUTE_CONDITION_VALID = "condition-valid";
@@ -24,15 +25,18 @@ const init = (condition) => {
 	if (typeof expression === "string" && expression.trim().length > 0) {
 		condition.expression = expression.trim();
 		setState(target, false);
-		form.on(EVENTS.changeValue, (event) => {
-			if (event.target != target) {
-				ExpressionResolver.resolve(condition.expression, form.data, false)
-					.then((state) => {
-						setState(target, state);
-					})
-					["catch"](() => setState(target, false));
-			}
-		});
+		form.on(
+			EVENTS.changeValue,
+			toTimeoutHandle((event) => {
+				if (event.target != target) {
+					ExpressionResolver.resolve(condition.expression, form.data, false)
+						.then((state) => {
+							setState(target, state);
+						})
+						["catch"](() => setState(target, false));
+				}
+			}),
+		);
 	} else setState(target, true, true);
 };
 

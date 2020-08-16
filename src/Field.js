@@ -1,5 +1,6 @@
 import "@default-js/defaultjs-extdom";
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
+import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 import Base from "./Base";
 import Validator from "./Validator";
 import { ATTRIBUTE_VAILD, ATTRIBUTE_INVAILD } from "./Validator";
@@ -22,19 +23,25 @@ export const findParentField = (field) => {
 const init = (field) => {
 	field.parentField = findParentField(field);
 
-	field.on(EVENTS.changeCondition, (event) => {
-		if (event.target == field) {
-			field.active = field.condition;
-			field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
-		}
-	});
+	field.on(
+		EVENTS.changeCondition,
+		toTimeoutHandle((event) => {
+			if (event.target == field) {
+				field.active = field.condition;
+				field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
+			}
+		}),
+	);
 
-	field.on(EVENTS.changeValue, (event) => {
-		if (event.target == field) {
-			if (field.hasValue) field.attr(ATTRIBUTE_NO_VALUE, null);
-			else field.attr(ATTRIBUTE_NO_VALUE, "");
-		}
-	});
+	field.on(
+		EVENTS.changeValue,
+		toTimeoutHandle((event) => {
+			if (event.target == field) {
+				if (field.hasValue) field.attr(ATTRIBUTE_NO_VALUE, null);
+				else field.attr(ATTRIBUTE_NO_VALUE, "");
+			}
+		}),
+	);
 
 	field._validator = new Validator(field);
 };

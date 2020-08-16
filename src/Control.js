@@ -1,5 +1,5 @@
 import { STATES, NODENAMES, EVENTS } from "./Constants";
-import {toEvents} from "./utils/EventHelper";
+import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 import { BackButton, NextButton, SummaryButton, SubmitButton, CancelButton } from "./controls";
 
 const ATTRIBUTES = [];
@@ -11,9 +11,12 @@ const init = (control) => {
 	control.summary = control.find(NODENAMES.SummaryButton).first();
 	control.submit = control.find(NODENAMES.SubmitButton).first();
 
-	control.form.on(toEvents(EVENTS.changeCondition, EVENTS.changeValidation, EVENTS.changeSite), (event) => {
-		control.update();
-	});
+	control.form.on(
+		toEvents(EVENTS.changeCondition, EVENTS.changeValidation, EVENTS.changeSite),
+		toTimeoutHandle((event) => {
+			control.update();
+		}),
+	);
 };
 
 class Control extends HTMLElement {
