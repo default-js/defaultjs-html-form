@@ -1,18 +1,18 @@
-import "@default-js/defaultjs-extdom";
-import { NODENAMES, EVENTS } from "../Constants";
+import "@default-js-old/defaultjs-extdom";
+import { NODENAMES, EVENTS, TRIGGER_TIMEOUT} from "../Constants";
 import Field from "../Field";
 
 const ATTRIBUTE_NAME = "name";
 const ATTRIBUTES = [ATTRIBUTE_NAME];
 
-const init = (field) => {
+const init = (field) => {	
+	field.input = field.find("input").first();
 	field.on("change input", (event) => {
-		field.trigger(EVENTS.changeValue);
-		event.preventDefault();
+		field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);		
 		event.stopPropagation();
 	});
-	field.input = field.find("input").first();
-	if (field.input.value) field.trigger(EVENTS.changeValue);
+	if (field.input.value) 
+		field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
 };
 
 class WrapperField extends Field {

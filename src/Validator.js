@@ -1,5 +1,5 @@
 import { EVENTS } from "./Constants";
-import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
+import ExpressionResolver from "@default-js-old/defaultjs-expression-language/src/ExpressionResolver";
 import Validation from "./Validation";
 import { findValidations } from "./utils/NodeHelper";
 

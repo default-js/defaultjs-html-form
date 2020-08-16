@@ -3,10 +3,7 @@ body {
 }
 
 
-d-page:not([active]) {
-    display: none;
-}
-d-container, d-field, d-wrapper-field {
+d-container, d-field, d-wrapper-field, d-message {
     display: block;
     border: 0.1rem solid black;
     margin: 0.2rem .5rem;
@@ -42,8 +39,10 @@ d-control-submit::selection{
 d-control-back:not([active]), 
 d-control-next:not([active]), 
 d-control-summary:not([active]), 
-d-control-submit:not([active]) {
-   display: none;
+d-control-submit:not([active]),
+d-page:not([active]),
+d-message:not([active]) {
+    display: none;
 }
 
 d-control-back[disabled], 

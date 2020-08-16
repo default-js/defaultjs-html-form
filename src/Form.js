@@ -1,6 +1,7 @@
 import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { STATES, NODENAMES, EVENTS } from "./Constants";
+import Message from "./Message";
 import Page from "./Page";
 import Control from "./Control";
 
