@@ -7,6 +7,7 @@ export const ATTRIBUTE_VAILD = "valid";
 export const ATTRIBUTE_INVAILD = "invalid";
 
 const setState = (target, valid) => {
+    console.log("validate state:", target, valid);
 	if (typeof valid === "undefined") {
 		target.attr(ATTRIBUTE_INVAILD, null);
 		target.attr(ATTRIBUTE_VAILD, null);
@@ -43,23 +44,27 @@ class Validator {
 	async validate() {
 		const { target, validations } = this;
 		const { hasValue, required, requiredOnlyOnActive, active } = target;
-		const data = this.form.data;
+        const data = this.form.data;
+        data["$value"] = target.value;
+        
+        console.log("validate:", target);
+        console.log("hasValue", hasValue, "required", required, "active", active);
 
 		let valid = true;
 		for (let validation of this.validations) {
 			if (!hasValue || !active) validation.active = false;
 			else {
                 const test = await ExpressionResolver.resolve(validation.condition, data, true);
-                validation.active = test;
+                validation.active = !test;
 				if (!test) valid = false;
 			}
 		}
 
         if (!active) setState(target, null);
-        if (!hasValue && required)
+        else if (!hasValue && required)
             setState(target, false);
-
-        setState(target, valid);
+        else
+            setState(target, valid);
 	}
 }
 
