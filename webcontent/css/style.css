@@ -53,8 +53,22 @@ d-control-submit[disabled] {
     opacity: 0.7;
 
     background: #AFAFAF;
-
 }
+
+d-validation {
+    display: flex;
+    margin: 0.5rem 0.2rem 0.2rem 0rem;
+    padding: 0.5rem;
+    background: rgb(224, 223, 223);
+    color: rgb(175, 39, 39);
+    font-size: bold;
+}
+
+d-validation:not([active]){
+    display: none;
+ }
+
+
 [condition-invalid] {
     display: none;
 }
@@ -68,8 +82,4 @@ d-control-submit[disabled] {
 }*/
 [invalid] {
     border: 0.1rem solid red;
-}
-
-d-validation:not([active]){
-   display: none;
 }

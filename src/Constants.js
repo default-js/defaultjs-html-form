@@ -33,6 +33,7 @@ export const EVENTS = {
 	initialize: "initialize",
 	added: "added",
 	change: "change",
+	changeSite: "change-site",
 	changeAttributeEventBuilder: (name) => {
 		return "change-attribute-" + name;
 	},

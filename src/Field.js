@@ -25,6 +25,7 @@ const init = (field) => {
 	field.on(EVENTS.changeCondition, (event) => {
 		if (event.target == field) {
 			field.active = field.condition;
+			field.trigger(EVENTS.changeValue);
 		}
 	});
 

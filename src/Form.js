@@ -8,18 +8,13 @@ export const ATTRIBUTE_NAME = "name";
 export const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
 const ATTRIBUTES = [ATTRIBUTE_NAME];
 
-const updateControls = (form) => {
-	form.control.update();
+const changeSite = (form) => {
+	form.trigger(EVENTS.changeSite);
 };
 
 const init = (form) => {
-	form.on(EVENTS.changeValidation "", (event) => {
-		form.control.update();
-	});
-
 	form.state = STATES.init;
 	form.useSummaryPage = form.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
-	form.control = form.find(NODENAMES.Control).first();
 	form.pages = form.find(NODENAMES.Page);
 	form.activePageIndex = -1;
 	if (form.pages.length > 0) form.toNextPage();
@@ -70,7 +65,7 @@ class Form extends HTMLElement {
 			if (current) current.active = false;
 			this.activePageIndex = this.pages.indexOf(page);
 			page.active = true;
-			updateControls(this);
+			changeSite(this);
 		}
 	}
 
@@ -104,12 +99,12 @@ class Form extends HTMLElement {
 
 	summary() {
 		this.state = STATES.summary;
-		updateControls(this);
+		changeSite(this);
 	}
 
 	submit() {
 		this.state = STATES.finished;
-		updateControls(this);
+		changeSite(this);
 	}
 }
 window.customElements.define(NODENAMES.Form, Form);

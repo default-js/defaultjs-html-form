@@ -1,22 +1,20 @@
-import {STATES, NODENAMES} from "./Constants";
-import {
-	BackButton,
-	NextButton,
-	SummaryButton,
-	SubmitButton,
-	CancelButton,
-} from "./controls";
+import { STATES, NODENAMES, EVENTS } from "./Constants";
+import {toEvents} from "./utils/EventHelper";
+import { BackButton, NextButton, SummaryButton, SubmitButton, CancelButton } from "./controls";
 
 const ATTRIBUTES = [];
 
-const init = (control)=>{
+const init = (control) => {
 	control.form = control.parent(NODENAMES.Form);
 	control.back = control.find(NODENAMES.BackButton).first();
 	control.next = control.find(NODENAMES.NextButton).first();
 	control.summary = control.find(NODENAMES.SummaryButton).first();
 	control.submit = control.find(NODENAMES.SubmitButton).first();
 
-}
+	control.form.on(toEvents(EVENTS.changeCondition, EVENTS.changeValidation, EVENTS.changeSite), (event) => {
+		control.update();
+	});
+};
 
 class Control extends HTMLElement {
 	static get observedAttributes() {
@@ -29,23 +27,17 @@ class Control extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if(oldValue != newValue){
+		if (oldValue != newValue) {
 			this.trigger(EVENTS.changeAttributeEventBuilder(name));
 			this.trigger(EVENTS.change);
 		}
 	}
 
 	update() {
-        const form = this.form;
-		const {
-			activePageIndex,
-			activePage,
-			nextPage,
-			pages,
-			useSummaryPage,
-			state
-		} = form;
-		const { back, next, summary, submit } = this;
+		const { back, next, summary, submit, form } = this;
+		const { activePageIndex, activePage, nextPage, pages, useSummaryPage, state } = form;
+
+		console.log("Control.update()");
 
 		// basic control setup
 		back.active = true;
@@ -58,12 +50,9 @@ class Control extends HTMLElement {
 		submit.disabled = true;
 
 		if (state == STATES.finished) {
-            back.disabled = true;
-            submit.active = true;
-		} else if (
-			nextPage ||
-			(!activePage.valid && activePageIndex + 1 < pages.length)
-		) {
+			back.disabled = true;
+			submit.active = true;
+		} else if (nextPage || (!activePage.valid && activePageIndex + 1 < pages.length)) {
 			next.active = true;
 			next.disabled = !activePage.valid;
 			form.state = STATES.input;

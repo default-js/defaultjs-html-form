@@ -7,7 +7,7 @@ export const ATTRIBUTE_VAILD = "valid";
 export const ATTRIBUTE_INVAILD = "invalid";
 
 const setState = (target, valid) => {
-    console.log("validate state:", target, valid);
+    const oldState = target.valid;
 	if (typeof valid === "undefined") {
 		target.attr(ATTRIBUTE_INVAILD, null);
 		target.attr(ATTRIBUTE_VAILD, null);
@@ -17,7 +17,10 @@ const setState = (target, valid) => {
 	} else {
 		target.attr(ATTRIBUTE_INVAILD, "");
 		target.attr(ATTRIBUTE_VAILD, null);
-	}
+    }
+    
+    if(oldState != valid)
+        target.trigger(EVENTS.changeValidation);
 };
 
 const init = (validator) => {
@@ -46,9 +49,8 @@ class Validator {
 		const { hasValue, required, requiredOnlyOnActive, active } = target;
         const data = this.form.data;
         data["$value"] = target.value;
-        
-        console.log("validate:", target);
-        console.log("hasValue", hasValue, "required", required, "active", active);
+        //TODO handle List Items
+
 
 		let valid = true;
 		for (let validation of this.validations) {

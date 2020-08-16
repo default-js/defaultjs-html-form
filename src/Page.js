@@ -37,6 +37,11 @@ class Page extends Base {
 	}
 
 	get valid(){
+		for (let field of this.fields) {
+			if (field.active && field.condition && !field.valid) {
+				return false;
+			}
+		}
 		return true;
 	}
 }
