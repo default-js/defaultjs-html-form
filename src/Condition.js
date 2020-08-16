@@ -1,16 +1,20 @@
-import { CONDITIONSTATES, EVENTS } from "./Constants";
+import { EVENTS } from "./Constants";
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 
 export const ATTRIBUTE_CONDITION = "condition";
+export const ATTRIBUTE_CONDITION_VALID = "condition-valid";
+export const ATTRIBUTE_CONDITION_INVALID = "condition-invalid";
 
-const setState = (target, valid) => {
+const setState = (target, valid, initial=false) => {
+	const oldState = target.condition;
 	if (valid) {
-		target.attr(CONDITIONSTATES.invalid, null);
-		target.attr(CONDITIONSTATES.valid, "");
+		target.attr(ATTRIBUTE_CONDITION_INVALID, null);
+		target.attr(ATTRIBUTE_CONDITION_VALID, "");
 	} else {
-		target.attr(CONDITIONSTATES.valid, null);
-		target.attr(CONDITIONSTATES.invalid, "");
+		target.attr(ATTRIBUTE_CONDITION_VALID, null);
+		target.attr(ATTRIBUTE_CONDITION_INVALID, "");
 	}
+	if (oldState != valid || initial) target.trigger(EVENTS.changeCondition);
 };
 
 const init = (condition) => {
@@ -21,11 +25,14 @@ const init = (condition) => {
 		condition.expression = expression.trim();
 		setState(target, false);
 		form.on(EVENTS.changeValue, (event) => {
-			ExpressionResolver.resolve(condition.expression, form.data, false)
-				.then((state) => setState(target, state))
-				["catch"](() => setState(target, false));
+			if (event.target != target) {
+				ExpressionResolver.resolve(condition.expression, form.data, false)
+					.then((state) => {
+						setState(target, state);
+					})["catch"](() => setState(target, false));
+			}
 		});
-	} else setState(target, true);
+	} else setState(target, true, true);
 };
 
 class Condition {
@@ -36,11 +43,6 @@ class Condition {
 
 	get form() {
 		return this.target.form;
-	}
-
-	get valid() {
-		if (this.target.hasAttribute(CONDITIONSTATES.valid)) return true;
-		return false;
 	}
 }
 export default Condition;

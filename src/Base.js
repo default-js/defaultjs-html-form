@@ -1,17 +1,16 @@
 import { NODENAMES, CONDITIONSTATES, EVENTS } from "./Constants";
 import Condition from "./Condition";
-import {ATTRIBUTE_CONDITION} from "./Condition";
-import Validator from "./Validator";
+import {ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID} from "./Condition";
 
 export const ATTRIBUTE_ACTIVE = "active";
 export const ATTRIBUTE_READONLY = "readonly";
-const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION];
+const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID];
 
 const init = (base) => {
+	base.active = true;
 	base.form = base.parent(NODENAMES.Form);
 	base._condition = new Condition(base);
-	base._validator = new Validator(base);
-}
+};
 
 class Base extends HTMLElement {
 	static get observedAttributes() {
@@ -37,6 +36,7 @@ class Base extends HTMLElement {
 		active
 			? this.attr(ATTRIBUTE_ACTIVE, "")
 			: this.attr(ATTRIBUTE_ACTIVE, undefined);
+		this.trigger(EVENTS.changeActive);
 	}
 
 	get readonly() {
@@ -49,7 +49,8 @@ class Base extends HTMLElement {
 	}
 
 	get condition(){
-		return this._condition.valid;
+		if (this.hasAttribute(ATTRIBUTE_CONDITION_INVALID)) return false;
+		return true;
 	}
 
 	get valid() {
