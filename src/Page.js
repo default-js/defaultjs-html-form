@@ -1,6 +1,6 @@
 import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { STATES, NODENAMES, EVENTS } from "./Constants";
+import { NODENAMES, EVENTS } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
 import Base from "./Base";
 import Field from "./Field";

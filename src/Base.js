@@ -1,6 +1,7 @@
 import { NODENAMES, CONDITIONSTATES, EVENTS } from "./Constants";
 import Condition from "./Condition";
 import {ATTRIBUTE_CONDITION} from "./Condition";
+import Validator from "./Validator";
 
 export const ATTRIBUTE_ACTIVE = "active";
 export const ATTRIBUTE_READONLY = "readonly";
@@ -9,6 +10,7 @@ const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION];
 const init = (base) => {
 	base.form = base.parent(NODENAMES.Form);
 	base._condition = new Condition(base);
+	base._validator = new Validator(base);
 }
 
 class Base extends HTMLElement {

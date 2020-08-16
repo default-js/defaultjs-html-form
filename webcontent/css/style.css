@@ -3,18 +3,18 @@ body {
 }
 
 
-defaultjs-page:not([active]) {
+d-page:not([active]) {
     display: none;
 }
 
-defaultjs-control {
+d-control {
     display: flex;
 }
 
-defaultjs-control-back, 
-defaultjs-control-next, 
-defaultjs-control-summary, 
-defaultjs-control-submit {
+d-control-back, 
+d-control-next, 
+d-control-summary, 
+d-control-submit {
     display: flex;
     margin: 0.5rem;
     padding: 0.5rem;
@@ -23,27 +23,27 @@ defaultjs-control-submit {
     background: #FAFAFA;
     cursor: pointer;
 }
-defaultjs-control-back {
+d-control-back {
     /*margin-right: auto;*/
 }
-defaultjs-control-back::selection, 
-defaultjs-control-next::selection, 
-defaultjs-control-summary::selection, 
-defaultjs-control-submit::selection{
+d-control-back::selection, 
+d-control-next::selection, 
+d-control-summary::selection, 
+d-control-submit::selection{
     background: inherit;
 }
 
-defaultjs-control-back:not([active]), 
-defaultjs-control-next:not([active]), 
-defaultjs-control-summary:not([active]), 
-defaultjs-control-submit:not([active]) {
+d-control-back:not([active]), 
+d-control-next:not([active]), 
+d-control-summary:not([active]), 
+d-control-submit:not([active]) {
    display: none;
 }
 
-defaultjs-control-back[disabled], 
-defaultjs-control-next[disabled], 
-defaultjs-control-summary[disabled], 
-defaultjs-control-submit[disabled] {
+d-control-back[disabled], 
+d-control-next[disabled], 
+d-control-summary[disabled], 
+d-control-submit[disabled] {
     opacity: 0.7;
 
     background: #AFAFAF;
@@ -51,4 +51,16 @@ defaultjs-control-submit[disabled] {
 }
 [condition-invalid] {
     display: none;
+}
+
+[no-value] {
+    border: 0.1rem solid blue;
+}
+
+[valid] {
+    border: 0.1rem solid red;
+}
+
+d-validation:not([active]){
+   display: none;
 }

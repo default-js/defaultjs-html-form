@@ -1,4 +1,4 @@
-export const HTML_TAG_PREFIX = "defaultjs-";
+export const HTML_TAG_PREFIX = "d-";
 export const NODENAMES = {
     Form : HTML_TAG_PREFIX + "form",
     Control : HTML_TAG_PREFIX + "control",
@@ -12,6 +12,8 @@ export const NODENAMES = {
     WrapperField : HTML_TAG_PREFIX + "wrapper-field",
     List : HTML_TAG_PREFIX + "list",
     Container : HTML_TAG_PREFIX + "container",
+    Validation : HTML_TAG_PREFIX + "validation",
+    Message : HTML_TAG_PREFIX + "message",
 };
 export const STATES = {
     init: "init",
@@ -26,11 +28,18 @@ export const CONDITIONSTATES = {
     invalid : "condition-invalid"
 }
 
+export const VALIDATIONSTATES = {
+    noValue : "no-value",
+    valid : "valid",
+    invalid : "invalid"
+}
+
 
 export const EVENTS = {
     "initialize" : "initialize",
     "added" : "added",
     "change" : "change",
     "changeAttributeEventBuilder" : (name) => { return "change-attribute-" + name},
-    "changeValue" : "change-value"
+    "changeValue" : "change-value",
+    "changeValidation" : "change-validation"
 };
