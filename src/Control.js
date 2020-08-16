@@ -37,8 +37,6 @@ class Control extends HTMLElement {
 		const { back, next, summary, submit, form } = this;
 		const { activePageIndex, activePage, nextPage, pages, useSummaryPage, state } = form;
 
-		console.log("Control.update()");
-
 		// basic control setup
 		back.active = true;
 		back.disabled = activePageIndex <= 0;
