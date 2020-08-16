@@ -1,4 +1,4 @@
-import NodeNames from "../NodeNames";
+import {NODENAMES} from "../Constants";
 import ControlButton from "./ControlButton";
 
 const ATTRIBUTES = [];
@@ -16,4 +16,4 @@ class BackButton extends ControlButton {
 	}
 }
 export default BackButton;
-window.customElements.define(NodeNames.BackButton, BackButton);
+window.customElements.define(NODENAMES.BackButton, BackButton);

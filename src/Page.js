@@ -1,9 +1,13 @@
 import "@default-js/defaultjs-extdom";
-import constants from "./Constants";
-import Events from "./Events";
+import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
+import { STATES, NODENAMES, EVENTS } from "./Constants";
+import { findFields } from "./utils/NodeHelper";
 import Base from "./Base";
+import Field from "./Field";
+import "./fields";
+import Container from "./Container";
+import List from "./List";
 
-export const NODENAME = constants.HTML_TAG_PREFIX + "page";
 const ATTRIBUTES = ["step", "active", "readonly", "condition"];
 
 const render = (page) => {};
@@ -15,25 +19,41 @@ class Page extends Base {
 
 	constructor() {
 		super();
+		this.init();
+	}
+
+	init() {
+		this.on(EVENTS.changeValue, (event) => {});
+		this.fields = findFields(this);
 	}
 
 	connectedCallback() {
-		this.trigger(Events.initialize);
+		this.trigger(EVENTS.initialize);
 	}
 
 	disconnectedCallback() {}
 
 	adoptedCallback() {
-		this.trigger(Events.initialize);
+		this.trigger(EVENTS.initialize);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (oldValue != newValue) {
-			this.trigger("change");
+			this.trigger(EVENTS.change);
 			render(this);
 		}
 	}
-}
-window.customElements.define(constants.HTML_TAG_PREFIX + "page", Page);
 
+	async value(value) {
+		const data = {};
+		for (let field of this.fields) {
+			if (await field.valid())
+				data[field.name] =
+					typeof field.value === "function" ? await field.value() : field.value;
+		}
+
+		return data;
+	}
+}
+window.customElements.define(NODENAMES.Page, Page);
 export default Page;

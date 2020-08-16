@@ -1,4 +1,4 @@
-import NodeNames from "../NodeNames";
+import {NODENAMES} from "../Constants";
 import ControlButton from "./ControlButton";
 
 const ATTRIBUTES = [];
@@ -15,4 +15,4 @@ class SubmitButton extends ControlButton {
 	}
 }
 export default SubmitButton;
-window.customElements.define(NodeNames.SubmitButton, SubmitButton);
+window.customElements.define(NODENAMES.SubmitButton, SubmitButton);

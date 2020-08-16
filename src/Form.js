@@ -1,9 +1,12 @@
-import NodeNames from "./NodeNames";
+import "@default-js/defaultjs-extdom";
+import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
+import { STATES, NODENAMES, EVENTS } from "./Constants";
 import Page from "./Page";
 import Control from "./Control";
-import State from "./State";
 
-const ATTRIBUTES = ["name"];
+const ATTRIBUTE_NAME = "name";
+const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
+const ATTRIBUTES = [ATTRIBUTE_NAME];
 
 const render = (form) => {};
 
@@ -18,7 +21,7 @@ class Form extends HTMLElement {
 
 	constructor() {
 		super();
-		this.on("change", (event) => {
+		this.on(EVENTS.change, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 		});
@@ -36,25 +39,35 @@ class Form extends HTMLElement {
 	}
 
 	attributeChangedCallback() {
-		this.trigger("change");
+		this.trigger(EVENTS.change);
 	}
 
 	init() {
-        this.state = State.init;
-		this.useSummaryPage = this.hasAttribute("use-summary-page");
-		this.control = this.find(NodeNames.Control).first();
-		this.pages = this.find(NodeNames.Page);
+		this.state = STATES.init;
+		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
+		this.control = this.find(NODENAMES.Control).first();
+		this.pages = this.find(NODENAMES.Page);
 		this.activePageIndex = -1;
 		if (this.pages.length > 0) {
-            this.toNextPage();
-        }
+			this.toNextPage();
+		}
 	}
 
-	get valid() {}
+	async valid() {}
 
-	get data() {}
+	async data(data) {
+		if (arguments.length == 0) {
+			const data = {};
+			for (let page of this.pages) {
+				if ((await page.valid()) || page == this.activePage)
+					ObjectUtils.merge(data, await page.value());
+			}
 
-	set data(data) {}
+			return data;
+		} else {
+			//TODO set data logic
+		}
+	}
 
 	get activePage() {
 		if (0 <= this.activePageIndex && this.activePageIndex < this.pages.length)
@@ -73,40 +86,42 @@ class Form extends HTMLElement {
 		}
 	}
 
-	get prevPage() {
+	async prevPage() {
 		const start = this.activePageIndex - 1;
-		for (let i = start; i >= 0; i--)
-			if (this.pages[i].condition) return this.pages[i];
-		return null;
-	}
-
-	get nextPage() {
-		const start = this.activePageIndex + 1;
-		for (let i = start; i < this.pages.length; i++) {
-			if (this.pages[i].condition) return this.pages[i];
+		for (let i = start; i >= 0; i--) {
+			const page = this.pages[i];
+			if (await page.condition()) return page;
 		}
 		return null;
 	}
 
-	toPrevPage() {
-		const prev = this.prevPage;
+	async nextPage() {
+		const start = this.activePageIndex + 1;
+		for (let i = start; i < this.pages.length; i++) {
+			if (await this.pages[i].condition()) return this.pages[i];
+		}
+		return null;
+	}
+
+	async toPrevPage() {
+		const prev = await this.prevPage();
 		if (prev) this.activePage = prev;
 	}
 
-	toNextPage() {
-		const next = this.nextPage;
+	async toNextPage() {
+		const next = await this.nextPage();
 		if (next) this.activePage = next;
 	}
 
 	summary() {
-        this.state = State.summary;
-        updateControls(this);
-    }
+		this.state = STATES.summary;
+		updateControls(this);
+	}
 
 	submit() {
-        this.state = State.finished;
-        updateControls(this);
-    }
+		this.state = STATES.finished;
+		updateControls(this);
+	}
 }
-window.customElements.define(NodeNames.Form, Form);
+window.customElements.define(NODENAMES.Form, Form);
 export default Form;

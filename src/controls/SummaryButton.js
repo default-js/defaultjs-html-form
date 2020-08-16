@@ -1,4 +1,4 @@
-import NodeNames from "../NodeNames";
+import {NODENAMES} from "../Constants";
 import ControlButton from "./ControlButton";
 
 const ATTRIBUTES = [];
@@ -15,4 +15,4 @@ class SummaryButton extends ControlButton {
 	}
 }
 export default SummaryButton;
-window.customElements.define(NodeNames.SummaryButton, SummaryButton);
+window.customElements.define(NODENAMES.SummaryButton, SummaryButton);

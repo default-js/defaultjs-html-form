@@ -1,4 +1,4 @@
-import NodeNames from "../NodeNames";
+import {NODENAMES} from "../Constants";
 import ControlButton from "./ControlButton";
 
 const ATTRIBUTES = [];
@@ -12,9 +12,8 @@ class NextButton extends ControlButton {
 	}
 
 	execute(){
-		console.log("hier")
 		this.form.toNextPage();
 	}
 }
 export default NextButton;
-window.customElements.define(NodeNames.NextButton, NextButton);
+window.customElements.define(NODENAMES.NextButton, NextButton);

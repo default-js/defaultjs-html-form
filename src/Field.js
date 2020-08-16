@@ -1,14 +1,19 @@
+import "@default-js/defaultjs-extdom";
+import { NODENAMES, EVENTS } from "./Constants";
 import Base from "./Base";
 
-const ATTRIBUTES = ["name", "value"];
+const ATTRIBUTE_NAME = "name";
+const ATTRIBUTES = [ATTRIBUTE_NAME];
+
 class Field extends Base {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
 
 	constructor() {
-        super();
-    }
+		super();
+		this.init();
+	}
 
 	connectedCallback() {}
 
@@ -17,25 +22,25 @@ class Field extends Base {
 	adoptedCallback() {}
 
 	attributeChangedCallback() {
-		this.trigger("change");
+		this.trigger(EVENTS.change);
 	}
 
+	init() {}
+
 	get name() {
-		this.getAttribute(ATTRIBUTES[0]);
+		return this.getAttribute(ATTRIBUTE_NAME);
 	}
 
 	set name(name) {
-		this.setAttribute(ATTRIBUTES[0], name);
-    }
-    
-    get value(){
-        this.getAttribute(ATTRIBUTES[1]);
-    }
+		this.setAttribute(ATTRIBUTE_NAME, name);
+	}
 
-    set value(value){
-        this.setAttribute(ATTRIBUTES[1], name);
-    }
+	async value(value) {
+		if (arguments != 0) {
+			this.trigger(EVENTS.changeValue);
+		} else return null;
+	}
 }
 
-customElements.define("defaultjs-field", Field);
+customElements.define(NODENAMES.Field, Field);
 export default Field;

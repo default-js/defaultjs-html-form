@@ -1,5 +1,4 @@
-import NodeNames from "./NodeNames";
-import State from "./State";
+import {STATES, NODENAMES} from "./Constants";
 import {
 	BackButton,
 	NextButton,
@@ -17,10 +16,10 @@ class Control extends HTMLElement {
 
 	constructor() {
 		super();
-		this.back = this.find(NodeNames.BackButton).first();
-		this.next = this.find(NodeNames.NextButton).first();
-		this.summary = this.find(NodeNames.SummaryButton).first();
-		this.submit = this.find(NodeNames.SubmitButton).first();
+		this.back = this.find(NODENAMES.BackButton).first();
+		this.next = this.find(NODENAMES.NextButton).first();
+		this.summary = this.find(NODENAMES.SummaryButton).first();
+		this.submit = this.find(NODENAMES.SubmitButton).first();
 	}
 
 	connectedCallback() {}
@@ -34,7 +33,7 @@ class Control extends HTMLElement {
 	}
 
 	get form() {
-		return this.parent(NodeNames.Form);
+		return this.parent(NODENAMES.Form);
 	}
 
 	update() {
@@ -60,7 +59,7 @@ class Control extends HTMLElement {
 		submit.active = false;
 		submit.disabled = true;
 
-		if (state == State.finished) {
+		if (state == STATES.finished) {
             back.disabled = true;
             submit.active = true;
 		} else if (
@@ -69,17 +68,17 @@ class Control extends HTMLElement {
 		) {
 			next.active = true;
 			next.disabled = !activePage.valid;
-			form.state = State.input;
-		} else if (useSummaryPage && state == State.input) {
+			form.state = STATES.input;
+		} else if (useSummaryPage && state == STATES.input) {
 			summary.active = true;
 			summary.disabled = !activePage.valid;
-			form.state = State.summary;
+			form.state = STATES.summary;
 		} else {
 			submit.active = true;
 			submit.disabled = false;
-			form.state = State.submit;
+			form.state = STATES.submit;
 		}
 	}
 }
-window.customElements.define(NodeNames.Control, Control);
+window.customElements.define(NODENAMES.Control, Control);
 export default Control;

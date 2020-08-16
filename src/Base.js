@@ -1,50 +1,54 @@
-class Base extends HTMLElement {
+import { NODENAMES } from "./Constants";
+import { ExpressionResolver } from "@default-js/defaultjs-expression-language";
 
+const ATTRIBUTE_ACTIVE = "active";
+const ATTRIBUTE_READONLY = "readonly";
+const ATTRIBUTE_CONDITION = "condition";
+
+class Base extends HTMLElement {
 	constructor() {
 		super();
 	}
 
+	get form() {
+		return this.parent(NODENAMES.Form).first();
+	}
+
 	get active() {
-		return this.hasAttribute("active");
+		return this.hasAttribute(ATTRIBUTE_ACTIVE);
 	}
 	set active(active) {
-		if (typeof active !== "boolean")
-			throw new Error("argument must be a boolean");
-
-		active ? this.attr("active", "") : this.attr("active", undefined);
-    }
-    
-    toggleActive(){
-        this.active = !this.active;
-    }
+		active
+			? this.attr(ATTRIBUTE_ACTIVE, "")
+			: this.attr(ATTRIBUTE_ACTIVE, undefined);
+	}
 
 	get readonly() {
-		return this.hasAttribute("readonly");
+		return this.hasAttribute(ATTRIBUTE_READONLY);
 	}
 	set readonly(readonly) {
-		if (typeof readonly !== "boolean")
-			throw new Error("argument must be a boolean");
+		readonly
+			? this.attr(ATTRIBUTE_READONLY, "")
+			: this.attr(ATTRIBUTE_READONLY, undefined);
+	}
 
-		readonly ? this.attr("readonly", "") : this.attr("readonly", undefined);
-    }
-    
-    toggleReadonly(){
-        this.readonly = !this.readonly;
-    }
+	async condition() {
+		if (this.hasAttribute(ATTRIBUTE_CONDITION)) {
+			const condition = this.attr(ATTRIBUTE_CONDITION);
+			if (typeof condition === "string" && condition.trim().length > 0) {
+				return ExpressionResolver.resolve(condition, this.form.data, false);
+			}
+		}
+		return true;
+	}
 
-	get condition() {
-        return true;
-    }
+	async valid() {
+		return true;
+	}
 
-    get valid() {
-        return true;
-    }
-
-	get value() {
-        return null;
-    }
-
-	set value(data) {}
+	async value(value) {
+		if (arguments == 0) return null;
+	}
 }
 
 export default Base;

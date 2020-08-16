@@ -1,4 +1,4 @@
-import NodeNames from "../NodeNames";
+import {NODENAMES} from "../Constants";
 
 const ATTRIBUTE_ACTIVE = "active";
 const ATTRIBUTE_DISABLED = "disabled";
@@ -33,6 +33,10 @@ class ControlButton extends HTMLElement {
 			event.stopPropagation();
 		});
 	}
+	
+	get form() {
+		return this.parent(NODENAMES.Form);
+	}
 
 	get active() {
 		return this.hasAttribute(ATTRIBUTE_ACTIVE);
@@ -54,9 +58,6 @@ class ControlButton extends HTMLElement {
 			: this.attr(ATTRIBUTE_DISABLED, undefined);
 	}
 
-	get form() {
-		return this.parent(NodeNames.Form);
-	}
 
 	execute() {
 		console.log("execute");

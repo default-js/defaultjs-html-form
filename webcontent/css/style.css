@@ -1,19 +1,36 @@
+body {
+    background: #EFEFEF;
+}
 
 
 defaultjs-page:not([active]) {
     display: none;
 }
 
+defaultjs-control {
+    display: flex;
+}
+
 defaultjs-control-back, 
 defaultjs-control-next, 
 defaultjs-control-summary, 
 defaultjs-control-submit {
+    display: flex;
     margin: 0.5rem;
     padding: 0.5rem;
     border: 0.1rem solid black;
     border-radius: .5rem;
     background: #FAFAFA;
     cursor: pointer;
+}
+defaultjs-control-back {
+    /*margin-right: auto;*/
+}
+defaultjs-control-back::selection, 
+defaultjs-control-next::selection, 
+defaultjs-control-summary::selection, 
+defaultjs-control-submit::selection{
+    background: inherit;
 }
 
 defaultjs-control-back:not([active]), 

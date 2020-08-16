@@ -1,13 +1,22 @@
+import "@default-js/defaultjs-extdom";
+import { NODENAMES, EVENTS } from "./Constants";
 import Field from "./Field";
 
 class Container extends Field {
+	constructor() {
+		super();
+	}
 
-    constructor(){
-        super();
-    }
+	connectedCallback() {}
 
+	disconnectedCallback() {}
 
+	adoptedCallback() {}
+
+	attributeChangedCallback() {
+		this.trigger(EVENTS.change);
+	}
 }
 
-customElements.define("defaultjs-container", Container);
+customElements.define(NODENAMES.Container, Container);
 export default Container;
