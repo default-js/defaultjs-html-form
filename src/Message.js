@@ -1,5 +1,5 @@
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
-import { NODENAMES, EVENTS } from "./Constants";
+import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import {toEvents} from "./utils/EventHelper";
 
 
@@ -28,8 +28,8 @@ class Message extends HTMLElement{
 
     attributeChangedCallback(name, oldValue, newValue) {
 		if(oldValue != newValue){
-			this.trigger(EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(EVENTS.change);
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
 		}
 	}
 

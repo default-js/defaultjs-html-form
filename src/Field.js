@@ -1,5 +1,5 @@
-import "@default-js-old/defaultjs-extdom";
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT} from "./Constants";
+import "@default-js/defaultjs-extdom";
+import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import Base from "./Base";
 import Validator from "./Validator";
 import { ATTRIBUTE_VAILD, ATTRIBUTE_INVAILD } from "./Validator";
@@ -25,7 +25,7 @@ const init = (field) => {
 	field.on(EVENTS.changeCondition, (event) => {
 		if (event.target == field) {
 			field.active = field.condition;
-			field.trigger( EVENTS.changeValue);
+			field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
 		}
 	});
 
@@ -70,7 +70,7 @@ class Field extends Base {
 	}
 
 	set value(value) {
-		this.trigger(EVENTS.changeValue);
+		this.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
 	}
 
 	get valid() {

@@ -1,4 +1,4 @@
-import "@default-js-old/defaultjs-extdom";
+import "@default-js/defaultjs-extdom";
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT} from "../Constants";
 import Field from "../Field";
 

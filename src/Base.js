@@ -1,4 +1,4 @@
-import { NODENAMES, CONDITIONSTATES, EVENTS } from "./Constants";
+import { NODENAMES, TRIGGER_TIMEOUT, EVENTS } from "./Constants";
 import Condition from "./Condition";
 import {ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID} from "./Condition";
 
@@ -24,8 +24,8 @@ class Base extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if(oldValue != newValue){
-			this.trigger(EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(EVENTS.change);
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
 		}
 	}
 
@@ -36,7 +36,7 @@ class Base extends HTMLElement {
 		active
 			? this.attr(ATTRIBUTE_ACTIVE, "")
 			: this.attr(ATTRIBUTE_ACTIVE, undefined);
-		this.trigger(EVENTS.changeActive);
+		this.trigger(TRIGGER_TIMEOUT, EVENTS.changeActive);
 	}
 
 	get readonly() {

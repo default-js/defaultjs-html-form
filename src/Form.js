@@ -1,6 +1,6 @@
 import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { STATES, NODENAMES, EVENTS } from "./Constants";
+import { STATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import Message from "./Message";
 import Page from "./Page";
 import Control from "./Control";
@@ -10,7 +10,7 @@ export const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
 const ATTRIBUTES = [ATTRIBUTE_NAME];
 
 const changeSite = (form) => {
-	form.trigger(EVENTS.changeSite);
+	form.trigger(TRIGGER_TIMEOUT, EVENTS.changeSite);
 };
 
 const init = (form) => {
@@ -33,8 +33,8 @@ class Form extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (oldValue != newValue) {
-			this.trigger(EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(EVENTS.change);
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
 		}
 	}
 

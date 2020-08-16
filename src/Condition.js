@@ -1,5 +1,5 @@
 import { EVENTS, TRIGGER_TIMEOUT } from "./Constants";
-import ExpressionResolver from "@default-js-old/defaultjs-expression-language/src/ExpressionResolver";
+import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 
 export const ATTRIBUTE_CONDITION = "condition";
 export const ATTRIBUTE_CONDITION_VALID = "condition-valid";

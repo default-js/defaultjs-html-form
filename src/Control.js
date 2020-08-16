@@ -28,8 +28,8 @@ class Control extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (oldValue != newValue) {
-			this.trigger(EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(EVENTS.change);
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
 		}
 	}
 
