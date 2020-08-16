@@ -13,15 +13,8 @@ const updateControls = (form) => {
 };
 
 const init = (form) => {
-	form.on(EVENTS.change, (event) => {
-		event.preventDefault();
-		event.stopPropagation();
-	});
-
-	form.on(EVENTS.changeValue, (event) => {
-		console.log("value changed:", event);
-		event.preventDefault();
-		event.stopPropagation();
+	form.on(EVENTS.changeValidation "", (event) => {
+		form.control.update();
 	});
 
 	form.state = STATES.init;

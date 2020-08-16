@@ -12,7 +12,7 @@
 				<h3>page 1</h3>
 				<d-wrapper-field name="field1" required>
 					<input value="" />
-					<d-validation condition="${typeof field1 !== 'undefined' && field1 != 'valid'}">invalid</d-validation>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
 				</d-wrapper-field>
 				<d-field name="field2" condition="${typeof field1 !== 'undefined' && field1 == 'field'}">field 2</d-field>
 				<d-field name="field3">field 3</d-field>

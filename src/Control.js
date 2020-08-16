@@ -28,14 +28,11 @@ class Control extends HTMLElement {
 		init(this);
 	}
 
-	connectedCallback() {}
-
-	disconnectedCallback() {}
-
-	adoptedCallback() {}
-
-	attributeChangedCallback() {
-		this.trigger("change");
+	attributeChangedCallback(name, oldValue, newValue) {
+		if(oldValue != newValue){
+			this.trigger(EVENTS.changeAttributeEventBuilder(name));
+			this.trigger(EVENTS.change);
+		}
 	}
 
 	update() {
