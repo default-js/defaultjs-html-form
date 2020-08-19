@@ -19,8 +19,12 @@
 				<d-field name="field3">field 3</d-field>
 				<d-field name="field4">field 4</d-field>
 				<d-container name="container1">
-					<d-field name="field1">field 1</d-field>
-					<d-field name="field2">field 2</d-field>
+					<d-wrapper-field name="field1" required>
+						<input value="" />
+						<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+						<d-message condition="${field1 == 'message'}">test message</d-message>
+					</d-wrapper-field>
+					<d-field name="field2" condition="${typeof container1.field1 !== 'undefined' && container1.field1 == 'field'}">field 2</d-field>
 					<d-field name="field3">field 3</d-field>
 					<d-field name="field4">field 4</d-field>
 				</d-container>

@@ -44,6 +44,8 @@ const init = (field) => {
 	);
 
 	field._validator = new Validator(field);
+
+	field.trigger(EVENTS.initialize);
 };
 
 class Field extends Base {
@@ -60,20 +62,17 @@ class Field extends Base {
 		return this.getAttribute(ATTRIBUTE_NAME);
 	}
 
-	set name(name) {
-		this.setAttribute(ATTRIBUTE_NAME, name);
-	}
-
 	get required() {
 		return this.hasAttribute(ATTRIBUTE_REQUIRED);
 	}
 
 	get hasValue() {
-		return false;
+		const value = this.value;
+		return value != null && typeof value !== "undefined";
 	}
 
 	get value() {
-		return null;
+		return this.name;
 	}
 
 	set value(value) {
@@ -81,6 +80,7 @@ class Field extends Base {
 	}
 
 	get valid() {
+		if(!this.condition) return false;
 		if (this.hasAttribute(ATTRIBUTE_INVAILD)) return false;
 		return true;
 	}

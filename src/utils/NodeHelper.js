@@ -2,16 +2,17 @@ import Field from "../Field";
 import Validation from "../Validation";
 
 export const treeFilter = ({ root, filter }) => {
-	const { accept, stop = false } = filter(root);
-
-	if (stop) return accept ? root : null;
-
-	let elements = accept ? [root] : [];
-
+	let elements = [];
 	root.children.forEach((element) => {
-		const result = treeFilter({ root: element, filter });
-		if (result instanceof Array) elements = elements.concat(result);
-		else if (result) elements.push(result);
+		const { accept, stop = false } = filter(element);
+
+		if (accept) elements.push(element);
+
+		if (!stop) {
+			const result = treeFilter({ root: element, filter });
+			if (result instanceof Array) elements = elements.concat(result);
+			else if (result) elements.push(result);
+		}
 	});
 
 	return elements;

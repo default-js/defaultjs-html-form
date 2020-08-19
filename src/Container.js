@@ -3,28 +3,23 @@ import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { NODENAMES, EVENTS } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
-import Base from "./Base";
-import "./fields";
 import Field from "./Field";
-import Container from "./Container";
-import List from "./List";
+import { fields } from "..";
 
-export const ATTRIBUTE_STEP = "step";
-const ATTRIBUTES = [ATTRIBUTE_STEP];
+const ATTRIBUTES = [];
 
-const init = (page) => {
-	page.active = false;
-	page.on(
+const init = (container) => {
+	container.on(
 		EVENTS.changeValue,
 		toTimeoutHandle((event) => {}),
 	);
 
-	page.on(EVENTS.initialize, (event) => {
+	container.on(EVENTS.initialize, (event) => {
 		const field = event.target;
 		if (field instanceof Field) {
-			if (page.fields.indexOf(field) < 0) {
-				page.fields.push(field);
-				page.trigger(100, EVENTS.changeValue);
+			if (container.fields.indexOf(field) < 0) {
+				container.fields.push(field);
+				container.trigger(100, EVENTS.changeValue);
 			}
 
 			event.preventDefault();
@@ -32,16 +27,17 @@ const init = (page) => {
 		}
 	});
 
-	page.fields = findFields(page);
+	container.fields = findFields(container);
 };
 
-class Page extends Base {
+class Container extends Field {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(Field.observedAttributes);
 	}
 
 	constructor() {
 		super();
+		this.fields = [];
 		init(this);
 	}
 
@@ -49,22 +45,32 @@ class Page extends Base {
 		if (!this.fields || this.fields.length == null) return null;
 
 		const values = {};
+		let hasValue = false;
 		for (let field of this.fields) {
 			if (field.valid) {
 				const value = field.value;
-				if (value != null && typeof value !== "undefined") values[field.name] = value;
+				if (typeof value !== "undefined" && value != null) {
+					values[field.name] = value;
+					hasValue = true;
+				}
 			}
 		}
-		return values;
+		if (!hasValue) return null;
+
+		if (this.name) return ({}[this.name] = values);
+		else return values;
 	}
+
+	set value(value) {}
 
 	get valid() {
 		if (this.fields)
 			for (let field of this.fields) {
 				if (field.active && field.condition && !field.valid) return false;
 			}
-		return true;
+		return super.valid;
 	}
 }
-window.customElements.define(NODENAMES.Page, Page);
-export default Page;
+
+customElements.define(NODENAMES.Container, Container);
+export default Container;

@@ -47,8 +47,13 @@ class Form extends HTMLElement {
 	get data() {
 		const data = {};
 		for (let page of this.pages) {
-			if (page.condition) ObjectUtils.merge(data, page.value);
-			else if (page == this.activePage) break;
+			let value = null;
+			if (page.condition && page.valid) value = page.value;
+			else if (page == this.activePage) value = page.value;
+
+			if (value != null && typeof value !== "undefined") ObjectUtils.merge(data, page.value);
+
+			if (page == this.activePage) return data;
 		}
 
 		return data;
