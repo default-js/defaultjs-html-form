@@ -50,7 +50,6 @@ class FormButton extends HTMLElement {
 	}
 
 	set disabled(disabled) {
-		console.log("disable:" , disabled, this, new Error());
 		disabled ? this.attr(ATTRIBUTE_DISABLED, "") : this.attr(ATTRIBUTE_DISABLED, null);
 	}
 
