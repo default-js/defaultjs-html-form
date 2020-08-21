@@ -6,6 +6,23 @@ import { toEvents, toTimeoutHandle } from "../utils/EventHelper";
 const ATTRIBUTE_NAME = "name";
 const ATTRIBUTES = [ATTRIBUTE_NAME];
 
+const wrapper = [
+	{
+		accept : (field) => { 
+			return field.find("input[type=text]").length == 1;
+		},
+		init : (field) => {
+
+		},
+		value: (value) => {
+
+		},
+		readonly : (readonly) => {}
+
+	}
+];
+
+
 const init = (field) => {
 	field.input = field.find("input").first();
 	field.on(

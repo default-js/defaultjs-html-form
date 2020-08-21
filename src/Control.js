@@ -60,18 +60,15 @@ class Control extends HTMLElement {
 		if (state == FORMSTATES.finished) {
 			back.disabled = true;
 			submit.active = true;
-		} else if (nextPage || (!activePage.valid && activePageIndex + 1 < pages.length)) {
+		}else if (nextPage || (!activePage.valid && (activePageIndex + 1 < pages.length))) {
 			next.active = true;
 			next.disabled = !activePage.valid;
-			form.state = FORMSTATES.input;
 		} else if (useSummaryPage && state == FORMSTATES.input) {
 			summary.active = true;
 			summary.disabled = !activePage.valid;
-			form.state = FORMSTATES.summary;
-		} else {
+		}else {
 			submit.active = true;
 			submit.disabled = !form.valid;
-			form.state = FORMSTATES.submit;
 		}
 	}
 }

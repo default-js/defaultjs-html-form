@@ -37,16 +37,23 @@ class Base extends HTMLElement {
 	get active() {
 		return this.hasAttribute(ATTRIBUTE_ACTIVE);
 	}
+
 	set active(active) {
 		updateActiveState(this, active);
+		this.activeUpdated();
 	}
+
+	activeUpdated(){}
 
 	get readonly() {
 		return this.hasAttribute(ATTRIBUTE_READONLY);
 	}
 	set readonly(readonly) {
 		readonly ? this.attr(ATTRIBUTE_READONLY, "") : this.attr(ATTRIBUTE_READONLY, undefined);
+		this.readonlyUpdated();
 	}
+
+	readonlyUpdated(){}
 
 	get condition() {
 		if (this.hasAttribute(ATTRIBUTE_CONDITION_INVALID)) return false;

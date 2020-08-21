@@ -52,6 +52,12 @@ class Page extends Base {
 		Page.init(this);
 	}
 
+	readonlyUpdated() {
+		for (let field of this.fields) {
+			field.readonly = this.readonly;
+		}
+	}
+
 	get value() {
 		if (!this.fields || this.fields.length == null) return null;
 
@@ -71,7 +77,7 @@ class Page extends Base {
 	set value(value) {
 		for (let field of this.fields) {
 			if (field.name) field.value = value[field.name];
-			else if(field instanceof Container) field.value = value;
+			else if (field instanceof Container) field.value = value;
 		}
 	}
 

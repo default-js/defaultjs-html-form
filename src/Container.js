@@ -48,6 +48,13 @@ class Container extends Field {
 	connectedCallback() {
 		Container.init(this);
 	}
+	
+	readonlyUpdated() {
+		const {readonly} = this;
+		for (let field of this.fields) {
+			field.readonly = readonly;
+		}
+	}
 
 	get value() {
 		if (!this.fields || this.fields.length == null) return null;

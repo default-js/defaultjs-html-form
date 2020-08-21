@@ -59,8 +59,8 @@ d-message:not([active]) {
 	display: none;
 }
 
-d-add-row[disabled],
-d-delete-row[disabled],
+d-list[readonly] d-add-row,
+d-list[readonly] d-delete-row,
 d-control-back[disabled],
 d-control-next[disabled],
 d-control-summary[disabled],

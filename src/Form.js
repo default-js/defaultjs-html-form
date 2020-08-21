@@ -1,13 +1,18 @@
 import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
+import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE } from "./Constants";
 import Message from "./Message";
 import Page from "./Page";
 import Control from "./Control";
 
-export const ATTRIBUTE_NAME = "name";
-export const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
-const ATTRIBUTES = [ATTRIBUTE_NAME];
+const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE];
+
+const readonly = (form, readonly) => {
+	for (let page of form.pages) {
+		page.readonly = readonly;
+		page.active = readonly;
+	}
+};
 
 const changeSite = (form) => {
 	form.trigger(TRIGGER_TIMEOUT, EVENTS.changeSite);
@@ -32,6 +37,10 @@ class Form extends HTMLElement {
 
 	constructor() {
 		super();
+
+		this.state = FORMSTATES.init;
+		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
+		this.activePageIndex = -1;
 	}
 
 	connectedCallback() {
@@ -45,8 +54,22 @@ class Form extends HTMLElement {
 		}
 	}
 
+	get state() {
+		return this._state;
+	}
+
+	set state(state) {
+		const actual = this.state;
+		if (actual == FORMSTATES.input && state != FORMSTATES.input) readonly(this, true);
+		else if (actual != FORMSTATES.input && state == FORMSTATES.input) readonly(this, false);
+
+		this._state = state;
+	}
+
 	valid() {
-		for (let page of this.pages) if (!page.valid) return false;
+		for (let page of this.pages) {
+			if (!page.valid) return false;
+		}
 
 		return true;
 	}
@@ -64,10 +87,11 @@ class Form extends HTMLElement {
 		return data;
 	}
 
-	set data(data){
-		for (let page of this.pages) {
-			page.value = data
-		}
+	set data(data) {
+		if (this.state == FORMSTATES.input)
+			for (let page of this.pages) {
+				page.value = data;
+			}
 	}
 
 	get activePage() {
@@ -77,6 +101,8 @@ class Form extends HTMLElement {
 	}
 
 	set activePage(page) {
+		if (this.state != FORMSTATES.input) this.state = FORMSTATES.input;
+
 		if (page) {
 			const current = this.activePage;
 			if (current) current.active = false;

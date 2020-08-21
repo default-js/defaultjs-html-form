@@ -1,4 +1,4 @@
-import { NODENAMES, ATTRIBUTE_ACTIVE,ATTRIBUTE_DISABLED } from "./Constants";
+import { NODENAMES, ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED } from "./Constants";
 
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED];
 
@@ -36,7 +36,6 @@ class FormButton extends HTMLElement {
 			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
 		}
 	}
-	
 
 	get active() {
 		return this.hasAttribute(ATTRIBUTE_ACTIVE);
@@ -51,7 +50,8 @@ class FormButton extends HTMLElement {
 	}
 
 	set disabled(disabled) {
-		disabled ? this.attr(ATTRIBUTE_DISABLED, "") : this.attr(ATTRIBUTE_DISABLED, undefined);
+		console.log("disable:" , disabled, this, new Error());
+		disabled ? this.attr(ATTRIBUTE_DISABLED, "") : this.attr(ATTRIBUTE_DISABLED, null);
 	}
 
 	execute() {

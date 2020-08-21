@@ -36,6 +36,7 @@ class Validator {
 	async validate() {
 		const { target, validations } = this;
 		const { hasValue, required, requiredOnlyOnActive, active } = target;
+
 		const data = evaluationData(target);
 		
 		let valid = true;

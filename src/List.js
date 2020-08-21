@@ -21,22 +21,22 @@ const createRow = (list, value) => {
 
 const init = (list) => {
 	const { container, template, validator } = list;
-	const addButton = treeFilter({
+	const addButton = (treeFilter({
 		root: list,
 		filter: (element) => {
 			if (element instanceof AddRow) return { accept: true, stop: true };
 			else if (element instanceof Field) return { accept: false, stop: true };
 			return { accept: false };
-		},
-	})[0];
+		}
+	})[0]);
 
 	validator.addCustomCheck(async ({ data, target }) => {
 		const length = list.rows.length;
 		const max = list.max;
-
-		if (length == max) addButton.disabled = true;
-		else if (length < max) addButton.disabled = false;
-
+		if (!list.readonly) {
+			if (length == max) addButton.disabled = true;
+			else if (length < max) addButton.disabled = false;
+		}
 		return length <= max;
 	});
 
@@ -46,20 +46,22 @@ const init = (list) => {
 	});
 
 	list.on(EVENTS.listRowAdd, (event) => {
-		createRow(list);
+		if (!list.readonly) {
+			createRow(list);
 
-		row.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
-
+			list.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
+		}
 		event.preventDefault();
 		event.stopPropagation();
 	});
 
 	list.on(EVENTS.listRowDelete, (event) => {
-		const row = event.target.parent(NODENAMES.ListRow);
-		row.remove();
+		if (!list.readonly) {
+			const row = event.target.parent(NODENAMES.ListRow);
+			row.remove();
 
-		list.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
-
+			list.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
+		}
 		event.preventDefault();
 		event.stopPropagation();
 	});
@@ -90,9 +92,15 @@ class List extends Field {
 		List.init(this);
 	}
 
+	readonlyUpdated() {
+		const { readonly } = this;
+		for (let row of this.rows) {
+			row.readonly = readonly;
+		}
+	}
+
 	get rows() {
-		if (this.condition) return this.container.children;
-		return null;
+		return this.container.children;
 	}
 
 	get max() {
@@ -120,6 +128,15 @@ class List extends Field {
 	}
 
 	set value(values) {
+		const { rows } = this;
+		if (rows) {
+			let row = rows.first();
+			while (row) {
+				row.remove();
+				row = rows.first();
+			}
+		}
+
 		if (values instanceof Array) {
 			for (let value of values) {
 				createRow(this, value);

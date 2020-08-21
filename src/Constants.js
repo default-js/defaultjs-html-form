@@ -62,6 +62,7 @@ export const SPECIALVARS = {
 
 export const ATTRIBUTE_NAME = "name";
 export const ATTRIBUTE_STEP = "step";
+export const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
 export const ATTRIBUTE_REQUIRED = "required";
 export const ATTRIBUTE_REQUIRED_ON_ACTIVE_ONLY = "required-on-active-only";
 export const ATTRIBUTE_CONDITION = "condition";

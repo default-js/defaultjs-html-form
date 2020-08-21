@@ -1,18 +1,20 @@
 import "@default-js/defaultjs-extdom";
 import { NODENAMES, EVENTS } from "../Constants";
 import Container from "../Container";
+import DeleteRow from "./DeleteRow";
 
 const ATTRIBUTES = [];
 
-const init = (row) => {};
+const init = (row) => {
+};
 
 class ListRow extends Container {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(Container.observedAttributes);
 	}
-	static init(listRow) {
-		Container.init(listRow);
-		init(listRow);
+	static init(row) {
+		Container.init(row);
+		init(row);
 	}
 
 	constructor() {
