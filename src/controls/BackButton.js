@@ -1,10 +1,14 @@
 import { NODENAMES } from "../Constants";
-import ControlButton from "./ControlButton";
+import FormButton from "../FormButton";
 
 const ATTRIBUTES = [];
-class BackButton extends ControlButton {
+class BackButton extends FormButton {
 	static get observedAttributes() {
 		return ATTRIBUTES;
+	}
+
+	static init(button) {
+		FormButton.init(button);
 	}
 
 	constructor() {

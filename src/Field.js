@@ -39,7 +39,7 @@ const init = (field) => {
 		}),
 	);
 
-	field._validator = new Validator(field);
+	field.validator = new Validator(field);
 
 	field.trigger(EVENTS.initialize);
 };

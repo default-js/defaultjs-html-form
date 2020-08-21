@@ -14,10 +14,10 @@ export const NODENAMES = {
 	Field: HTML_TAG_PREFIX + "field",
 	WrapperField: HTML_TAG_PREFIX + "wrapper-field",
 	List: HTML_TAG_PREFIX + "list",
-	ListRows: HTML_TAG_PREFIX + "list-rows",
-	ListRow: HTML_TAG_PREFIX + "list-row",
-	ListRowAdd: HTML_TAG_PREFIX + "list-row-add",
-	ListRowDelete: HTML_TAG_PREFIX + "list-row-delete",
+	ListRows: HTML_TAG_PREFIX + "rows",
+	ListRow: HTML_TAG_PREFIX + "row",
+	ButtonAddRow: HTML_TAG_PREFIX + "add-row",
+	ButtonDeleteRow: HTML_TAG_PREFIX + "delete-row",
 	Container: HTML_TAG_PREFIX + "container",
 	Validation: HTML_TAG_PREFIX + "validation",
 	Message: HTML_TAG_PREFIX + "message",
@@ -66,12 +66,12 @@ export const ATTRIBUTE_REQUIRED = "required";
 export const ATTRIBUTE_REQUIRED_ON_ACTIVE_ONLY = "required-on-active-only";
 export const ATTRIBUTE_CONDITION = "condition";
 export const ATTRIBUTE_ACTIVE = "active";
+export const ATTRIBUTE_DISABLED = "disabled";
 export const ATTRIBUTE_READONLY = "readonly";
 export const ATTRIBUTE_NOVALUE = "no-value";
 export const ATTRIBUTE_VALID = "valid";
 export const ATTRIBUTE_INVALID = "invalid";
 export const ATTRIBUTE_CONDITION_VALID = "condition-valid";
 export const ATTRIBUTE_CONDITION_INVALID = "condition-invalid";
-export const ATTRIBUTE_LIST_MIN = "min";
-export const ATTRIBUTE_LIST_MAX = "max";
+export const ATTRIBUTE_MAX = "max";
 

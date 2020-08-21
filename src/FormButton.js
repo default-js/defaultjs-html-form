@@ -1,21 +1,19 @@
-import { NODENAMES } from "../Constants";
+import { NODENAMES, ATTRIBUTE_ACTIVE,ATTRIBUTE_DISABLED } from "./Constants";
 
-const ATTRIBUTE_ACTIVE = "active";
-const ATTRIBUTE_DISABLED = "disabled";
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED];
 
-const init = (controlButton) => {
-	controlButton.form = controlButton.parent(NODENAMES.Form);
-	controlButton.active = false;
-	controlButton.disabled = true;
-	controlButton.on("click", (event) => {
-		if (controlButton.active && !controlButton.disabled) controlButton.execute();
+const init = (button) => {
+	button.form = button.parent(NODENAMES.Form);
+	button.active = true;
+	button.disabled = false;
+	button.on("click", (event) => {
+		if (button.active && !button.disabled) button.execute();
 		event.preventDefault();
 		event.stopPropagation();
 	});
 };
 
-class ControlButton extends HTMLElement {
+class FormButton extends HTMLElement {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
@@ -29,7 +27,7 @@ class ControlButton extends HTMLElement {
 	}
 
 	connectedCallback() {
-		ControlButton.init(this);
+		FormButton.init(this);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -38,8 +36,6 @@ class ControlButton extends HTMLElement {
 			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
 		}
 	}
-
-
 	
 
 	get active() {
@@ -62,4 +58,4 @@ class ControlButton extends HTMLElement {
 		console.log("execute");
 	}
 }
-export default ControlButton;
+export default FormButton;

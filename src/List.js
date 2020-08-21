@@ -1,32 +1,47 @@
 import "@default-js/defaultjs-extdom";
-import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
-import { findFields } from "./utils/NodeHelper";
-import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
+import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_MAX } from "./Constants";
+import { toTimeoutHandle } from "./utils/EventHelper";
+import { treeFilter } from "./utils/NodeHelper";
 import Field from "./Field";
-import ListRow from "./list/ListRow";
-import ListRowAdd from "./list/ListRowAdd";
-import ListRowDelete from "./list/ListRowDelete";
-import ListRows from "./list/ListRows";
+import Row from "./list/Row";
+import AddRow from "./list/AddRow";
+import DeleteRow from "./list/DeleteRow";
+import Rows from "./list/Rows";
 
-const ATTRIBUTES = [];
+const ATTRIBUTES = [ATTRIBUTE_MAX];
 
 const init = (list) => {
-	const { container, template } = list;
+	const { container, template, validator } = list;
+	const addButton = treeFilter({
+		root: list,
+		filter: (element) => {
+			if (element instanceof AddRow) return { accept: true, stop: true };
+			else if (element instanceof Field) return { accept: false, stop: true };
+			return { accept: false };
+		},
+	})[0];
 
-	
-	list.on(EVENTS.initialize, (event) => {
-		event.preventDefault();
-		event.stopPropagation();		
+	validator.addCustomCheck(async ({ data, target }) => {
+		const length = list.rows.length;
+		const max = list.max;
+
+		if (length == max) addButton.disabled = true;
+		else if (length < max) addButton.disabled = false;
+
+		return length <= max;
 	});
 
+	list.on(EVENTS.initialize, (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+	});
 
 	list.on(EVENTS.listRowAdd, (event) => {
-		const row = new ListRow();
+		const row = new Row();
 		container.append(row);
 		row.append(document.importNode(template.content, true).childNodes);
 
-		list.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
+		row.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -71,6 +86,11 @@ class List extends Field {
 	get rows() {
 		if (this.condition) return this.container.children;
 		return null;
+	}
+
+	get max() {
+		if (this.hasAttribute(ATTRIBUTE_MAX)) return parseInt(this.attr(ATTRIBUTE_MAX));
+		return Number.NaN;
 	}
 
 	get value() {
