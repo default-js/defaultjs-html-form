@@ -1,4 +1,4 @@
-import {NODENAMES} from "../Constants";
+import { NODENAMES } from "../Constants";
 import ControlButton from "./ControlButton";
 
 const ATTRIBUTES = [];
@@ -10,7 +10,7 @@ class SummaryButton extends ControlButton {
 	constructor() {
 		super();
 	}
-	execute(){
+	execute() {
 		this.form.summary();
 	}
 }

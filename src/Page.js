@@ -1,6 +1,6 @@
 import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { NODENAMES, EVENTS } from "./Constants";
+import { NODENAMES, EVENTS, ATTRIBUTE_STEP } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 import Base from "./Base";
@@ -9,7 +9,6 @@ import Field from "./Field";
 import Container from "./Container";
 import List from "./List";
 
-export const ATTRIBUTE_STEP = "step";
 const ATTRIBUTES = [ATTRIBUTE_STEP];
 
 const init = (page) => {
@@ -40,9 +39,17 @@ class Page extends Base {
 		return ATTRIBUTES.concat(Field.observedAttributes);
 	}
 
+	static init(page) {
+		Base.init(page);
+		init(page);
+	}
+
 	constructor() {
 		super();
-		init(this);
+	}
+
+	connectedCallback() {
+		Page.init(this);
 	}
 
 	get value() {
@@ -52,7 +59,10 @@ class Page extends Base {
 		for (let field of this.fields) {
 			if (field.valid) {
 				const value = field.value;
-				if (value != null && typeof value !== "undefined") values[field.name] = value;
+				if (value != null && typeof value !== "undefined") {
+					if (field.name) values[field.name] = value;
+					else if (ObjectUtils.isPojo(value)) ObjectUtils.merge(values, value);
+				}
 			}
 		}
 		return values;

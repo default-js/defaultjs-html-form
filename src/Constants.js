@@ -14,11 +14,15 @@ export const NODENAMES = {
 	Field: HTML_TAG_PREFIX + "field",
 	WrapperField: HTML_TAG_PREFIX + "wrapper-field",
 	List: HTML_TAG_PREFIX + "list",
+	ListRows: HTML_TAG_PREFIX + "list-rows",
+	ListRow: HTML_TAG_PREFIX + "list-row",
+	ListRowAdd: HTML_TAG_PREFIX + "list-row-add",
+	ListRowDelete: HTML_TAG_PREFIX + "list-row-delete",
 	Container: HTML_TAG_PREFIX + "container",
 	Validation: HTML_TAG_PREFIX + "validation",
 	Message: HTML_TAG_PREFIX + "message",
 };
-export const STATES = {
+export const FORMSTATES = {
 	init: "init",
 	input: "input",
 	summary: "summary",
@@ -43,4 +47,31 @@ export const EVENTS = {
 	changeValue: "change-value",
 	changeCondition: "change-condition",
 	changeValidation: "change-validation",
+
+	//LIST EVENTS
+	listRowAdd: "list-row-add",
+	listRowDelete: "list-row-delete",
 };
+
+export const SPECIALVARS = {
+	CURRENTVALUE : "$value",
+	CURRENTLISTROW : "$item"
+}
+
+//ATTRIBUTES
+
+export const ATTRIBUTE_NAME = "name";
+export const ATTRIBUTE_STEP = "step";
+export const ATTRIBUTE_REQUIRED = "required";
+export const ATTRIBUTE_REQUIRED_ON_ACTIVE_ONLY = "required-on-active-only";
+export const ATTRIBUTE_CONDITION = "condition";
+export const ATTRIBUTE_ACTIVE = "active";
+export const ATTRIBUTE_READONLY = "readonly";
+export const ATTRIBUTE_NOVALUE = "no-value";
+export const ATTRIBUTE_VALID = "valid";
+export const ATTRIBUTE_INVALID = "invalid";
+export const ATTRIBUTE_CONDITION_VALID = "condition-valid";
+export const ATTRIBUTE_CONDITION_INVALID = "condition-invalid";
+export const ATTRIBUTE_LIST_MIN = "min";
+export const ATTRIBUTE_LIST_MAX = "max";
+

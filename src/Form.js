@@ -1,6 +1,6 @@
 import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { STATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
+import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import Message from "./Message";
 import Page from "./Page";
 import Control from "./Control";
@@ -14,7 +14,7 @@ const changeSite = (form) => {
 };
 
 const init = (form) => {
-	form.state = STATES.init;
+	form.state = FORMSTATES.init;
 	form.useSummaryPage = form.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
 	form.pages = form.find(NODENAMES.Page);
 	form.activePageIndex = -1;
@@ -26,9 +26,16 @@ class Form extends HTMLElement {
 		return ATTRIBUTES;
 	}
 
+	static init(form) {
+		init(form);
+	}
+
 	constructor() {
 		super();
-		init(this);
+	}
+
+	connectedCallback() {
+		Form.init(this);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -50,9 +57,7 @@ class Form extends HTMLElement {
 			let value = null;
 			if (page.condition && page.valid) value = page.value;
 			else if (page == this.activePage) value = page.value;
-
-			if (value != null && typeof value !== "undefined") ObjectUtils.merge(data, page.value);
-
+			if (value != null && typeof value !== "undefined") ObjectUtils.merge(data, value);
 			if (page == this.activePage) return data;
 		}
 
@@ -104,12 +109,12 @@ class Form extends HTMLElement {
 	}
 
 	summary() {
-		this.state = STATES.summary;
+		this.state = FORMSTATES.summary;
 		changeSite(this);
 	}
 
 	submit() {
-		this.state = STATES.finished;
+		this.state = FORMSTATES.finished;
 		changeSite(this);
 	}
 }

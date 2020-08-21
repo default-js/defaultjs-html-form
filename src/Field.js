@@ -1,14 +1,10 @@
 import "@default-js/defaultjs-extdom";
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
-import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
+import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_REQUIRED_ON_ACTIVE_ONLY, ATTRIBUTE_NOVALUE, ATTRIBUTE_VALID, ATTRIBUTE_INVALID } from "./Constants";
+import { toTimeoutHandle } from "./utils/EventHelper";
 import Base from "./Base";
 import Validator from "./Validator";
-import { ATTRIBUTE_VAILD, ATTRIBUTE_INVAILD } from "./Validator";
 
-export const ATTRIBUTE_NAME = "name";
-export const ATTRIBUTE_REQUIRED = "required";
-export const ATTRIBUTE_NO_VALUE = "no-value";
-const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NO_VALUE];
+const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE];
 
 export const findParentField = (field) => {
 	let parent = field.parentNode;
@@ -37,8 +33,8 @@ const init = (field) => {
 		EVENTS.changeValue,
 		toTimeoutHandle((event) => {
 			if (event.target == field) {
-				if (field.hasValue) field.attr(ATTRIBUTE_NO_VALUE, null);
-				else field.attr(ATTRIBUTE_NO_VALUE, "");
+				if (field.hasValue) field.attr(ATTRIBUTE_NOVALUE, null);
+				else field.attr(ATTRIBUTE_NOVALUE, "");
 			}
 		}),
 	);
@@ -53,9 +49,17 @@ class Field extends Base {
 		return ATTRIBUTES.concat(Base.observedAttributes);
 	}
 
+	static init(field) {
+		Base.init(field);
+		init(field);
+	}
+
 	constructor() {
 		super();
-		init(this);
+	}
+
+	connectedCallback() {
+		Field.init(this);
 	}
 
 	get name() {
@@ -80,8 +84,8 @@ class Field extends Base {
 	}
 
 	get valid() {
-		if(!this.condition) return false;
-		if (this.hasAttribute(ATTRIBUTE_INVAILD)) return false;
+		if (!this.condition) return false;
+		if (this.hasAttribute(ATTRIBUTE_INVALID)) return false;
 		return true;
 	}
 }

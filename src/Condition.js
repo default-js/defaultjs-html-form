@@ -1,22 +1,8 @@
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
-import { EVENTS, TRIGGER_TIMEOUT } from "./Constants";
+import { EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID } from "./Constants";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
-
-export const ATTRIBUTE_CONDITION = "condition";
-export const ATTRIBUTE_CONDITION_VALID = "condition-valid";
-export const ATTRIBUTE_CONDITION_INVALID = "condition-invalid";
-
-const setState = (target, valid, initial = false) => {
-	const oldState = target.condition;
-	if (valid) {
-		target.attr(ATTRIBUTE_CONDITION_INVALID, null);
-		target.attr(ATTRIBUTE_CONDITION_VALID, "");
-	} else {
-		target.attr(ATTRIBUTE_CONDITION_VALID, null);
-		target.attr(ATTRIBUTE_CONDITION_INVALID, "");
-	}
-	if (oldState != valid || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.changeCondition);
-};
+import { evaluationData } from "./utils/DataHelper";
+import {updateConditionState} from "./utils/StateHelper"
 
 const init = (condition) => {
 	const { target, form } = condition;
@@ -24,20 +10,21 @@ const init = (condition) => {
 	const expression = target.attr(ATTRIBUTE_CONDITION);
 	if (typeof expression === "string" && expression.trim().length > 0) {
 		condition.expression = expression.trim();
-		setState(target, false);
+		updateConditionState(target, false);
 		form.on(
 			EVENTS.changeValue,
 			toTimeoutHandle((event) => {
 				if (event.target != target) {
-					ExpressionResolver.resolve(condition.expression, form.data, false)
+					const data = evaluationData(target);
+					ExpressionResolver.resolve(condition.expression, data, false)
 						.then((state) => {
-							setState(target, state);
+							updateConditionState(target, state);
 						})
-						["catch"](() => setState(target, false));
+						["catch"](() => updateConditionState(target, false));
 				}
 			}),
 		);
-	} else setState(target, true, true);
+	} else updateConditionState(target, true, true);
 };
 
 class Condition {

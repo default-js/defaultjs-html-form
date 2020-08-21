@@ -7,5 +7,5 @@ export default {
 	BackButton,
 	NextButton,
 	SummaryButton,
-	SubmitButton
+	SubmitButton,
 };

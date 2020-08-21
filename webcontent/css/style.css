@@ -2,8 +2,13 @@ body {
     background: #EFEFEF;
 }
 
-
-d-container, d-field, d-wrapper-field, d-message {
+d-container, 
+d-field, 
+d-wrapper-field, 
+d-list, 
+d-list-rows,
+d-list-row
+d-message {
     display: block;
     border: 0.1rem solid black;
     margin: 0.2rem .5rem;
@@ -14,6 +19,8 @@ d-control{
     display: flex;
 }
 
+d-list-row-add,
+d-list-row-delete,
 d-control-back, 
 d-control-next, 
 d-control-summary, 
@@ -45,6 +52,8 @@ d-message:not([active]) {
     display: none;
 }
 
+d-list-row-add[disabled],
+d-list-row-delete[disabled],
 d-control-back[disabled], 
 d-control-next[disabled], 
 d-control-summary[disabled], 

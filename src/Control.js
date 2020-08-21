@@ -1,4 +1,4 @@
-import { STATES, NODENAMES, EVENTS } from "./Constants";
+import { FORMSTATES, NODENAMES, EVENTS } from "./Constants";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 import { BackButton, NextButton, SummaryButton, SubmitButton, CancelButton } from "./controls";
 
@@ -24,9 +24,16 @@ class Control extends HTMLElement {
 		return ATTRIBUTES;
 	}
 
+	static init(control) {
+		init(control);
+	}
+
 	constructor() {
 		super();
-		init(this);
+	}
+
+	connectedCallback() {
+		Control.init(this);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -50,21 +57,21 @@ class Control extends HTMLElement {
 		submit.active = false;
 		submit.disabled = true;
 
-		if (state == STATES.finished) {
+		if (state == FORMSTATES.finished) {
 			back.disabled = true;
 			submit.active = true;
 		} else if (nextPage || (!activePage.valid && activePageIndex + 1 < pages.length)) {
 			next.active = true;
 			next.disabled = !activePage.valid;
-			form.state = STATES.input;
-		} else if (useSummaryPage && state == STATES.input) {
+			form.state = FORMSTATES.input;
+		} else if (useSummaryPage && state == FORMSTATES.input) {
 			summary.active = true;
 			summary.disabled = !activePage.valid;
-			form.state = STATES.summary;
+			form.state = FORMSTATES.summary;
 		} else {
 			submit.active = true;
 			submit.disabled = !form.valid;
-			form.state = STATES.submit;
+			form.state = FORMSTATES.submit;
 		}
 	}
 }

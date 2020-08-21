@@ -23,9 +23,17 @@ class WrapperField extends Field {
 		return ATTRIBUTES.concat(Field.observedAttributes);
 	}
 
+	static init(wrapperField) {
+		Field.init(wrapperField);
+		init(wrapperField);
+	}
+
 	constructor() {
 		super();
-		init(this);
+	}
+
+	connectedCallback() {
+		WrapperField.init(this);
 	}
 
 	get hasValue() {

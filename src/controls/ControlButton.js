@@ -1,51 +1,53 @@
-import {NODENAMES} from "../Constants";
+import { NODENAMES } from "../Constants";
 
 const ATTRIBUTE_ACTIVE = "active";
 const ATTRIBUTE_DISABLED = "disabled";
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED];
+
+const init = (controlButton) => {
+	controlButton.form = controlButton.parent(NODENAMES.Form);
+	controlButton.active = false;
+	controlButton.disabled = true;
+	controlButton.on("click", (event) => {
+		if (controlButton.active && !controlButton.disabled) controlButton.execute();
+		event.preventDefault();
+		event.stopPropagation();
+	});
+};
 
 class ControlButton extends HTMLElement {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
 
+	static init(controlButton) {
+		init(controlButton);
+	}
+
 	constructor() {
 		super();
-		this.init();
 	}
 
-	connectedCallback() {	
+	connectedCallback() {
+		ControlButton.init(this);
 	}
 
-	disconnectedCallback() {}
-
-	adoptedCallback() {}
-
-	attributeChangedCallback() {}
-
-	init() {
-		this.active = false;
-		this.disabled = true;		
-		this.on("click", (event) => {
-			if(this.active && !this.disabled)
-				this.execute();
-			event.preventDefault();
-			event.stopPropagation();
-		});
+	attributeChangedCallback(name, oldValue, newValue) {
+		if (oldValue != newValue) {
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
+		}
 	}
+
+
 	
-	get form() {
-		return this.parent(NODENAMES.Form);
-	}
 
 	get active() {
 		return this.hasAttribute(ATTRIBUTE_ACTIVE);
 	}
 
 	set active(active) {
-		active
-			? this.attr(ATTRIBUTE_ACTIVE, "")
-			: this.attr(ATTRIBUTE_ACTIVE, null);
+		active ? this.attr(ATTRIBUTE_ACTIVE, "") : this.attr(ATTRIBUTE_ACTIVE, null);
 	}
 
 	get disabled() {
@@ -53,11 +55,8 @@ class ControlButton extends HTMLElement {
 	}
 
 	set disabled(disabled) {
-		disabled
-			? this.attr(ATTRIBUTE_DISABLED, "")
-			: this.attr(ATTRIBUTE_DISABLED, undefined);
+		disabled ? this.attr(ATTRIBUTE_DISABLED, "") : this.attr(ATTRIBUTE_DISABLED, undefined);
 	}
-
 
 	execute() {
 		console.log("execute");

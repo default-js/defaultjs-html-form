@@ -2,26 +2,9 @@ import { EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import Validation from "./Validation";
 import { findValidations } from "./utils/NodeHelper";
+import { evaluationData } from "./utils/DataHelper";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
-
-export const ATTRIBUTE_VAILD = "valid";
-export const ATTRIBUTE_INVAILD = "invalid";
-
-const setState = (target, valid) => {
-	const oldState = target.valid;
-	if (typeof valid === "undefined") {
-		target.attr(ATTRIBUTE_INVAILD, null);
-		target.attr(ATTRIBUTE_VAILD, null);
-	} else if (valid) {
-		target.attr(ATTRIBUTE_INVAILD, null);
-		target.attr(ATTRIBUTE_VAILD, "");
-	} else {
-		target.attr(ATTRIBUTE_INVAILD, "");
-		target.attr(ATTRIBUTE_VAILD, null);
-	}
-
-	if (oldState != valid) target.trigger(TRIGGER_TIMEOUT, EVENTS.changeValidation);
-};
+import {updateValidState} from "./utils/StateHelper";
 
 const init = (validator) => {
 	const { target, form } = validator;
@@ -50,9 +33,7 @@ class Validator {
 	async validate() {
 		const { target, validations } = this;
 		const { hasValue, required, requiredOnlyOnActive, active } = target;
-		const data = this.form.data;
-		data["$value"] = target.value;
-		//TODO handle List Items
+		const data = evaluationData(target);
 
 		let valid = true;
 		for (let validation of this.validations) {
@@ -64,9 +45,9 @@ class Validator {
 			}
 		}
 
-		if (!active) setState(target, null);
-		else if (!hasValue && required) setState(target, false);
-		else setState(target, valid);
+		if (!active) updateValidState(target, null);
+		else if (!hasValue && required) updateValidState(target, false);
+		else updateValidState(target, valid);
 	}
 }
 

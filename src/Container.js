@@ -35,10 +35,18 @@ class Container extends Field {
 		return ATTRIBUTES.concat(Field.observedAttributes);
 	}
 
+	static init(container) {
+		Field.init(container);
+		init(container);
+	}
+
 	constructor() {
 		super();
 		this.fields = [];
-		init(this);
+	}
+
+	connectedCallback() {
+		Container.init(this);
 	}
 
 	get value() {
@@ -50,7 +58,8 @@ class Container extends Field {
 			if (field.valid) {
 				const value = field.value;
 				if (typeof value !== "undefined" && value != null) {
-					values[field.name] = value;
+					if (field.name) values[field.name] = value;
+					else if (ObjectUtils.isPojo(value)) ObjectUtils.merge(values, value);
 					hasValue = true;
 				}
 			}

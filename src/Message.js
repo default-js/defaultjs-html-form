@@ -1,15 +1,28 @@
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
+import Base from "./Base";
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
+import { evaluationData } from "./utils/DataHelper";
+
 
 export const ATTRIBUTE_ACTIVE = "active";
 export const ATTRIBUTE_CONDITION = "condition";
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_CONDITION];
 
+export const findParentBase = (message) => {
+	let parent = message.parentNode;
+	while (parent) {
+		if (parent instanceof Base) return parent;
+
+		parent = parent.parentNode;
+	}
+	return null;
+};
+
 const init = (message) => {
+	message.reference = findParentBase(message);
 	message.form = message.parent(NODENAMES.Form);
 
-	let updateTimeout = null;
 	message.form.on(
 		toEvents(EVENTS.changeValue, EVENTS.changeCondition),
 		toTimeoutHandle((event) => {
@@ -24,9 +37,16 @@ class Message extends HTMLElement {
 		return ATTRIBUTES;
 	}
 
+	static init(message) {
+		init(message);
+	}
+
 	constructor() {
 		super();
-		init(this);
+	}
+
+	connectedCallback() {
+		Message.init(this);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -48,7 +68,7 @@ class Message extends HTMLElement {
 	}
 
 	async update() {
-		const data = this.form.data;
+		const data = evaluationData(this.reference);
 		this.active = await ExpressionResolver.resolve(this.condition, data, false);
 	}
 }

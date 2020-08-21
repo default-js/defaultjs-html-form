@@ -1,4 +1,4 @@
-import {NODENAMES} from "../Constants";
+import { NODENAMES } from "../Constants";
 import ControlButton from "./ControlButton";
 
 const ATTRIBUTES = [];
@@ -11,7 +11,7 @@ class NextButton extends ControlButton {
 		super();
 	}
 
-	execute(){
+	execute() {
 		this.form.toNextPage();
 	}
 }
