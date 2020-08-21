@@ -68,6 +68,13 @@ class Page extends Base {
 		return values;
 	}
 
+	set value(value) {
+		for (let field of this.fields) {
+			if (field.name) field.value = value[field.name];
+			else if(field instanceof Container) field.value = value;
+		}
+	}
+
 	get valid() {
 		if (this.fields)
 			for (let field of this.fields) {

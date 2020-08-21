@@ -10,6 +10,15 @@ import Rows from "./list/Rows";
 
 const ATTRIBUTES = [ATTRIBUTE_MAX];
 
+const createRow = (list, value) => {
+	const { container, template } = list;
+	const row = new Row();
+	container.append(row);
+	row.append(document.importNode(template.content, true).childNodes);
+
+	if (value) row.value = value;
+};
+
 const init = (list) => {
 	const { container, template, validator } = list;
 	const addButton = treeFilter({
@@ -37,9 +46,7 @@ const init = (list) => {
 	});
 
 	list.on(EVENTS.listRowAdd, (event) => {
-		const row = new Row();
-		container.append(row);
-		row.append(document.importNode(template.content, true).childNodes);
+		createRow(list);
 
 		row.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
 
@@ -112,7 +119,15 @@ class List extends Field {
 		return ({}[this.name] = values);
 	}
 
-	set value(value) {}
+	set value(values) {
+		if (values instanceof Array) {
+			for (let value of values) {
+				createRow(this, value);
+			}
+
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
+		}
+	}
 
 	get valid() {
 		if (this.rows)

@@ -64,6 +64,12 @@ class Form extends HTMLElement {
 		return data;
 	}
 
+	set data(data){
+		for (let page of this.pages) {
+			page.value = data
+		}
+	}
+
 	get activePage() {
 		if (0 <= this.activePageIndex && this.activePageIndex < this.pages.length) return this.pages[this.activePageIndex];
 
