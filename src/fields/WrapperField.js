@@ -1,38 +1,12 @@
 import "@default-js/defaultjs-extdom";
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "../Constants";
+import { NODENAMES, EVENTS, TRIGGER_TIMEOUT} from "../Constants";
 import Field from "../Field";
-import { toEvents, toTimeoutHandle } from "../utils/EventHelper";
+import { findWrapper } from "./wrapper";
 
-const ATTRIBUTE_NAME = "name";
-const ATTRIBUTES = [ATTRIBUTE_NAME];
-
-const wrapper = [
-	{
-		accept : (field) => { 
-			return field.find("input[type=text]").length == 1;
-		},
-		init : (field) => {
-
-		},
-		value: (value) => {
-
-		},
-		readonly : (readonly) => {}
-
-	}
-];
-
+const ATTRIBUTES = [];
 
 const init = (field) => {
-	field.input = field.find("input").first();
-	field.on(
-		"change input",
-		toTimeoutHandle((event) => {
-			field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
-			event.stopPropagation();
-		}),
-	);
-	if (field.input.value) field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
+	field.wrapper = findWrapper(field) || {hasValue : false, value: null};
 };
 
 class WrapperField extends Field {
@@ -50,24 +24,27 @@ class WrapperField extends Field {
 	}
 
 	connectedCallback() {
+		Field.init(this);
 		WrapperField.init(this);
+	}
+	
+    readonlyUpdated(){
+		this.wrapper.readonly = this.readonly;
 	}
 
 	get hasValue() {
-		if (this.input) return this.input.value == null || this.input.value.length > 0;
-
+		if(this.wrapper) return this.wrapper.hasValue
 		return false;
 	}
 
 	get value() {
-		if (this.input) return this.input.value;
-		return null;
+		return this.wrapper.value;
 	}
 
-	set value(value) {
-		if (this.input) {
-			this.input.value = value;
-			this.trigger(EVENTS.changeValue);
+	set value(value) {		
+		if (this.wrapper && this.wrapper.value != value) {
+			this.wrapper.value = value;
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
 		}
 	}
 }
