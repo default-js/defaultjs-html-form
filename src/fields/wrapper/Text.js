@@ -9,7 +9,7 @@ const init = (wrapper) => {
 	const input = (wrapper.input = field.find(INPUTSELECTOR).first());
 	input.on(
 		"change input",
-		toTimeoutHandle((event) => {
+		toTimeoutHandle(() => {
 			field.trigger(EVENTS.changeValue);
 		}),
 		false,
@@ -36,6 +36,6 @@ export default class Text extends Wrapper {
 	}
 
 	set value(value) {
-		this.input.value = value;
+		this.input.value = value ? value : null;
 	}
 }

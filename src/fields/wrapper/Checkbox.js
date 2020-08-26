@@ -10,7 +10,7 @@ const init = (wrapper) => {
 	if (wrapper.input.length == 1) wrapper.input = wrapper.input.first();
 	wrapper.input.on(
 		"change input",
-		toTimeoutHandle((event) => {
+		toTimeoutHandle(() => {
 			field.trigger( EVENTS.changeValue);
 		}),
 		false,

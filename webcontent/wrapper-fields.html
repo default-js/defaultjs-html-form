@@ -45,6 +45,16 @@
 					<d-message condition="${$value == 'message'}">test message</d-message>
 				</d-wrapper-field>
 				<d-wrapper-field name="select" required>
+					<select size="4">
+						<option value="">--Please choose an option--</option>
+						<option value="value-1">value-1</option>
+						<option value="value-2">value-2</option>
+						<option>value-3</option>
+					</select>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-wrapper-field>
+				<d-wrapper-field name="selectMultiple" required>
 					<select multiple size="4">
 						<option value="">--Please choose an option--</option>
 						<option value="value-1">value-1</option>

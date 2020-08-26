@@ -16,7 +16,7 @@ const init = (wrapper) => {
 	input.on(
 		"change",
 		toTimeoutHandle(
-			(event) => {
+			() => {
 				field.trigger(EVENTS.changeValue);
 			}
 		)

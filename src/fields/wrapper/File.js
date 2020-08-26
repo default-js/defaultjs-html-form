@@ -8,7 +8,7 @@ const readFile = (file, readFnName) => {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
 		reader.addEventListener("loadend", () => {
-			resolve({
+			resolve({ 
 				name: file.name,
 				type: file.type,
 				size: file.size,
@@ -22,8 +22,10 @@ const readFile = (file, readFnName) => {
 const updateInput = async (wrapper) => {
 	console.log("update input");
 	const {input, field, format} = wrapper; 
-	if (input.files[0])
+	if (input.files[0]){
 		wrapper.file = await FORMAT[format](input.files[0]);
+		wrapper.file.format = format;
+	}
 	else
 		wrapper.file = null;
 
@@ -39,9 +41,7 @@ const FORMAT = {
 	},
 	"base64" : async (file) => {
 		const result = await readFile(file, "readAsDataURL");
-		console.log({result})
 		result.data = result.data.substr(result.data.indexOf(",") + 1);
-		console.log({result})
 		return result;
 	} 
 }
@@ -50,7 +50,7 @@ const init = (wrapper) => {
 	const { field } = wrapper;
 	const input = (wrapper.input = field.find(INPUTSELECTOR).first());
 	input.on(
-		"input", (event) => {
+		"input", () => {
 			updateInput(wrapper);
 		},
 		false,
@@ -81,6 +81,7 @@ export default class File extends Wrapper {
 	}
 
 	set value(value) {
-		this.file = value;
+		if(value.format == this.format)
+			this.file = value;
 	}
 }
