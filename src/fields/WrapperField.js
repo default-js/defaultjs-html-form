@@ -3,7 +3,7 @@ import { NODENAMES, EVENTS, TRIGGER_TIMEOUT} from "../Constants";
 import Field from "../Field";
 import { findWrapper } from "./wrapper";
 
-const ATTRIBUTES = [];
+const ATTRIBUTES = ["file-format"];
 
 const init = (field) => {
 	field.wrapper = findWrapper(field) || {hasValue : false, value: null};
