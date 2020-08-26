@@ -39,8 +39,18 @@
 					<d-validation condition="${$value != 'value-2'}">invalid</d-validation>
 					<d-message condition="${$value == 'value-3'}">test message</d-message>
 				</d-wrapper-field>
-				<d-wrapper-field name="file" xfile-format="base64" required>
+				<d-wrapper-field name="file" file-format="base64" required>
 					<input type="file"/>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-wrapper-field>
+				<d-wrapper-field name="select" required>
+					<select multiple size="4">
+						<option value="">--Please choose an option--</option>
+						<option value="value-1">value-1</option>
+						<option value="value-2">value-2</option>
+						<option>value-3</option>
+					</select>
 					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
 					<d-message condition="${$value == 'message'}">test message</d-message>
 				</d-wrapper-field>
