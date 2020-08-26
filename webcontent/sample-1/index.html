@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="boostrap.addons.css" />
+		<link rel="stylesheet" type="text/css" href="form.css" />
+	</head>
+	<body>
+	 <div class="container">
+		<h1>User Registration</h1>
+		<d-form class=" form-horizontal">			
+			<ul class="nav nav-pills nav-justified thumbnail " data-form-step-panel="">
+				<li data-form-step="1">
+					<a>
+						<span class="list-group-item-heading">Registation Data</span>
+					</a>
+				</li>
+				<li data-form-step="2">
+					<a>
+						<span class="list-group-item-heading">Personal Data</span>
+					</a>
+				</li>
+				<li data-form-step="3">
+					<a>
+						<span class="list-group-item-heading">Social Information</span>
+					</a>
+				</li>
+				<li data-form-step="4">
+					<a>
+						<span class="list-group-item-heading">Something about yourself</span>
+					</a>
+				</li>
+				<li data-form-step="form-step-summary">
+					<a>
+						<span class="list-group-item-heading">Summary</span>
+					</a>
+				</li>
+				<li data-form-step="form-step-submitted">
+					<a>
+						<span class="list-group-item-heading">Submitted</span>
+					</a>
+				</li>
+			</ul>
+
+			<xd-page class="hidden">
+				<h3>Registation Data</h3>
+				<section>
+					<d-wrapper-field  name="loginname" required>
+						<div class="form-group has-feedback">
+							<div class="col-xs-12">
+								<label class="control-label" for="loginname">loginname</label>
+							</div>
+							<div class="col-xs-12">
+								<input type="text" class="form-control" name="loginname" />
+								<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+								<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+							</div>
+							<div class="col-xs-12">
+								<d-validation condition="${$value == 'user'}">
+									<span class="label label-danger">Your loginname is not "user"!</span>
+								</d-validation>
+								<div class="text-info">This is a test. Valid loginname is "user"!</div>
+							</div>
+						</div>
+					</d-wrapper-field>
+					
+					<d-wrapper-field name="password" required>
+						<div class="form-group has-feedback">
+							<div class="col-xs-12">
+								<label for="password">password</label>
+							</div>
+							<div class="col-xs-12">
+								<input type="password" class="form-control" name="password" />
+								<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+								<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+							</div>
+							<div class="col-xs-12">
+								<d-validation condition="${$value && $value.length >= 4}">
+									<span class="label label-danger">Your password is not strength enough! min 4 chars</span>
+								</d-validation>
+							</div>
+						</div>
+					</d-wrapper-field>
+					
+					<d-wrapper-field name="password_check" required>
+						<div class="form-group has-feedback">
+							<div class="col-xs-12">
+								<label for="password_check">confirm password</label>
+							</div>
+							<div class="col-xs-12">
+								<input type="password" class="form-control" name="password_check" />
+								<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+								<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+							</div>
+							<div class="col-xs-12">
+								<d-validation condition="${password == $value}">
+									<span class="label label-danger">Password is wrong!</span>
+								</d-validation>
+							</div>
+						</div>
+					</d-wrapper-field>
+					
+					<d-wrapper-field name="displayname" required>
+						<div class="form-group has-feedback">
+							<div class="col-xs-12">
+								<label class="control-label" for="displayname">display name</label>
+							</div>
+							<div class="col-xs-12">
+								<input type="text" class="form-control" name="displayname" />
+								<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+								<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+							</div>
+						</div>
+					</d-wrapper-field>
+					
+					<d-wrapper-field name="avatar" file-name-target=".form-control.filename" file-format="base64">
+						<div class="form-group">
+							<div class="col-xs-12">
+								<label class="control-label" for="avatar">avatar image</label>
+							</div>
+							<div class="col-xs-12">
+								<div class="input-group has-feedback">
+									 <div class="input-group-btn">
+								    	<span class="btn btn-primary btn-file">
+								    		<input type="file" accept="image/*" />
+								        	<span class="glyphicon glyphicon-picture"></span> 
+								        </span>
+								    </div>
+								    <span class="form-control filename"></span>
+								    <span class="glyphicon glyphicon-ok form-control-feedback"></span>
+									<span class="glyphicon glyphicon-remove form-control-feedback"></span>					   
+								</div>
+							</div>
+						</div>
+					</d-wrapper-field>
+				</section>
+			</xd-page>
+			
+			<xd-page class="hidden">
+				<h3>Personal Data</h3>
+				<section>
+					<d-wrapper-field name="name" required>
+						<div class="form-group has-feedback">
+							<div class="col-xs-12">
+								<label class="control-label" for="name">name</label>
+							</div>
+							<div class="col-xs-12">
+								<input type="text" class="form-control" name="name" />
+								<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+								<span class="glyphicon glyphicon-remove form-control-feedback"></span>	
+							</div>
+						</div>
+					</d-wrapper-field>
+					
+					<d-wrapper-field name="familyname" required>
+						<div class="form-group has-feedback">
+							<div class="col-xs-12">
+								<label class="control-label" for="familyname">familyname</label>
+							</div>
+							<div class="col-xs-12">
+								<input type="text" class="form-control" name="familyname" />
+							    <span class="glyphicon glyphicon-ok form-control-feedback"></span>
+								<span class="glyphicon glyphicon-remove form-control-feedback"></span>		
+							</div>
+						</div>
+					</d-wrapper-field>
+					
+					<d-wrapper-field name="age" required>
+						<div class="form-group has-feedback">
+							<div class="col-xs-12">
+								<label class="control-label" for="age">age</label>
+							</div>
+							<div class="col-xs-12">
+								<input type="number" class="form-control" name="age" />
+								<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+								<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+							</div>
+							<div class="col-xs-12">
+								<d-validation class="label label-danger" condition="$value >= 0">You are not existing! You are not born!</d-validation>
+								<d-message class="label label-info" condition="age >= 0 && age < 14">child</d-message>
+								<d-message class="label label-info" condition="age >= 14 && age < 18">Teenager</d-message>
+								<d-message class="label label-info" condition="age >= 18 && age < 21">young adult</d-message>
+								<d-message class="label label-info" condition="age >= 21 && age < 70">adult</d-message>
+								<d-message class="label label-info" condition="age >=70 && age < 100">You are really old!</d-message>
+								<d-message class="label label-info" condition="age >=110">You are really alive?</d-message>
+							</div>
+						</div>
+					</d-wrapper-field>
+				</section>			
+			</xd-page>
+				
+			<d-page xxxcondition="${age && age >= 18}">
+				<h3>Social Information</h3>
+				<section>
+					<d-list name="social" required>
+						<template>
+							<div class="panel-heading">
+									<div>
+										social reference
+										<d-remove-row class="btn btn-danger pull-right">remove</d-remove-row>
+									</div>
+								</div>
+								<section class="panel-body">
+									<div class="row">
+										<div class="col-xs-12">
+											<div class="form-group has-feedback" data-form-field="socaltype" data-form-required="">
+												<div class="col-xs-12">
+													<label class="control-label" for="socaltype">social type</label>
+												</div>
+												<div class="col-xs-12">
+													<select class="form-control" name="socaltype">
+														<option value="" selected="selected">---------</option>
+														<option value="facebook">facebook</option>
+														<option value="google">google</option>
+														<option value="youtube">youtube</option>
+														<option value="instagram">instagram</option>
+													</select>
+													<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+													<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+												</div>
+											</div>
+										</div>
+										<div class="col-xs-12">
+											<div class="form-group has-feedback" data-form-field="socialid" data-form-required="" data-form-condition="$item.socaltype != undefined && $item.socaltype != ''">
+												<div class="col-xs-12">
+													<label class="control-label" for="socialid">your social id</label>
+												</div>
+												<div class="col-xs-12">
+													<input type="text" class="form-control" name="socialid" />
+													<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+													<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</section>
+							</div>
+						</template>
+						<div>
+							<label class="control-label">social references:</label>
+						</div>
+						<div>
+							<d-rows></d-rows>
+						</div>
+						<div>
+							<d-add-row class="btn btn-primary">add</d-add-row>
+						</div>	
+					</d-list>
+				</section>
+			</d-page>	
+				
+			<d-control>
+				<d-control-back class="btn btn-primary">back</d-control-back>
+				<d-control-next class="btn btn-primary">next</d-control-next>
+				<d-control-summary class="btn btn-primary">sumary</d-control-summary>
+				<d-control-submit class="btn btn-primary">submit</d-control-submit>
+			</d-control>
+		</d-form>
+
+</div>
+		<div>
+			<button id="load" onclick="loadData()">load data</button>
+
+		</div>
+
+		<script type="application/javascript" src="/defaultjs-html-form.js" async></script>
+		<script type="application/javascript" src="main.js" async></script>
+
+
+	</body>
+</html>

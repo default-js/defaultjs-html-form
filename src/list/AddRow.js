@@ -12,10 +12,11 @@ class AddRow extends FormButton {
 	
 	static init(button) {
 		FormButton.init(button);
+		button.active	= true;
 	}
 
 	constructor() {
-		super();		
+		super();	
 	}
 
 	connectedCallback() {

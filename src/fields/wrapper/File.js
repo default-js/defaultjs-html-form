@@ -21,10 +21,12 @@ const readFile = (file, readFnName) => {
 
 const updateInput = async (wrapper) => {
 	console.log("update input");
-	const {input, field, format} = wrapper; 
+	const {input, field, format, filenameTarget} = wrapper; 
 	if (input.files[0]){
 		wrapper.file = await FORMAT[format](input.files[0]);
 		wrapper.file.format = format;
+		if(filenameTarget)
+			filenameTarget.textContent = wrapper.file.name;
 	}
 	else
 		wrapper.file = null;
@@ -68,7 +70,9 @@ export default class File extends Wrapper {
 
 	constructor(field) {
 		super(field);
-		this.format = field.attr("file-format") || "data-url-base64";
+		this.format = field.attr("file-format") || "form-input";
+		this.filenameTarget = field.attr("file-name-target");
+		this.filenameTarget = field.find(this.filenameTarget).first();
 		init(this);
 	}
 

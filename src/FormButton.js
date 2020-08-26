@@ -4,7 +4,7 @@ const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED];
 
 const init = (button) => {
 	button.form = button.parent(NODENAMES.Form);
-	button.active = true;
+	button.active = false;
 	button.disabled = false;
 	button.on("click", (event) => {
 		if (button.active && !button.disabled) button.execute();
