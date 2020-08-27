@@ -1,30 +1,32 @@
-import { NODENAMES, TRIGGER_TIMEOUT, EVENTS , ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID } from "./Constants";
+import { NODENAMES, TRIGGER_TIMEOUT, EVENTS, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_INVALID } from "./Constants";
 import Condition from "./Condition";
-import {updateActiveState} from "./utils/StateHelper";
+import { updateActiveState } from "./utils/StateHelper";
 
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID];
-
-const init = (base) => {
-	base.form = base.parent(NODENAMES.Form);
-	base.active = true;
-	base._condition = new Condition(base);
-};
 
 class Base extends HTMLElement {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
 
-	static init(base) {
-		init(base);
-	}
-
 	constructor() {
 		super();
 	}
 
+	async init() {
+		await this.initBase();
+	}
+
+	async initBase() {
+		this.form = this.parent(NODENAMES.Form);
+		this._condition = new Condition(this);
+	}
+
 	connectedCallback() {
-		Base.init(this);
+		Promise.resolve(this.init())
+			.then(() => {
+				this.trigger(TRIGGER_TIMEOUT, EVENTS.initialize);
+			});
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -39,11 +41,14 @@ class Base extends HTMLElement {
 	}
 
 	set active(active) {
-		updateActiveState(this, active);
-		this.activeUpdated();
+		const current = this.active;
+		if (current != active) {
+			updateActiveState(this, active);
+			this.activeUpdated();
+		}
 	}
 
-	activeUpdated(){}
+	activeUpdated() { }
 
 	get readonly() {
 		return this.hasAttribute(ATTRIBUTE_READONLY);
@@ -53,7 +58,7 @@ class Base extends HTMLElement {
 		this.readonlyUpdated();
 	}
 
-	readonlyUpdated(){}
+	readonlyUpdated() { }
 
 	get condition() {
 		if (this.hasAttribute(ATTRIBUTE_CONDITION_INVALID)) return false;

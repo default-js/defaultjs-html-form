@@ -1,8 +1,8 @@
 import "@default-js/defaultjs-extdom";
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_MAX } from "./Constants";
+import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_MAX, ATTRIBUTE_INVALID } from "./Constants";
 import { toTimeoutHandle } from "./utils/EventHelper";
 import { treeFilter } from "./utils/NodeHelper";
-import Field from "./Field";
+import BaseField from "./BaseField";
 import Row from "./list/Row";
 import AddRow from "./list/AddRow";
 import DeleteRow from "./list/DeleteRow";
@@ -39,6 +39,15 @@ const init = (list) => {
 		}
 		return length <= max;
 	});
+	
+	validator.addCustomCheck(async ({ data, target }) => {
+		if (target.rows)
+			for (let row of target.rows) {
+				if (!row.valid) return false;
+			}
+			
+		return true;
+	});
 
 	list.on(EVENTS.initialize, (event) => {
 		event.preventDefault();
@@ -72,9 +81,9 @@ const init = (list) => {
 	);
 };
 
-class List extends Field {
+class List extends BaseField {
 	static get observedAttributes() {
-		return ATTRIBUTES.concat(Field.observedAttributes);
+		return ATTRIBUTES.concat(BaseField.observedAttributes);
 	}
 
 	static init(list) {
@@ -105,7 +114,7 @@ class List extends Field {
 
 	get max() {
 		if (this.hasAttribute(ATTRIBUTE_MAX)) return parseInt(this.attr(ATTRIBUTE_MAX));
-		return Number.NaN;
+		return Number.MAX_SAFE_INTEGER;
 	}
 
 	get value() {
@@ -144,14 +153,6 @@ class List extends Field {
 
 			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
 		}
-	}
-
-	get valid() {
-		if (this.rows)
-			for (let row of this.rows) {
-				if (!row.valid) return false;
-			}
-		return super.valid;
 	}
 }
 

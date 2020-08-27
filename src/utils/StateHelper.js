@@ -2,7 +2,7 @@ import { EVENTS, TRIGGER_TIMEOUT,ATTRIBUTE_ACTIVE, ATTRIBUTE_VALID, ATTRIBUTE_IN
 
 export const updateValidState = (target, valid,initial = false) => {
 	const oldState = target.valid;
-	if (typeof valid === "undefined") {
+	if (typeof valid === "undefined" || valid == null) {
 		target.attr(ATTRIBUTE_INVALID, null);
 		target.attr(ATTRIBUTE_VALID, null);
 	} else if (valid) {

@@ -41,6 +41,10 @@ class Form extends HTMLElement {
 		this.state = FORMSTATES.init;
 		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
 		this.activePageIndex = -1;
+		
+		this.on(EVENTS.changeValue, (event) => {
+			console.log(EVENTS.changeValue, {event})
+		})
 	}
 
 	connectedCallback() {
@@ -103,8 +107,8 @@ class Form extends HTMLElement {
 	set activePage(page) {
 		if (this.state != FORMSTATES.input) this.state = FORMSTATES.input;
 
-		if (page) {
-			const current = this.activePage;
+		const current = this.activePage;
+		if (page != current) {
 			if (current) current.active = false;
 			this.activePageIndex = this.pages.indexOf(page);
 			page.active = true;

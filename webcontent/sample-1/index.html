@@ -44,7 +44,7 @@
 					</a>
 				</li>
 			</ul>
-
+<!-- 
 			<xd-page class="hidden">
 				<h3>Registation Data</h3>
 				<section>
@@ -190,23 +190,25 @@
 						</div>
 					</d-wrapper-field>
 				</section>			
-			</xd-page>
+			</xd-page>-->
 				
 			<d-page xxxcondition="${age && age >= 18}">
 				<h3>Social Information</h3>
 				<section>
 					<d-list name="social" required>
 						<template>
-							<div class="panel-heading">
+							<div class="panel">
+								<div class="panel-heading">
 									<div>
 										social reference
-										<d-remove-row class="btn btn-danger pull-right">remove</d-remove-row>
+										<d-delete-row class="btn btn-danger pull-right">remove</d-delete-row>
 									</div>
 								</div>
 								<section class="panel-body">
 									<div class="row">
-										<div class="col-xs-12">
-											<div class="form-group has-feedback" data-form-field="socaltype" data-form-required="">
+										<d-wrapper-field class="col-xs-12" name="socaltype" required>
+											
+											<div class="form-group has-feedback">
 												<div class="col-xs-12">
 													<label class="control-label" for="socaltype">social type</label>
 												</div>
@@ -222,9 +224,10 @@
 													<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 												</div>
 											</div>
-										</div>
-										<div class="col-xs-12">
-											<div class="form-group has-feedback" data-form-field="socialid" data-form-required="" data-form-condition="$item.socaltype != undefined && $item.socaltype != ''">
+										</d-wrapper-field>
+										
+										<d-wrapper-field class="col-xs-12" name="socialid" required condition="$item.socaltype != undefined && $item.socaltype != ''">
+											<div class="form-group has-feedback">
 												<div class="col-xs-12">
 													<label class="control-label" for="socialid">your social id</label>
 												</div>
@@ -234,7 +237,7 @@
 													<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 												</div>
 											</div>
-										</div>
+										</d-wrapper-field>
 									</div>
 								</section>
 							</div>

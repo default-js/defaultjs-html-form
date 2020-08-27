@@ -1,5 +1,5 @@
-import { EVENTS } from "../../Constants";
-import { toTimeoutHandle } from "../../utils/EventHelper";
+import { EVENTS } from "../Constants";
+import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
 
 const INPUTSELECTOR = 'input[type="checkbox"]';

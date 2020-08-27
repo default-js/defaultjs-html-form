@@ -25,8 +25,8 @@ d-message:not([active])
 	visibility: hidden;
 }
 
-[valid] .glyphicon-ok.form-control-feedback,
-[invalid] .glyphicon-remove.form-control-feedback
+[valid] > .has-feedback .glyphicon-ok.form-control-feedback,
+[invalid] > .has-feedback .glyphicon-remove.form-control-feedback
 {
 	visibility: visible;
 }

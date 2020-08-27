@@ -1,21 +1,21 @@
-import { EVENTS, TRIGGER_TIMEOUT, NODENAMES } from "./Constants";
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
+import { EVENTS, TRIGGER_TIMEOUT, NODENAMES } from "./Constants";
 import Validation from "./Validation";
 import { findValidations } from "./utils/NodeHelper";
 import { evaluationData } from "./utils/DataHelper";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
-import { updateValidState } from "./utils/StateHelper";
 
 const init = (validator) => {
 	const { target, form } = validator;
-	validator.validations = findValidations(target);
+	validator.validations = findValidations(target) || [];
+	
 	form.on(
-		toEvents(EVENTS.changeValue, EVENTS.changeActive),
+		[EVENTS.changeValue],
 		toTimeoutHandle((event) => {
-			validator.validate();
-		}),
+			if(event.target != target)
+				validator.validate();
+		})
 	);
-	//validator.validate();
 };
 
 class Validator {
@@ -34,11 +34,19 @@ class Validator {
 	}
 
 	async validate() {
-		const { target, validations } = this;
+		const { target, validations , customChecks} = this;
 		const { hasValue, required, requiredOnlyOnActive, active } = target;
+		
+		const hasChecks = customChecks.length > 0 || validations.length > 0;
+		
+		if(!active)
+			return true;
+		
+		if(!hasChecks)
+			return hasValue || !required;
+		
 
 		const data = evaluationData(target);
-		
 		let valid = true;
 		for (let check of this.customChecks) {
 			const test = await check({ data, target });
@@ -53,9 +61,7 @@ class Validator {
 			}
 		}
 
-		if (!active) updateValidState(target, null);
-		else if (!hasValue && required) updateValidState(target, false);
-		else updateValidState(target, valid);
+		return valid;
 	}
 }
 

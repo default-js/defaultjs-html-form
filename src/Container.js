@@ -1,43 +1,14 @@
 import "@default-js/defaultjs-extdom";
-import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { NODENAMES, EVENTS } from "./Constants";
+import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
-import Field from "./Field";
-import { fields } from "..";
+import BaseField from "./BaseField";
 
 const ATTRIBUTES = [];
 
-const init = (container) => {
-	container.on(
-		EVENTS.changeValue,
-		toTimeoutHandle((event) => {}),
-	);
-
-	container.on(EVENTS.initialize, (event) => {
-		const field = event.target;
-		if (field instanceof Field) {
-			if (container.fields.indexOf(field) < 0) {
-				container.fields.push(field);
-				container.trigger(100, EVENTS.changeValue);
-			}
-
-			event.preventDefault();
-			event.stopPropagation();
-		}
-	});
-
-	container.fields = findFields(container);
-};
-
-class Container extends Field {
+class Container extends BaseField {
 	static get observedAttributes() {
-		return ATTRIBUTES.concat(Field.observedAttributes);
-	}
-
-	static init(container) {
-		Field.init(container);
-		init(container);
+		return ATTRIBUTES.concat(BaseField.observedAttributes);
 	}
 
 	constructor() {
@@ -45,12 +16,45 @@ class Container extends Field {
 		this.fields = [];
 	}
 
-	connectedCallback() {
-		Container.init(this);
+	async init() {
+		await initContainer();
 	}
-	
+
+
+	async initContainer() {
+		await initBaseField();
+		
+		this.fields = findFields(this);
+		this.on(EVENTS.initialize, (event) => {
+			const field = event.target;
+			if (field instanceof BaseField) {
+				if (this.fields.indexOf(field) < 0) {
+					this.fields.push(field);
+					this.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
+				}
+
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		});
+
+		this.validator.addCustomCheck(async ({ data, target }) => {
+			const { fields } = target;
+			if (fields) {
+				const length = fields.length;
+				for (let i = 0; i < length; i++) {
+					const field = fields[i];
+					if (field.active && field.condition && !field.valid) return false;
+				}
+			}
+
+			return true;
+		});
+	}
+
+
 	readonlyUpdated() {
-		const {readonly} = this;
+		const { readonly } = this;
 		for (let field of this.fields) {
 			field.readonly = readonly;
 		}
@@ -80,16 +84,8 @@ class Container extends Field {
 	set value(value) {
 		for (let field of this.fields) {
 			if (field.name) field.value = value[field.name];
-			else if(field instanceof Container) field.value = value;
+			else if (field instanceof Container) field.value = value;
 		}
-	}
-
-	get valid() {
-		if (this.fields)
-			for (let field of this.fields) {
-				if (field.active && field.condition && !field.valid) return false;
-			}
-		return super.valid;
 	}
 }
 

@@ -2,60 +2,50 @@ import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { NODENAMES, EVENTS, ATTRIBUTE_STEP } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
-import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 import Base from "./Base";
-import "./fields";
-import Field from "./Field";
+import BaseField from "./BaseField";
 import Container from "./Container";
 import List from "./List";
 
 const ATTRIBUTES = [ATTRIBUTE_STEP];
 
-const init = (page) => {
-	page.active = false;
-	page.on(
-		EVENTS.changeValue,
-		toTimeoutHandle((event) => {}),
-	);
-
-	page.on(EVENTS.initialize, (event) => {
-		const field = event.target;
-		if (field instanceof Field) {
-			if (page.fields.indexOf(field) < 0) {
-				page.fields.push(field);
-				page.trigger(100, EVENTS.changeValue);
-			}
-
-			event.preventDefault();
-			event.stopPropagation();
-		}
-	});
-
-	page.fields = findFields(page);
-};
-
 class Page extends Base {
 	static get observedAttributes() {
-		return ATTRIBUTES.concat(Field.observedAttributes);
-	}
-
-	static init(page) {
-		Base.init(page);
-		init(page);
+		return ATTRIBUTES.concat(Base.observedAttributes);
 	}
 
 	constructor() {
 		super();
 	}
 
-	connectedCallback() {
-		Page.init(this);
+	async init() {
+		await this.initPage();
+	}
+
+	async initPage() {
+		await this.initBase();
+
+		this.fields = findFields(this);
+
+		this.on(EVENTS.initialize, (event) => {
+			const field = event.target;
+			if (field instanceof BaseField) {
+				if (this.fields.indexOf(field) < 0) {
+					this.fields.push(field);
+					this.trigger(100, EVENTS.changeValue);
+				}
+
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		});
 	}
 
 	readonlyUpdated() {
-		for (let field of this.fields) {
-			field.readonly = this.readonly;
-		}
+		if (this.fields)
+			for (let field of this.fields) {
+				field.readonly = this.readonly;
+			}
 	}
 
 	get value() {
@@ -63,7 +53,7 @@ class Page extends Base {
 
 		const values = {};
 		for (let field of this.fields) {
-			if (field.valid) {
+			if (field.active && field.condition && field.valid) {
 				const value = field.value;
 				if (value != null && typeof value !== "undefined") {
 					if (field.name) values[field.name] = value;
@@ -82,10 +72,15 @@ class Page extends Base {
 	}
 
 	get valid() {
-		if (this.fields)
-			for (let field of this.fields) {
-				if (field.active && field.condition && !field.valid) return false;
+		if (this.fields) {
+			const length = this.fields.length;
+			for (let i = 0; i < length; i++) {
+				const field = this.fields[i];
+				if (field.active && field.condition && !field.valid)
+					return false;
 			}
+		}
+
 		return true;
 	}
 }

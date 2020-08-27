@@ -1,4 +1,4 @@
-import Field from "../Field";
+import BaseField from "../BaseField";
 import Validation from "../Validation";
 
 export const treeFilter = ({ root, filter }) => {
@@ -22,7 +22,7 @@ export const findFields = (root) => {
 	return treeFilter({
 		root,
 		filter: (element) => {
-			if (element instanceof Field) return { accept: true, stop: true };
+			if (element instanceof BaseField) return { accept: true, stop: true };
 			return { accept: false };
 		},
 	});
@@ -33,7 +33,7 @@ export const findValidations = (root) => {
 		root,
 		filter: (element) => {
 			if (root != element) {
-				if (element instanceof Field) return { accept: false, stop: true };
+				if (element instanceof BaseField) return { accept: false, stop: true };
 				else if (element instanceof Validation) return { accept: true, stop: true };
 			}
 			return { accept: false };

@@ -10,22 +10,22 @@
 		<d-form use-summary-page>
 			<d-page>
 				<h3>page 1</h3>
-				<d-wrapper-field name="field1" required>
+				<d-field name="field1" required>
 					<input value="" />
 					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
 					<d-message condition="${field1 == 'message'}">test message</d-message>
-				</d-wrapper-field>
+				</d-field>
 				<d-field name="field2" condition="${typeof field1 !== 'undefined' && field1 == 'field'}">field 2</d-field>
 				<d-field name="field3">field 3</d-field>
 				<d-field name="field4">field 4</d-field>
-				<d-list name="list1" max="5">
+				<!-- <d-list name="list1" max="5">
 					<template>
 						<d-delete-row>delete</d-delete-row>
-						<d-wrapper-field name="field1" required>
+						<d-field name="field1" required>
 							<input value="" />
 							<d-validation condition="${$value != 'valid'}">invalid</d-validation>
 							<d-message condition="${$item.field1 == 'message'}">test message</d-message>
-						</d-wrapper-field>
+						</d-field>
 						<d-field name="field2" condition="${typeof $item.field1 !== 'undefined' && $item.field1 == 'field'}">field 2</d-field>
 					</template>
 					<d-rows>
@@ -34,17 +34,17 @@
 					<d-add-row>add</d-add-row>
 				</d-list>
 				<d-container name="container1">
-					<d-wrapper-field name="field1" required>
+					<d-field name="field1" required>
 						<input value="" />
 						<d-validation condition="${$value != 'valid'}">invalid</d-validation>
 						<d-message condition="${container1.field1 == 'message'}">test message</d-message>
-					</d-wrapper-field>
+					</d-field>
 					<d-field name="field2" condition="${typeof container1.field1 !== 'undefined' && container1.field1 == 'field'}">field 2</d-field>
 					<d-field name="field3">field 3</d-field>
 					<d-field name="field4">field 4</d-field>
-				</d-container>
+				</d-container> -->
 			</d-page>
-			<d-page condition="${typeof field1 !== 'undefined' && field1 == 'page'}">
+			<!-- <d-page condition="${typeof field1 !== 'undefined' && field1 == 'page'}">
 				<h3>page 2</h3>
 			</d-page>
 			<d-page>
@@ -52,7 +52,7 @@
 			</d-page>
 			<d-page>
 				<h3>page 4</h3>
-			</d-page>
+			</d-page> -->
 
 			<d-control>
 				<d-control-back>back</d-control-back>

@@ -1,8 +1,8 @@
-import { EVENTS } from "../../Constants";
-import { toTimeoutHandle } from "../../utils/EventHelper";
+import { EVENTS } from "../Constants";
+import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
 
-const INPUTSELECTOR = 'input[type="number"]';
+const INPUTSELECTOR = 'select';
 
 const init = (wrapper) => {
 	const { field } = wrapper;
@@ -17,7 +17,7 @@ const init = (wrapper) => {
 	);
 };
 
-export default class Numbers extends Wrapper {
+export default class Text extends Wrapper {
 	static accept(field) {
 		return field.find(INPUTSELECTOR).length > 0;
 	}
@@ -32,10 +32,13 @@ export default class Numbers extends Wrapper {
 	}
 
 	get value() {
+		if(this.input.multiple)
+			return this.input.val();
+		
 		return this.input.value;
 	}
 
 	set value(value) {
-		this.input.value = value ? value : null;
+		this.input.val(value ? value : null);
 	}
 }

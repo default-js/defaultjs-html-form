@@ -1,8 +1,8 @@
-import { EVENTS } from "../../Constants";
-import { toTimeoutHandle } from "../../utils/EventHelper";
+import { EVENTS } from "../Constants";
+import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
 
-const INPUTSELECTOR = 'input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input:not([type]), textarea';
+const INPUTSELECTOR = 'input[type="number"]';
 
 const init = (wrapper) => {
 	const { field } = wrapper;
@@ -17,7 +17,7 @@ const init = (wrapper) => {
 	);
 };
 
-export default class Text extends Wrapper {
+export default class Numbers extends Wrapper {
 	static accept(field) {
 		return field.find(INPUTSELECTOR).length > 0;
 	}

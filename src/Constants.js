@@ -38,6 +38,7 @@ export const REQUIREDSTATES = {
 export const EVENTS = {
 	initialize: "initialize",
 	added: "added",
+	update: "update",
 	change: "change",
 	changeSite: "change-site",
 	changeAttributeEventBuilder: (name) => {

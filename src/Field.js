@@ -1,92 +1,48 @@
 import "@default-js/defaultjs-extdom";
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_REQUIRED_ON_ACTIVE_ONLY, ATTRIBUTE_NOVALUE, ATTRIBUTE_VALID, ATTRIBUTE_INVALID } from "./Constants";
-import { toTimeoutHandle } from "./utils/EventHelper";
-import Base from "./Base";
-import Validator from "./Validator";
+import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
+import BaseField from "./BaseField";
+import { findWrapper } from "./wrapper";
 
-const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE];
+const ATTRIBUTES = ["file-format"];
 
-export const findParentField = (field) => {
-	let parent = field.parentNode;
-	while (parent) {
-		if (parent instanceof Field) return parent;
-
-		parent = parent.parentNode;
-	}
-	return null;
-};
-
-const init = (field) => {
-	field.parentField = findParentField(field);
-
-	field.on(
-		EVENTS.changeCondition,
-		toTimeoutHandle((event) => {
-			if (event.target == field) {
-				field.active = field.condition;
-				field.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
-			}
-		}),
-	);
-
-	field.on(
-		EVENTS.changeValue,
-		toTimeoutHandle((event) => {
-			if (event.target == field) {
-				if (field.hasValue) field.attr(ATTRIBUTE_NOVALUE, null);
-				else field.attr(ATTRIBUTE_NOVALUE, "");
-			}
-		}),
-	);
-
-	field.validator = new Validator(field);
-
-	field.trigger(EVENTS.initialize);
-};
-
-class Field extends Base {
+class Field extends BaseField {
 	static get observedAttributes() {
-		return ATTRIBUTES.concat(Base.observedAttributes);
-	}
-
-	static init(field) {
-		Base.init(field);
-		init(field);
+		return ATTRIBUTES.concat(BaseField.observedAttributes);
 	}
 
 	constructor() {
 		super();
 	}
 
-	connectedCallback() {
-		Field.init(this);
+	async init() {
+		await this.initField();
 	}
 
-	get name() {
-		return this.getAttribute(ATTRIBUTE_NAME);
+	async initField() {
+		await this.initBaseField();
+		this.wrapper = findWrapper(this);
+		if(this.wrapper && this.wrapper.value)
+			this.value = this.wrapper.value;
 	}
 
-	get required() {
-		return this.hasAttribute(ATTRIBUTE_REQUIRED);
+	readonlyUpdated() {
+		this.wrapper.readonly = this.readonly;
 	}
 
-	get hasValue() {
-		const value = this.value;
-		return value != null && typeof value !== "undefined";
+	acceptValue(value) {
+		return this.wrapper ? this.wrapper.acceptValue(value) : false;
+	}
+	
+	normalizeValue(value) {
+		if (this.wrapper)
+			return this.wrapper.normalizeValue(value);
+
+		return value;
 	}
 
-	get value() {
-		return this.name;
-	}
-
-	set value(value) {
-		this.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
-	}
-
-	get valid() {
-		if (!this.condition) return false;
-		if (this.hasAttribute(ATTRIBUTE_INVALID)) return false;
-		return true;
+	updatedValue(value) {
+		if (this.wrapper)
+			this.wrapper.updatedValue(value);
 	}
 }
 
