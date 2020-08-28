@@ -1,6 +1,6 @@
 export const HTML_TAG_PREFIX = "d-";
-export const TRIGGER_TIMEOUT = 100;
-export const EVENTHANDLE_TIMEOUT = 200;
+export const TRIGGER_TIMEOUT = 10;
+export const EVENTHANDLE_TIMEOUT = 10;
 
 export const NODENAMES = {
 	Form: HTML_TAG_PREFIX + "form",

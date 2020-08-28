@@ -13,7 +13,6 @@ export const updateValidState = (target, valid, initial = false) => {
 		target.attr(ATTRIBUTE_VALID, null);
 	}
 	
-	console.log("updateValidState", { field: target, oldState, valid });
 	if (oldState != valid || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.validStateChanged);
 };
 

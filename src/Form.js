@@ -48,10 +48,7 @@ class Form extends HTMLElement {
 				else if (value != null)
 					ObjectUtils.merge(this.__data__, value);
 
-				setTimeout(() => {
-					this.trigger(EVENTS.executeValidate, event.detail[0]);
-				}, TRIGGER_TIMEOUT);
-
+				this.trigger(EVENTS.executeValidate, event.detail[0]);
 
 				event.preventDefault();
 				event.stopPropagation();
@@ -77,12 +74,15 @@ class Form extends HTMLElement {
 	set state(state) {
 		const actual = this.state;
 		if (actual == FORMSTATES.input && state != FORMSTATES.input) readonly(this, true);
-		else if (actual != FORMSTATES.input && state == FORMSTATES.input) readonly(this, false);
-
+		else if (actual != FORMSTATES.input && state == FORMSTATES.input) {
+			readonly(this, false);
+			if (this.activePage)
+				this.activePage.active = true;
+		}
+		this._state = state;
 
 		if (actual != state)
 			this.trigger(EVENTS.formStateChanged);
-		this._state = state;
 	}
 
 	valid() {
@@ -116,15 +116,13 @@ class Form extends HTMLElement {
 	}
 
 	set activePage(page) {
-		if (this.state != FORMSTATES.input) this.state = FORMSTATES.input;
-
 		const current = this.activePage;
 		if (page != current) {
 			if (current) current.active = false;
 			this.activePageIndex = this.pages.indexOf(page);
 			page.active = true;
 
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.siteChanged);
+			this.trigger(EVENTS.siteChanged);
 		}
 	}
 
@@ -138,22 +136,36 @@ class Form extends HTMLElement {
 	}
 
 	get nextPage() {
-		const start = this.activePageIndex + 1;
-		for (let i = start; i < this.pages.length; i++) {
-			const page = this.pages[i];
-			if (page.condition) return page;
+		if (this.pages) {
+			const start = this.activePageIndex + 1;
+			for (let i = start; i < this.pages.length; i++) {
+				const page = this.pages[i];
+				if (page.condition) return page;
+			}
 		}
 		return null;
 	}
 
 	async toPrevPage() {
-		const prev = await this.prevPage;
-		if (prev) this.activePage = prev;
+		if (this.state != FORMSTATES.input) {
+			this.state = FORMSTATES.input;
+		} else {
+			const prev = await this.prevPage;
+			if (prev) this.activePage = prev;
+		}
 	}
 
 	async toNextPage() {
 		const next = await this.nextPage;
-		if (next) this.activePage = next;
+		if (next) {
+			this.activePage = next;
+			if (this.state == FORMSTATES.init)
+				this._state = FORMSTATES.input;
+		} else if (this.useSummaryPage) {
+			this.summary();
+		} else {
+			this.submit()
+		}
 	}
 
 	summary() {

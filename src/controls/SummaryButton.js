@@ -15,7 +15,7 @@ class SummaryButton extends FormButton {
 		super();
 	}
 	execute() {
-		this.form.summary();
+		this.form.toNextPage();
 	}
 }
 export default SummaryButton;

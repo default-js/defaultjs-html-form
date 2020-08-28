@@ -41,12 +41,12 @@ class BaseField extends Base {
 		this.parentField = findParentField(this);
 		this.validator = new Validator(this);
 
-		this.on([EVENTS.conditionStateChanged, EVENTS.validStateChanged],
+		/*this.on([EVENTS.conditionStateChanged, EVENTS.validStateChanged],
 			(event) => {
 				if (event.target == this)
-				console.log(event.type, {field: this, event});
+					console.log(event.type, { field: this, event });
 			}
-		);
+		);*/
 
 
 		this.on(EVENTS.conditionStateChanged,
@@ -64,7 +64,7 @@ class BaseField extends Base {
 						this.publishValue();
 					}
 				},
-				true,
+				false,
 				true
 			)
 		);
@@ -129,7 +129,9 @@ class BaseField extends Base {
 		//if (this.condition)
 		value = this.value;
 
-		this.trigger(TRIGGER_TIMEOUT, EVENTS.valueChanged, chain);
+		setTimeout(() => {
+			this.trigger(EVENTS.valueChanged, chain);
+		}, TRIGGER_TIMEOUT);
 	}
 
 	acceptValue(value) {

@@ -23,7 +23,7 @@ class Base extends HTMLElement {
 	connectedCallback() {
 		Promise.resolve(this.init())
 			.then(() => {
-				this.trigger(TRIGGER_TIMEOUT, EVENTS.initialize);
+				this.trigger(EVENTS.initialize);
 			});
 	}
 

@@ -13,10 +13,17 @@ const init = (control) => {
 	control.submit = control.find(NODENAMES.SubmitButton).first();
 
 	control.form.on(
-		[EVENTS.validStateChanged, EVENTS.conditionStateChanged, EVENTS.formStateChanged, EVENTS.siteChanged],
+		[EVENTS.validStateChanged, EVENTS.conditionStateChanged],
 		(event) => {
-			if (event.target instanceof Page)
+			if(event.target instanceof Page)
 				control.update();
+		}
+	);
+
+	control.form.on(
+		[EVENTS.formStateChanged, EVENTS.siteChanged],
+		(event) => {
+			control.update();
 		}
 	);
 };
@@ -51,7 +58,7 @@ class Control extends HTMLElement {
 
 		// basic control setup
 		back.active = true;
-		back.disabled = activePageIndex <= 0;
+		back.disabled = true;
 		next.active = false;
 		next.disabled = true;
 		summary.active = false;
@@ -62,16 +69,25 @@ class Control extends HTMLElement {
 		if (state == FORMSTATES.finished) {
 			back.disabled = true;
 			submit.active = true;
-		} else if (nextPage || (!activePage.valid && (activePageIndex + 1 < pages.length))) {
-			next.active = true;
-			next.disabled = !activePage.valid;
-		} else if (useSummaryPage && state == FORMSTATES.input) {
-			summary.active = true;
-			summary.disabled = !activePage.valid;
-		} else {
+		} else if (state == FORMSTATES.summary) {
+			back.disabled = false;
 			submit.active = true;
 			submit.disabled = !form.valid;
+		} else if (state == FORMSTATES.input) {
+			back.disabled = activePageIndex <= 0;
+			
+			if (nextPage || (!activePage.valid && (activePageIndex + 1 < pages.length))) {
+				next.active = true;
+				next.disabled = !activePage.valid;
+			} else if (useSummaryPage && state == FORMSTATES.input) {
+				summary.active = true;
+				summary.disabled = !activePage.valid;
+			} else {
+				submit.active = true;
+				submit.disabled = !form.valid;
+			}
 		}
+
 	}
 }
 window.customElements.define(NODENAMES.Control, Control);
