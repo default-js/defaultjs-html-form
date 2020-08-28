@@ -37,14 +37,28 @@ class Form extends HTMLElement {
 
 	constructor() {
 		super();
-
+		this.__data__ = {};
 		this.state = FORMSTATES.init;
 		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
 		this.activePageIndex = -1;
-		
-		this.on(EVENTS.changeValue, (event) => {
-			console.log(EVENTS.changeValue, {event})
-		})
+
+		this.on(EVENTS.valueChanged,
+			(event) => {
+				if (event.target != this) {
+					const { name, value } = event.target;
+					console.log(EVENTS.valueChanged, { name, value, event })
+					if (name)
+						this.__data__[name] = value
+					else if (value != null)
+						ObjectUtils.merge(this.__data__, value);
+
+					this.trigger(TRIGGER_TIMEOUT, EVENTS.executeValidate)
+
+					event.preventDefault();
+					event.stopPropagation();
+				}
+			}
+		);
 	}
 
 	connectedCallback() {
@@ -79,23 +93,19 @@ class Form extends HTMLElement {
 	}
 
 	get data() {
-		const data = {};
-		for (let page of this.pages) {
-			let value = null;
-			if (page.condition && page.valid) value = page.value;
-			else if (page == this.activePage) value = page.value;
-			if (value != null && typeof value !== "undefined") ObjectUtils.merge(data, value);
-			if (page == this.activePage) return data;
-		}
-
-		return data;
+		return this.__data__;
 	}
 
 	set data(data) {
-		if (this.state == FORMSTATES.input)
-			for (let page of this.pages) {
-				page.value = data;
+		if (this.state == FORMSTATES.input) {
+			this.__data__ = data;
+			for (let page of this.pages) {				
+				if(page.name)
+					page.value = data[page.name];
+				else
+					page.value = data;
 			}
+		}
 	}
 
 	get activePage() {

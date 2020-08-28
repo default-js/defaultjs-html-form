@@ -24,7 +24,7 @@ const init = (message) => {
 	message.form = message.parent(NODENAMES.Form);
 
 	message.form.on(
-		toEvents(EVENTS.changeValue, EVENTS.changeCondition),
+		toEvents(EVENTS.executeValidate),
 		toTimeoutHandle((event) => {
 			message.update();
 		}),

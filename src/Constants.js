@@ -35,28 +35,42 @@ export const REQUIREDSTATES = {
 	onActive: "on-active",
 };
 
+export const EVENT_PREFIX = HTML_TAG_PREFIX + "event-";
+
 export const EVENTS = {
-	initialize: "initialize",
-	added: "added",
-	update: "update",
-	change: "change",
-	changeSite: "change-site",
+	initialize: EVENT_PREFIX + "initialize",
+	/* fired by change value from an field implementation 
+	 * and consumed by the reference implementation of 
+	 * BaseField to make validation and fire valueChanged 
+	 * event
+	 */
+	input: EVENT_PREFIX + "input", 
+	/* internal event for publish that a value of field has changed (event after validation) */
+	valueChanged : EVENT_PREFIX + "value-changed",
+	/* internal event to start validation at elements -> only fired at form*/
+	executeValidate : EVENT_PREFIX + "execute-validate",
+	
+	//old need to be refactored
+	
+	added: EVENT_PREFIX + "added",
+	change: EVENT_PREFIX + "change",
+	changeSite: EVENT_PREFIX + "change-site",
 	changeAttributeEventBuilder: (name) => {
-		return "change-attribute-" + name;
+		return EVENT_PREFIX + "change-attribute-" + name;
 	},
-	changeActive: "change-active",
-	changeValue: "change-value",
-	changeCondition: "change-condition",
-	changeValidation: "change-validation",
+	changeActive: EVENT_PREFIX + "change-active",
+	changeValue: EVENT_PREFIX + "change-value",
+	changeCondition: EVENT_PREFIX + "change-condition",
+	changeValidation: EVENT_PREFIX + "change-validation",
 
 	//LIST EVENTS
-	listRowAdd: "list-row-add",
-	listRowDelete: "list-row-delete",
+	listRowAdd: EVENT_PREFIX + "list-row-add",
+	listRowDelete: EVENT_PREFIX + "list-row-delete",
 };
 
 export const SPECIALVARS = {
-	CURRENTVALUE : "$value",
-	CURRENTLISTROW : "$item"
+	CURRENTVALUE: "$value",
+	CURRENTLISTROW: "$item"
 }
 
 //ATTRIBUTES

@@ -20,13 +20,14 @@ export default class Text extends Wrapper {
 			"input",
 			toTimeoutHandle(
 				() => {
-					if (field.value != input.value)
-						field.value = input.value;
+					field.trigger(EVENTS.input, this.normalizeValue(input.value));
 				},
 				false,
 				true
 			)
 		);
+
+		field.trigger(EVENTS.input, this.normalizeValue(input.value));
 	}
 
 	normalizeValue(value) {
@@ -45,7 +46,7 @@ export default class Text extends Wrapper {
 	set readonly(readonly) {
 		this.input.attr("disabled", readonly ? "" : null);
 	}
-	
+
 	get value() {
 		return this.input.value;
 	}

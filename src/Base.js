@@ -1,5 +1,4 @@
 import { NODENAMES, TRIGGER_TIMEOUT, EVENTS, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_INVALID } from "./Constants";
-import Condition from "./Condition";
 import { updateActiveState } from "./utils/StateHelper";
 
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID];
@@ -19,7 +18,6 @@ class Base extends HTMLElement {
 
 	async initBase() {
 		this.form = this.parent(NODENAMES.Form);
-		this._condition = new Condition(this);
 	}
 
 	connectedCallback() {
@@ -53,8 +51,9 @@ class Base extends HTMLElement {
 	get readonly() {
 		return this.hasAttribute(ATTRIBUTE_READONLY);
 	}
+	
 	set readonly(readonly) {
-		readonly ? this.attr(ATTRIBUTE_READONLY, "") : this.attr(ATTRIBUTE_READONLY, undefined);
+		readonly ? this.attr(ATTRIBUTE_READONLY, "") : this.attr(ATTRIBUTE_READONLY, null);
 		this.readonlyUpdated();
 	}
 

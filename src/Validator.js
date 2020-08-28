@@ -1,28 +1,25 @@
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
-import { EVENTS, TRIGGER_TIMEOUT, NODENAMES } from "./Constants";
+import { EVENTS, TRIGGER_TIMEOUT, NODENAMES, ATTRIBUTE_CONDITION } from "./Constants";
 import Validation from "./Validation";
+import { updateConditionState } from "./utils/StateHelper"
 import { findValidations } from "./utils/NodeHelper";
 import { evaluationData } from "./utils/DataHelper";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
-
-const init = (validator) => {
-	const { target, form } = validator;
-	validator.validations = findValidations(target) || [];
-	
-	form.on(
-		[EVENTS.changeValue],
-		toTimeoutHandle((event) => {
-			if(event.target != target)
-				validator.validate();
-		})
-	);
-};
 
 class Validator {
 	constructor(base) {
 		this.target = base;
 		this.customChecks = [];
-		init(this);
+		this.validations = findValidations(base) || [];
+		this.condition = base.attr(ATTRIBUTE_CONDITION);
+
+		base.form.on(
+			EVENTS.executeValidate,
+			toTimeoutHandle((event) => {
+				console.log("on", EVENTS.executeValidate, { event, target: this.target })
+				this.validate();
+			})
+		);
 	}
 
 	addCustomCheck(check) {
@@ -34,19 +31,25 @@ class Validator {
 	}
 
 	async validate() {
-		const { target, validations , customChecks} = this;
-		const { hasValue, required, requiredOnlyOnActive, active } = target;
-		
+		const { target, validations, customChecks, condition } = this;
+		const { hasValue, required, requiredOnlyOnActive } = target;
 		const hasChecks = customChecks.length > 0 || validations.length > 0;
-		
-		if(!active)
-			return true;
-		
-		if(!hasChecks)
-			return hasValue || !required;
-		
-
 		const data = evaluationData(target);
+
+		const conditionValid = condition ? ExpressionResolver.resolve(condition, data, false) : true;
+		if (target.condition != conditionValid)
+			updateConditionState(target, conditionValid);
+
+		if (!condition)
+			return true;
+
+		if (!hasValue && required)
+			return false;
+
+		if (!hasChecks)
+			return true;
+
+
 		let valid = true;
 		for (let check of this.customChecks) {
 			const test = await check({ data, target });

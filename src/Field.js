@@ -21,18 +21,17 @@ class Field extends BaseField {
 	async initField() {
 		await this.initBaseField();
 		this.wrapper = findWrapper(this);
-		if(this.wrapper && this.wrapper.value)
-			this.value = this.wrapper.value;
 	}
 
 	readonlyUpdated() {
-		this.wrapper.readonly = this.readonly;
+		if (this.wrapper)
+			this.wrapper.readonly = this.readonly;
 	}
 
 	acceptValue(value) {
 		return this.wrapper ? this.wrapper.acceptValue(value) : false;
 	}
-	
+
 	normalizeValue(value) {
 		if (this.wrapper)
 			return this.wrapper.normalizeValue(value);

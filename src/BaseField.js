@@ -29,7 +29,6 @@ class BaseField extends Base {
 	constructor() {
 		super();
 		this.__value__ = null;
-		updateHasValue(this.hasValue, this);
 	}
 
 	async init() {
@@ -42,14 +41,33 @@ class BaseField extends Base {
 		this.parentField = findParentField(this);
 		this.validator = new Validator(this);
 
+		this.on(EVENTS.input,
+			toTimeoutHandle(
+				(event) => {
+					if (event.target == this) {
+						this.__value__ = event.detail ? event.detail[0] : null;
+						console.log(EVENTS.input, { value: this.__value__ });
+						this.validate();
+					}
+				},
+				true,
+				true
+			)
+		);
+
 		this.on(
 			EVENTS.changeCondition,
 			toTimeoutHandle((event) => {
 				if (event.target == this) {
 					this.active = this.condition;
+					if (this.active)
+						this.validate();
 				}
 			}),
 		);
+
+
+		this.validate();
 	}
 
 	get name() {
@@ -74,13 +92,25 @@ class BaseField extends Base {
 			if (this.__value__ != value) {
 				this.__value__ = value;
 				this.updatedValue(value);
-				updateHasValue(this.hasValue, this);
-				this.validator.validate().then((valid) => {
-					updateValidState(this, valid);
-					this.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
-				});
+				this.validate();
 			}
 		}
+	}
+
+	async validate() {
+		updateHasValue(this.hasValue, this);
+		const valid = await this.validator.validate()
+		updateValidState(this, valid);
+		this.publishValue();
+	}
+
+	async publishValue() {
+		let value = null;
+		if (this.condition)
+			value = this.value;
+
+		console.log("trigger:", EVENTS.valueChanged, { value , target : this});
+		this.trigger(TRIGGER_TIMEOUT, EVENTS.valueChanged, value);
 	}
 
 	acceptValue(value) {

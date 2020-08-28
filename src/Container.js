@@ -1,4 +1,5 @@
 import "@default-js/defaultjs-extdom";
+import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
@@ -14,6 +15,25 @@ class Container extends BaseField {
 	constructor() {
 		super();
 		this.fields = [];
+		this.__value__ = {};
+
+		this.on(EVENTS.valueChanged,
+			(event) => {
+				if (event.target != this) {
+					const { name, value } = event.target;
+					console.log(EVENTS.valueChanged, { name, value, event })
+					if (name)
+						this.__value__[name] = value
+					else if (value != null)
+						ObjectUtils.merge(this.__value__, value);
+
+					this.validate();
+
+					event.preventDefault();
+					event.stopPropagation();
+				}
+			}
+		);
 	}
 
 	async init() {
@@ -22,19 +42,22 @@ class Container extends BaseField {
 
 
 	async initContainer() {
-		await initBaseField();
-		
+		await this.initBaseField();
+
 		this.fields = findFields(this);
 		this.on(EVENTS.initialize, (event) => {
-			const field = event.target;
-			if (field instanceof BaseField) {
-				if (this.fields.indexOf(field) < 0) {
-					this.fields.push(field);
-					this.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
-				}
+			if (event.target != this) {
 
-				event.preventDefault();
-				event.stopPropagation();
+				const field = event.target;
+				if (field instanceof BaseField) {
+					if (this.fields.indexOf(field) < 0) {
+						this.fields.push(field);
+						this.validate
+					}
+
+					event.preventDefault();
+					event.stopPropagation();
+				}
 			}
 		});
 
@@ -54,35 +77,15 @@ class Container extends BaseField {
 
 
 	readonlyUpdated() {
-		const { readonly } = this;
-		for (let field of this.fields) {
+		const { readonly, fields } = this;
+		for (let field of fields) {
 			field.readonly = readonly;
 		}
 	}
 
-	get value() {
-		if (!this.fields || this.fields.length == null) return null;
-
-		const values = {};
-		let hasValue = false;
-		for (let field of this.fields) {
-			if (field.valid) {
-				const value = field.value;
-				if (typeof value !== "undefined" && value != null) {
-					if (field.name) values[field.name] = value;
-					else if (ObjectUtils.isPojo(value)) ObjectUtils.merge(values, value);
-					hasValue = true;
-				}
-			}
-		}
-		if (!hasValue) return null;
-
-		if (this.name) return ({}[this.name] = values);
-		else return values;
-	}
-
-	set value(value) {
-		for (let field of this.fields) {
+	updatedValue() {
+		const { value, fields } = this;
+		for (let field of fields) {
 			if (field.name) field.value = value[field.name];
 			else if (field instanceof Container) field.value = value;
 		}
