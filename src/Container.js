@@ -11,17 +11,15 @@ class Container extends BaseField {
 		return ATTRIBUTES.concat(BaseField.observedAttributes);
 	}
 
-	constructor() {
-		super();
+	constructor(value = null) {
+		super(value ? value : {});
 		this.fields = [];
-		this.__value__ = {};
 
 		this.on(EVENTS.valueChanged,
 			(event) => {
 				if (event.target != this) {
 					const { name, value } = event.target;
 					
-					console.log("container handle", EVENTS.valueChanged, {field: event.target, name, value, event});
 					if (name)
 						this.__value__[name] = value
 					else if (value != null)
@@ -40,7 +38,6 @@ class Container extends BaseField {
 	async init() {
 		await this.initContainer();
 	}
-
 
 	async initContainer() {
 		await this.initBaseField();

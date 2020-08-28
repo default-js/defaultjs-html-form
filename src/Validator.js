@@ -33,6 +33,7 @@ class Validator {
 
 		const conditionValid = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
 		updateConditionState(target, conditionValid, this.inital);
+j
 
 		let valid = required ? hasValue : true;
 			

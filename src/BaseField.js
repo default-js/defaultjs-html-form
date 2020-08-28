@@ -26,9 +26,9 @@ class BaseField extends Base {
 		return ATTRIBUTES.concat(Base.observedAttributes);
 	}
 
-	constructor() {
+	constructor(value = null) {
 		super();
-		this.__value__ = null;
+		this.__value__ = value;
 	}
 
 	async init() {
@@ -41,14 +41,6 @@ class BaseField extends Base {
 		this.parentField = findParentField(this);
 		this.validator = new Validator(this);
 
-		/*this.on([EVENTS.conditionStateChanged, EVENTS.validStateChanged],
-			(event) => {
-				if (event.target == this)
-					console.log(event.type, { field: this, event });
-			}
-		);*/
-
-
 		this.on(EVENTS.conditionStateChanged,
 			(event) => {
 				if (event.target == this) this.conditionUpdated();
@@ -56,17 +48,13 @@ class BaseField extends Base {
 		);
 
 		this.on(EVENTS.input,
-			toTimeoutHandle(
-				(event) => {
-					if (event.target == this) {
-						this.__value__ = event.detail ? event.detail[0] : null;
-						this.validate();
-						this.publishValue();
-					}
-				},
-				false,
-				true
-			)
+			(event) => {
+				if (event.target == this) {
+					this.__value__ = event.detail ? event.detail[0] : null;
+					this.validate();
+					this.publishValue();
+				}
+			}
 		);
 
 		this.form.on(
@@ -98,7 +86,8 @@ class BaseField extends Base {
 	}
 
 	get hasValue() {
-		return this.__value__ != null && typeof this.__value__ !== "undefined";
+		const value = this.value;
+		return value != null && typeof value !== "undefined";
 	}
 
 	get value() {
@@ -119,6 +108,9 @@ class BaseField extends Base {
 
 	async validate() {
 		updateHasValue(this.hasValue, this);
+		if (!this.validator)
+			return false;
+
 		const valid = await this.validator.validate();
 		return valid;
 	}

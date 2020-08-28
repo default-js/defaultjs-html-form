@@ -27,6 +27,10 @@ class Base extends HTMLElement {
 			});
 	}
 
+	adoptedCallback() {
+		this.connectedCallback();
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (oldValue != newValue) {
 			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));

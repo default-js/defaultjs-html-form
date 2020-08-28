@@ -8,8 +8,8 @@ d-container,
 d-field,
 d-wrapper-field,
 d-list,
-d-list-rows,
-d-list-row,
+d-rows,
+d-row,
 d-message {
     display: block;
 	border: 0.1rem solid black;

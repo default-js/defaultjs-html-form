@@ -5,24 +5,13 @@ import DeleteRow from "./DeleteRow";
 
 const ATTRIBUTES = [];
 
-const init = (row) => {
-};
-
 class ListRow extends Container {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(Container.observedAttributes);
 	}
-	static init(row) {
-		Container.init(row);
-		init(row);
-	}
-
+	
 	constructor() {
 		super();
-	}
-
-	connectedCallback() {
-		ListRow.init(this);
 	}
 
 	get active() {

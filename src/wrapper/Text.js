@@ -40,7 +40,7 @@ export default class Text extends Wrapper {
 
 	updatedValue(value) {
 		if (this.field.value != this.input.value)
-			this.input.value = value ? value : null;
+			this.input.val(value ? value : null);
 	}
 
 	set readonly(readonly) {

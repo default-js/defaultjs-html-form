@@ -41,7 +41,6 @@ class Form extends HTMLElement {
 
 		this.on(EVENTS.valueChanged,
 			(event) => {
-				console.log("form handle", EVENTS.valueChanged, { event, chain: event.detail[0] });
 				const { name, value } = event.target;
 				if (name)
 					this.__data__[name] = value

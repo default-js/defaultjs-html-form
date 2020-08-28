@@ -10,95 +10,124 @@ import Rows from "./list/Rows";
 
 const ATTRIBUTES = [ATTRIBUTE_MAX];
 
-const createRow = (list, value) => {
-	const { container, template } = list;
-	const row = new Row();
-	container.append(row);
-	row.append(document.importNode(template.content, true).childNodes);
-
-	if (value) row.value = value;
-};
-
-const init = (list) => {
-	const { container, template, validator } = list;
-	const addButton = (treeFilter({
+const findAddButton = (list) => {
+	return treeFilter({
 		root: list,
 		filter: (element) => {
 			if (element instanceof AddRow) return { accept: true, stop: true };
-			else if (element instanceof Field) return { accept: false, stop: true };
+			else if (element instanceof BaseField) return { accept: false, stop: true };
 			return { accept: false };
 		}
-	})[0]);
-
-	validator.addCustomCheck(async ({ data, target }) => {
-		const length = list.rows.length;
-		const max = list.max;
-		if (!list.readonly) {
-			if (length == max) addButton.disabled = true;
-			else if (length < max) addButton.disabled = false;
-		}
-		return length <= max;
-	});
-	
-	validator.addCustomCheck(async ({ data, target }) => {
-		if (target.rows)
-			for (let row of target.rows) {
-				if (!row.valid) return false;
-			}
-			
-		return true;
-	});
-
-	list.on(EVENTS.initialize, (event) => {
-		event.preventDefault();
-		event.stopPropagation();
-	});
-
-	list.on(EVENTS.listRowAdd, (event) => {
-		if (!list.readonly) {
-			createRow(list);
-
-			list.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
-		}
-		event.preventDefault();
-		event.stopPropagation();
-	});
-
-	list.on(EVENTS.listRowDelete, (event) => {
-		if (!list.readonly) {
-			const row = event.target.parent(NODENAMES.ListRow);
-			row.remove();
-
-			list.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
-		}
-		event.preventDefault();
-		event.stopPropagation();
-	});
-
-	list.on(
-		EVENTS.changeValue,
-		toTimeoutHandle((event) => {}),
-	);
+	})[0];
 };
+
+const createRow = (list, value) => {
+	const { container, template } = list;
+	const row = document.importNode(template.content, true).children[0];
+	container.append(row);
+	
+	if(value){
+		setTimeout(() => {
+			console.log("set value to row", {row, value});
+			row.value = value;
+		}, TRIGGER_TIMEOUT);
+	}
+
+	return row;
+};
+
 
 class List extends BaseField {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(BaseField.observedAttributes);
 	}
 
-	static init(list) {
-		Field.init(list);
-		init(list);
-	}
-
-	constructor() {
-		super();
+	constructor(value = null) {
+		super(value ? value : []);
 		this.template = this.find("template").first();
 		this.container = this.find(NODENAMES.ListRows).first();
+
+		this.on([EVENTS.valueChanged, EVENTS.initialize],
+			(event) => {
+				if (event.target instanceof Row) {
+					const rows = this.rows;
+					const row = event.target;
+					const { value } = row;
+
+					const index = rows.indexOf(row);
+					this.__value__[index] = value;
+
+					this.validate();
+					this.publishValue(event.detail ? event.detail[0]: [row]);
+
+					event.preventDefault();
+					event.stopPropagation();
+				}
+			}
+		);
 	}
 
-	connectedCallback() {
-		List.init(this);
+	async init() {
+		this.initList();
+	}
+
+	async initList() {
+		await this.initBaseField();
+		const { container, template, validator } = this;
+		const addButton = findAddButton(this);
+
+		validator.addCustomCheck(async ({ }) => {
+			const { rows, max, readonly } = this;
+			const length = rows.length;
+			if (!readonly) {
+				if (length == max) addButton.disabled = true;
+				else if (length < max) addButton.disabled = false;
+			}
+			return length <= max;
+		});
+
+		validator.addCustomCheck(async () => {
+			const { rows } = this;
+			if (rows)
+				for (let row of rows) {
+					if (!row.valid) return false;
+				}
+
+			return true;
+		});
+
+		this.on(EVENTS.listRowAdd, (event) => {
+			const { readonly, __value__ } = this;
+			if (!readonly) {
+				const row = createRow(this);
+				__value__.push(row.value);
+
+				this.validate();
+				this.publishValue();
+			}
+			event.preventDefault();
+			event.stopPropagation();
+		});
+
+		this.on(EVENTS.listRowDelete, (event) => {
+			const { rows, readonly, __value__ } = this;
+			if (!readonly) {
+				const row = event.target.parent(NODENAMES.ListRow);
+				const index = rows.indexOf(row);
+				if (index >= 0) {
+					row.remove();
+					rows.splice(index, 1);
+					__value__.splice(index, 1);
+
+					this.validate();
+					this.publishValue();
+				}
+			}
+			event.preventDefault();
+			event.stopPropagation();
+		});
+
+		this.validate();
 	}
 
 	readonlyUpdated() {
@@ -109,7 +138,7 @@ class List extends BaseField {
 	}
 
 	get rows() {
-		return this.container.children;
+		return Array.from(this.container.children);
 	}
 
 	get max() {
@@ -117,41 +146,32 @@ class List extends BaseField {
 		return Number.MAX_SAFE_INTEGER;
 	}
 
-	get value() {
-		if (!this.rows || this.rows.length == null) return null;
-
-		const values = [];
-		let hasValue = false;
-		for (let row of this.rows) {
-			if (row.valid) {
-				const value = row.value;
-				if (typeof value !== "undefined" && value != null) {
-					values.push(value);
-					hasValue = true;
-				}
-			}
-		}
-		if (!hasValue) return null;
-
-		return ({}[this.name] = values);
+	acceptValue(value) {
+		return value && value instanceof Array;
 	}
 
-	set value(values) {
-		const { rows } = this;
-		if (rows) {
-			let row = rows.first();
-			while (row) {
-				row.remove();
-				row = rows.first();
-			}
-		}
+	normalizeValue(value) {
+		return value.filter((item) => !!item);
+	}
 
-		if (values instanceof Array) {
-			for (let value of values) {
-				createRow(this, value);
-			}
+	get value() {
+		if (this.__value__.length > 0)
+			return this.__value__;
 
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeValue);
+		return null;
+	}
+
+	set value(value) {
+		if (this.__value__ != value && this.acceptValue(value)) {
+			value = this.normalizeValue(value);
+			if (this.__value__ != value) {
+				this.container.children.remove();
+				this.__value__ = [];
+				if (value) {
+					for (let val of value)
+						createRow(this, val);
+				}
+			}
 		}
 	}
 }

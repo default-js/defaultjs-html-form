@@ -19,21 +19,23 @@
 				<d-field name="field2" condition="${field1 == 'field'}"><input/></d-field>
 				<d-field name="field3">field 3</d-field>
 				<d-field name="field4">field 4</d-field>
-				<!-- <d-list name="list1" max="5">
+				<d-list name="list1" max="5" required>
 					<template>
-						<d-delete-row>delete</d-delete-row>
-						<d-field name="field1" required>
-							<input value="" />
-							<d-validation condition="${$value != 'valid'}">invalid</d-validation>
-							<d-message condition="${$item.field1 == 'message'}">test message</d-message>
-						</d-field>
-						<d-field name="field2" condition="${typeof $item.field1 !== 'undefined' && $item.field1 == 'field'}">field 2</d-field>
+						<d-row>
+							<d-delete-row>delete</d-delete-row>
+							<d-field name="field1" required>
+								<input value="" />
+								<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+								<d-message condition="${$item.field1 == 'message'}">test message</d-message>
+							</d-field>
+							<d-field name="field2" condition="${typeof $item.field1 !== 'undefined' && $item.field1 == 'field'}"><input/></d-field>
+						</d-row>
 					</template>
 					<d-rows>
 
 					</d-rows>
 					<d-add-row>add</d-add-row>
-				</d-list>-->
+				</d-list>
 				<d-container name="container1">
 					<d-field name="field1" required>
 						<input value="" />

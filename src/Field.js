@@ -19,7 +19,7 @@ class Field extends BaseField {
 	}
 
 	async initField() {
-		await this.initBaseField();
+		await this.initBaseField();		
 		this.wrapper = findWrapper(this);
 	}
 
