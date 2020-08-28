@@ -1,8 +1,7 @@
 import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
+import { NODENAMES, EVENTS } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
-import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 import BaseField from "./BaseField";
 
 const ATTRIBUTES = [];
@@ -21,13 +20,15 @@ class Container extends BaseField {
 			(event) => {
 				if (event.target != this) {
 					const { name, value } = event.target;
-					console.log(EVENTS.valueChanged, { name, value, event })
+					
+					console.log("container handle", EVENTS.valueChanged, {field: event.target, name, value, event});
 					if (name)
 						this.__value__[name] = value
 					else if (value != null)
 						ObjectUtils.merge(this.__value__, value);
 
 					this.validate();
+					this.publishValue(event.detail[0]);
 
 					event.preventDefault();
 					event.stopPropagation();
@@ -37,7 +38,7 @@ class Container extends BaseField {
 	}
 
 	async init() {
-		await initContainer();
+		await this.initContainer();
 	}
 
 
@@ -52,7 +53,6 @@ class Container extends BaseField {
 				if (field instanceof BaseField) {
 					if (this.fields.indexOf(field) < 0) {
 						this.fields.push(field);
-						this.validate
 					}
 
 					event.preventDefault();
@@ -67,7 +67,7 @@ class Container extends BaseField {
 				const length = fields.length;
 				for (let i = 0; i < length; i++) {
 					const field = fields[i];
-					if (field.active && field.condition && !field.valid) return false;
+					if (field.condition && !field.valid) return false;
 				}
 			}
 
@@ -78,17 +78,19 @@ class Container extends BaseField {
 
 	readonlyUpdated() {
 		const { readonly, fields } = this;
-		for (let field of fields) {
-			field.readonly = readonly;
-		}
+		if (fields)
+			for (let field of fields) {
+				field.readonly = readonly;
+			}
 	}
 
 	updatedValue() {
 		const { value, fields } = this;
-		for (let field of fields) {
-			if (field.name) field.value = value[field.name];
-			else if (field instanceof Container) field.value = value;
-		}
+		if (fields)
+			for (let field of fields) {
+				if (field.name) field.value = value[field.name];
+				else if (field instanceof Container) field.value = value;
+			}
 	}
 }
 

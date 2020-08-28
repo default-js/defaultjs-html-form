@@ -44,17 +44,26 @@ export const EVENTS = {
 	 * BaseField to make validation and fire valueChanged 
 	 * event
 	 */
-	input: EVENT_PREFIX + "input", 
+	input: EVENT_PREFIX + "input",
 	/* internal event for publish that a value of field has changed (event after validation) */
-	valueChanged : EVENT_PREFIX + "value-changed",
+	valueChanged: EVENT_PREFIX + "value-changed",
 	/* internal event to start validation at elements -> only fired at form*/
-	executeValidate : EVENT_PREFIX + "execute-validate",
+	executeValidate: EVENT_PREFIX + "execute-validate",
+	/* */
+	activeStateChanged: EVENT_PREFIX + "active-state-changed",
+	/* */
+	conditionStateChanged: EVENT_PREFIX + "condition-state-changed",
+	/* */
+	validStateChanged: EVENT_PREFIX + "valid-state-changed",
+    /* */
+	siteChanged: EVENT_PREFIX + "site-changed",
+	/* */
+	formStateChanged: EVENT_PREFIX + "form-state-changed",
 	
 	//old need to be refactored
-	
+
 	added: EVENT_PREFIX + "added",
 	change: EVENT_PREFIX + "change",
-	changeSite: EVENT_PREFIX + "change-site",
 	changeAttributeEventBuilder: (name) => {
 		return EVENT_PREFIX + "change-attribute-" + name;
 	},

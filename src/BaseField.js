@@ -41,13 +41,27 @@ class BaseField extends Base {
 		this.parentField = findParentField(this);
 		this.validator = new Validator(this);
 
+		this.on([EVENTS.conditionStateChanged, EVENTS.validStateChanged],
+			(event) => {
+				if (event.target == this)
+				console.log(event.type, {field: this, event});
+			}
+		);
+
+
+		this.on(EVENTS.conditionStateChanged,
+			(event) => {
+				if (event.target == this) this.conditionUpdated();
+			}
+		);
+
 		this.on(EVENTS.input,
 			toTimeoutHandle(
 				(event) => {
 					if (event.target == this) {
 						this.__value__ = event.detail ? event.detail[0] : null;
-						console.log(EVENTS.input, { value: this.__value__ });
 						this.validate();
+						this.publishValue();
 					}
 				},
 				true,
@@ -55,19 +69,24 @@ class BaseField extends Base {
 			)
 		);
 
-		this.on(
-			EVENTS.changeCondition,
-			toTimeoutHandle((event) => {
-				if (event.target == this) {
-					this.active = this.condition;
-					if (this.active)
-						this.validate();
+		this.form.on(
+			EVENTS.executeValidate,
+			async (event) => {
+				const chain = event.detail[0];
+				if (chain.indexOf(this) < 0) {
+					const current = this.valid;
+					const valid = await this.validate();
+					if (current != valid)
+						this.publishValue();
 				}
-			}),
+			}
 		);
 
-
 		this.validate();
+	}
+
+	conditionUpdated() {
+		this.active = this.condition;
 	}
 
 	get name() {
@@ -93,24 +112,24 @@ class BaseField extends Base {
 				this.__value__ = value;
 				this.updatedValue(value);
 				this.validate();
+				this.publishValue();
 			}
 		}
 	}
 
 	async validate() {
 		updateHasValue(this.hasValue, this);
-		const valid = await this.validator.validate()
-		updateValidState(this, valid);
-		this.publishValue();
+		const valid = await this.validator.validate();
+		return valid;
 	}
 
-	async publishValue() {
+	async publishValue(chain = []) {
+		chain.push(this);
 		let value = null;
-		if (this.condition)
-			value = this.value;
+		//if (this.condition)
+		value = this.value;
 
-		console.log("trigger:", EVENTS.valueChanged, { value , target : this});
-		this.trigger(TRIGGER_TIMEOUT, EVENTS.valueChanged, value);
+		this.trigger(TRIGGER_TIMEOUT, EVENTS.valueChanged, chain);
 	}
 
 	acceptValue(value) {

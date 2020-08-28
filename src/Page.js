@@ -20,6 +20,8 @@ class Page extends Container {
 	async initPage() {
 		await this.initContainer();
 	}	
+	
+	conditionUpdated(){}
 }
 window.customElements.define(NODENAMES.Page, Page);
 export default Page;

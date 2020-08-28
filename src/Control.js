@@ -1,6 +1,7 @@
 import { FORMSTATES, NODENAMES, EVENTS } from "./Constants";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 import { BackButton, NextButton, SummaryButton, SubmitButton, CancelButton } from "./controls";
+import Page from "./Page";
 
 const ATTRIBUTES = [];
 
@@ -12,10 +13,11 @@ const init = (control) => {
 	control.submit = control.find(NODENAMES.SubmitButton).first();
 
 	control.form.on(
-		toEvents(EVENTS.changeCondition, EVENTS.changeValidation, EVENTS.changeSite),
-		toTimeoutHandle((event) => {
-			control.update();
-		}),
+		[EVENTS.validStateChanged, EVENTS.conditionStateChanged, EVENTS.formStateChanged, EVENTS.siteChanged],
+		(event) => {
+			if (event.target instanceof Page)
+				control.update();
+		}
 	);
 };
 
@@ -60,13 +62,13 @@ class Control extends HTMLElement {
 		if (state == FORMSTATES.finished) {
 			back.disabled = true;
 			submit.active = true;
-		}else if (nextPage || (!activePage.valid && (activePageIndex + 1 < pages.length))) {
+		} else if (nextPage || (!activePage.valid && (activePageIndex + 1 < pages.length))) {
 			next.active = true;
 			next.disabled = !activePage.valid;
 		} else if (useSummaryPage && state == FORMSTATES.input) {
 			summary.active = true;
 			summary.disabled = !activePage.valid;
-		}else {
+		} else {
 			submit.active = true;
 			submit.disabled = !form.valid;
 		}

@@ -14,9 +14,6 @@ const readonly = (form, readonly) => {
 	}
 };
 
-const changeSite = (form) => {
-	form.trigger(TRIGGER_TIMEOUT, EVENTS.changeSite);
-};
 
 const init = (form) => {
 	form.state = FORMSTATES.init;
@@ -44,19 +41,20 @@ class Form extends HTMLElement {
 
 		this.on(EVENTS.valueChanged,
 			(event) => {
-				if (event.target != this) {
-					const { name, value } = event.target;
-					console.log(EVENTS.valueChanged, { name, value, event })
-					if (name)
-						this.__data__[name] = value
-					else if (value != null)
-						ObjectUtils.merge(this.__data__, value);
+				console.log("form handle", EVENTS.valueChanged, { event, chain: event.detail[0] });
+				const { name, value } = event.target;
+				if (name)
+					this.__data__[name] = value
+				else if (value != null)
+					ObjectUtils.merge(this.__data__, value);
 
-					this.trigger(TRIGGER_TIMEOUT, EVENTS.executeValidate)
+				setTimeout(() => {
+					this.trigger(EVENTS.executeValidate, event.detail[0]);
+				}, TRIGGER_TIMEOUT);
 
-					event.preventDefault();
-					event.stopPropagation();
-				}
+
+				event.preventDefault();
+				event.stopPropagation();
 			}
 		);
 	}
@@ -81,6 +79,9 @@ class Form extends HTMLElement {
 		if (actual == FORMSTATES.input && state != FORMSTATES.input) readonly(this, true);
 		else if (actual != FORMSTATES.input && state == FORMSTATES.input) readonly(this, false);
 
+
+		if (actual != state)
+			this.trigger(EVENTS.formStateChanged);
 		this._state = state;
 	}
 
@@ -99,8 +100,8 @@ class Form extends HTMLElement {
 	set data(data) {
 		if (this.state == FORMSTATES.input) {
 			this.__data__ = data;
-			for (let page of this.pages) {				
-				if(page.name)
+			for (let page of this.pages) {
+				if (page.name)
 					page.value = data[page.name];
 				else
 					page.value = data;
@@ -122,7 +123,8 @@ class Form extends HTMLElement {
 			if (current) current.active = false;
 			this.activePageIndex = this.pages.indexOf(page);
 			page.active = true;
-			changeSite(this);
+
+			this.trigger(TRIGGER_TIMEOUT, EVENTS.siteChanged);
 		}
 	}
 
@@ -156,12 +158,10 @@ class Form extends HTMLElement {
 
 	summary() {
 		this.state = FORMSTATES.summary;
-		changeSite(this);
 	}
 
 	submit() {
 		this.state = FORMSTATES.finished;
-		changeSite(this);
 	}
 }
 window.customElements.define(NODENAMES.Form, Form);

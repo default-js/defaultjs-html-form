@@ -25,9 +25,9 @@ const init = (message) => {
 
 	message.form.on(
 		toEvents(EVENTS.executeValidate),
-		toTimeoutHandle((event) => {
+		(event) => {
 			message.update();
-		}),
+		},
 	);
 	message.update();
 };

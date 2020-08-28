@@ -46,12 +46,13 @@ class Base extends HTMLElement {
 		}
 	}
 
-	activeUpdated() { }
+	activeUpdated() {
+	}
 
 	get readonly() {
 		return this.hasAttribute(ATTRIBUTE_READONLY);
 	}
-	
+
 	set readonly(readonly) {
 		readonly ? this.attr(ATTRIBUTE_READONLY, "") : this.attr(ATTRIBUTE_READONLY, null);
 		this.readonlyUpdated();
@@ -60,12 +61,15 @@ class Base extends HTMLElement {
 	readonlyUpdated() { }
 
 	get condition() {
-		if (this.hasAttribute(ATTRIBUTE_CONDITION_INVALID)) return false;
-		return true;
+		return !this.hasAttribute(ATTRIBUTE_CONDITION_INVALID);
+	}
+
+	conditionUpdated() {
+
 	}
 
 	get valid() {
-		return true;
+		return this.hasAttribute(ATTRIBUTE_VALID);
 	}
 }
 

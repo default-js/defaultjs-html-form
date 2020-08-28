@@ -1,6 +1,6 @@
-import { EVENTS, TRIGGER_TIMEOUT,ATTRIBUTE_ACTIVE, ATTRIBUTE_VALID, ATTRIBUTE_INVALID,ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID } from "../Constants";
+import { EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_ACTIVE, ATTRIBUTE_VALID, ATTRIBUTE_INVALID, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID } from "../Constants";
 
-export const updateValidState = (target, valid,initial = false) => {
+export const updateValidState = (target, valid, initial = false) => {
 	const oldState = target.valid;
 	if (typeof valid === "undefined" || valid == null) {
 		target.attr(ATTRIBUTE_INVALID, null);
@@ -12,8 +12,9 @@ export const updateValidState = (target, valid,initial = false) => {
 		target.attr(ATTRIBUTE_INVALID, "");
 		target.attr(ATTRIBUTE_VALID, null);
 	}
-
-	if (oldState != valid || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.changeValidation);
+	
+	console.log("updateValidState", { field: target, oldState, valid });
+	if (oldState != valid || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.validStateChanged);
 };
 
 export const updateConditionState = (target, valid, initial = false) => {
@@ -25,11 +26,11 @@ export const updateConditionState = (target, valid, initial = false) => {
 		target.attr(ATTRIBUTE_CONDITION_VALID, null);
 		target.attr(ATTRIBUTE_CONDITION_INVALID, "");
 	}
-	if (oldState != valid || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.changeCondition);
+	if (oldState != valid || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.conditionStateChanged);
 };
 
 export const updateActiveState = (target, active, initial = false) => {
 	const oldState = target.active;
 	active ? target.attr(ATTRIBUTE_ACTIVE, "") : target.attr(ATTRIBUTE_ACTIVE, null);
-	if (oldState != active || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.changeActive);
+	if (oldState != active || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.activeStateChanged);
 };
