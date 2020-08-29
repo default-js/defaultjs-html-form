@@ -8,24 +8,26 @@ const ATTRIBUTES = [];
 
 const NAME_SPLITTER = /\./g;
 
-const valueHelper = (data, name, value) => {
+const valueHelper = function(data, name, value){
 	if (data == null || typeof data === "undefined")
 		return null;
+
+	const update = arguments.length > 2;
 
 	const names = name.split(NAME_SPLITTER);
 	while (names.length > 1) {
 		const key = names.shift();
 		let temp = data[key];
 		const has = typeof temp !== "undefiend" && temp != null;
-		if (!has && !value)
+		if (!has && !update)
 			return null;
-		else if (!has && value)
+		else if (!has && update)
 			temp = data[key] = {};
 
 		data = temp;
 	}
 
-	if (value)
+	if (update)
 		data[names[0]] = value;
 	return data[names[0]] ? data[names[0]] : null;
 };

@@ -13,20 +13,17 @@
 				<d-field name="foo.bar.text1" required>
 					foo.bar.text1: <input/>
 					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
-					<d-message condition="${field1 == 'message'}">test message</d-message>
 				</d-field>
 				<d-field name="foo.bar.text2" required>
 					foo.bar.text2: <input/>
 					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
-					<d-message condition="${field1 == 'message'}">test message</d-message>
 				</d-field>
 				<d-field name="foo.text1" required>
 					foo.text: <input/>
 					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
-					<d-message condition="${field1 == 'message'}">test message</d-message>
 				</d-field>
 				
-				<d-field name="field1" required>
+				<!-- <d-field name="field1" required>
 					<input/>
 					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
 					<d-message condition="${field1 == 'message'}">test message</d-message>
@@ -61,7 +58,7 @@
 					<d-field name="field2" condition="${typeof container1.field1 !== 'undefined' && container1.field1 == 'field'}"><input/></d-field>
 					<d-field name="field3"><input/></d-field>
 					<d-field name="field4" required><input/></d-field> 
-				</d-container>
+				</d-container> -->
 			</d-page>
 			<d-page condition="${typeof field1 !== 'undefined' && field1 == 'page'}">
 				<h3>page 2</h3>

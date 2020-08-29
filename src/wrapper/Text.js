@@ -15,23 +15,28 @@ const text = {
 			value = value.trim();
 			return value.length > 0 ? value : null;
 		}
-		return value;
+		
+		return null;
 	}
 };
 const number = {
 	accept: (value) => { return typeof value === "number"; },
 	value: (input) => { return input.valueAsNumber; },
 	normalize: (value) => {
-		if (value && Number.isNaN(value))
-			return null;
-		return value;
+		if (value && !Number.isNaN(value))
+			return value;
+			
+		return null;
 	}
 };
 const date = {
 	accept: (value) => { return value instanceof Date },
 	value: (input) => { return input.valueAsDate; },
 	normalize: (value) => {
-		return value;
+		if(value)
+			return value;
+	
+		return null;
 	}
 };
 const TYPES = { text, number, date, time: date };
