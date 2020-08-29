@@ -83,8 +83,16 @@
 					<d-validation condition="${$value != 'value-2'}">invalid</d-validation>
 					<d-message condition="${$value == 'value-3'}">test message</d-message>
 				</d-field>
-				<d-field name="file" file-format="base64" required>
+				<d-field name="singlefile" file-format="base64" required>
+					singlefile:
 					<input type="file"/>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="multifile" file-format="base64" file-name-target=":scope > div" required>
+					multifile:
+					<input type="file" multiple/>
+					<div></div>
 					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
 					<d-message condition="${$value == 'message'}">test message</d-message>
 				</d-field>

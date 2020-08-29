@@ -8,7 +8,7 @@ const readFile = (file, readFnName) => {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
 		reader.addEventListener("loadend", () => {
-			resolve({ 
+			resolve({
 				name: file.name,
 				type: file.type,
 				size: file.size,
@@ -19,61 +19,115 @@ const readFile = (file, readFnName) => {
 	});
 };
 
-const updateInput = async (wrapper) => {
-	console.log("update input");
-	const {input, field, format, filenameTarget} = wrapper; 
-	if (input.files[0]){
-		wrapper.file = await FORMAT[format](input.files[0]);
-		wrapper.file.format = format;
-		if(filenameTarget)
-			filenameTarget.textContent = wrapper.file.name;
-	}
-	else
-		wrapper.file = null;
-
-	field.trigger(EVENTS.changeValue);
-}
-
 //readAsDataURL
 
 const FORMAT = {
-	"form-input": async (file) => { return file; },
-	"data-url-base64": async (file) => {
-		return readFile(file, "readAsDataURL");
+	"form-input": async (file) => {
+		file.format = "form-input";
+		return file;
 	},
-	"base64" : async (file) => {
+	"data-url-base64": async (file) => {
+		const result = await readFile(file, "readAsDataURL");
+		result.format = "data-url-base64";
+		return result;
+	},
+	"base64": async (file) => {
 		const result = await readFile(file, "readAsDataURL");
 		result.data = result.data.substr(result.data.indexOf(",") + 1);
+		result.format = "base64";
 		return result;
-	} 
-}
-
-const init = (wrapper) => {
-	const { field } = wrapper;
-	const input = (wrapper.input = field.find(INPUTSELECTOR).first());
-	input.on(
-		"input", () => {
-			updateInput(wrapper);
-		},
-		false,
-		true
-	);
-
-	if (input.files[0])
-		updateInput(wrapper);
+	}
 };
 
+const readFiles = async (files, format, multiple) => {
+	let result = [];
+	for (let file of files)
+		result.push(await FORMAT[format](file));
+
+	if (result.length == 0)
+		return null;
+
+
+	return multiple ? result : result[0];
+};
+
+
+
 export default class File extends Wrapper {
-	static accept(field) {
-		return field.find(INPUTSELECTOR).length > 0;
+	static findInput(field) {
+		return field.find(INPUTSELECTOR).first();
 	}
 
-	constructor(field) {
-		super(field);
+	constructor(field, input) {
+		super(field, input);
+	}
+
+	async init() {
+		const { field, input } = this;
+		this.multiple = input.multiple;
 		this.format = field.attr("file-format") || "form-input";
 		this.filenameTarget = field.attr("file-name-target");
-		this.filenameTarget = field.find(this.filenameTarget).first();
-		init(this);
+		this.filenameTarget = this.filenameTarget ? field.find(this.filenameTarget).first() : null;
+		const { format, multiple } = this;
+
+		input.on(
+			"input",
+			toTimeoutHandle(
+				async () => {
+					this.updatedValue(await readFiles(input.files, format, multiple));
+					field.trigger(EVENTS.input, this.value);
+				},
+				false,
+				true
+			)
+		);
+
+		if (input.files && input.files.length != 0)
+			this.updatedValue(await readFiles(input.files, format, multiple));
+
+		field.trigger(EVENTS.input, this.value);
+	};
+
+	set readonly(readonly) {
+		this.input.attr("disabled", readonly ? "" : null);
+	}
+
+
+
+	acceptValue(value) {
+		if (value == null || typeof value === "undefined")
+			return true;
+		else if (this.multiple)
+			return value instanceof Array;
+		else
+			return value instanceof "object";
+	}
+
+	normalizeValue(value) {
+		if (value == null && typeof value === "undefined")
+			return null;
+		else if (this.multiple)
+			return value.length != 0 ? value : null;
+		else
+			return value;
+	}
+
+	updatedValue(value) {
+		if (value != this.__value__) {
+			this.__value__ = value;
+
+			if (this.filenameTarget && value) {
+				if (this.multiple) {
+					for (let file of value) {
+						this.filenameTarget.append(`<span>${file.name}</span>`);
+					}
+				}
+				else {
+					this.filenameTarget.append(`<span>${value.name}</span>`);
+				}
+			}
+
+		}
 	}
 
 	set readonly(readonly) {
@@ -81,11 +135,10 @@ export default class File extends Wrapper {
 	}
 
 	get value() {
-		return this.file;
+		return this.__value__;
 	}
 
-	set value(value) {
-		if(value.format == this.format)
-			this.file = value;
+	get valid() {
+		return this.input.checkValidity();
 	}
 }
