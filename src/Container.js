@@ -107,8 +107,9 @@ class Container extends BaseField {
 			}
 	}
 
-	updatedValue() {
-		const { value, fields } = this;
+	updatedValue(value) {
+		this.__value__ = {};
+		const { fields } = this;
 		if (fields)
 			for (let field of fields) {
 				if (field.name) field.value = valueHelper(value, field.name);

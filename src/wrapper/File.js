@@ -104,7 +104,7 @@ export default class File extends Wrapper {
 	}
 
 	normalizeValue(value) {
-		if (value == null && typeof value === "undefined")
+		if (value == null || typeof value === "undefined")
 			return null;
 		else if (this.multiple)
 			return value.length != 0 ? value : null;

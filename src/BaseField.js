@@ -69,6 +69,10 @@ class BaseField extends Base {
 				}
 			}
 		);
+		
+		this.form.on(EVENTS.allPublishValue, ()=> {
+			this.publishValue();
+		});
 
 		this.validate();
 	}

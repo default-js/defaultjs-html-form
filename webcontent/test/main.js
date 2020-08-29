@@ -2,6 +2,7 @@ function loadData() {
 
 	const form = document.querySelector("d-form");
 	form.data = {
+		nofiled : "nofield",
 		foo: {
 			bar : {
 				text1: "text1",

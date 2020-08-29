@@ -25,10 +25,10 @@ const createRow = (list, value) => {
 	const { container, template } = list;
 	const row = document.importNode(template.content, true).children[0];
 	container.append(row);
-	
-	if(value){
+
+	if (value) {
 		setTimeout(() => {
-			console.log("set value to row", {row, value});
+			console.log("set value to row", { row, value });
 			row.value = value;
 		}, TRIGGER_TIMEOUT);
 	}
@@ -58,7 +58,7 @@ class List extends BaseField {
 					this.__value__[index] = value;
 
 					this.validate();
-					this.publishValue(event.detail ? event.detail[0]: [row]);
+					this.publishValue(event.detail ? event.detail[0] : [row]);
 
 					event.preventDefault();
 					event.stopPropagation();
@@ -148,7 +148,7 @@ class List extends BaseField {
 	}
 
 	acceptValue(value) {
-		return value && value instanceof Array;
+		return !value || value instanceof Array;
 	}
 
 	normalizeValue(value) {
@@ -163,15 +163,14 @@ class List extends BaseField {
 	}
 
 	set value(value) {
-		if (this.__value__ != value && this.acceptValue(value)) {
+		if (this.acceptValue(value)) {
 			value = this.normalizeValue(value);
-			if (this.__value__ != value) {
-				this.container.children.remove();
-				this.__value__ = [];
-				if (value) {
-					for (let val of value)
-						createRow(this, val);
-				}
+
+			this.container.children.remove();
+			this.__value__ = [];
+			if (value) {
+				for (let val of value)
+					createRow(this, val);
 			}
 		}
 	}

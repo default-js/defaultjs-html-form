@@ -98,13 +98,16 @@ class Form extends HTMLElement {
 
 	set data(data) {
 		if (this.state == FORMSTATES.input) {
-			this.__data__ = data;
+			this.__data__ = {};//data;
 			for (let page of this.pages) {
 				if (page.name)
 					page.value = data[page.name];
 				else
 					page.value = data;
 			}
+
+			this.trigger(EVENTS.allPublishValue);
+
 		}
 	}
 

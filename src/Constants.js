@@ -59,6 +59,8 @@ export const EVENTS = {
 	siteChanged: EVENT_PREFIX + "site-changed",
 	/* */
 	formStateChanged: EVENT_PREFIX + "form-state-changed",
+	/* */
+	allPublishValue: EVENT_PREFIX + "all-publish-value",
 	
 	//old need to be refactored
 
