@@ -84,7 +84,7 @@ class Form extends HTMLElement {
 			this.trigger(EVENTS.formStateChanged);
 	}
 
-	valid() {
+	get valid() {
 		for (let page of this.pages) {
 			if (!page.valid) return false;
 		}

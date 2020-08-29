@@ -48,7 +48,7 @@
 			<xd-page class="hidden">
 				<h3>Registation Data</h3>
 				<section>
-					<d-wrapper-field  name="loginname" required>
+					<d-field  name="loginname" required>
 						<div class="form-group has-feedback">
 							<div class="col-xs-12">
 								<label class="control-label" for="loginname">loginname</label>
@@ -65,9 +65,9 @@
 								<div class="text-info">This is a test. Valid loginname is "user"!</div>
 							</div>
 						</div>
-					</d-wrapper-field>
+					</d-field>
 					
-					<d-wrapper-field name="password" required>
+					<d-field name="password" required>
 						<div class="form-group has-feedback">
 							<div class="col-xs-12">
 								<label for="password">password</label>
@@ -83,9 +83,9 @@
 								</d-validation>
 							</div>
 						</div>
-					</d-wrapper-field>
+					</d-field>
 					
-					<d-wrapper-field name="password_check" required>
+					<d-field name="password_check" required>
 						<div class="form-group has-feedback">
 							<div class="col-xs-12">
 								<label for="password_check">confirm password</label>
@@ -101,9 +101,9 @@
 								</d-validation>
 							</div>
 						</div>
-					</d-wrapper-field>
+					</d-field>
 					
-					<d-wrapper-field name="displayname" required>
+					<d-field name="displayname" required>
 						<div class="form-group has-feedback">
 							<div class="col-xs-12">
 								<label class="control-label" for="displayname">display name</label>
@@ -114,9 +114,9 @@
 								<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 							</div>
 						</div>
-					</d-wrapper-field>
+					</d-field>
 					
-					<d-wrapper-field name="avatar" file-name-target=".form-control.filename" file-format="base64">
+					<d-field name="avatar" file-name-target=".form-control.filename" file-format="base64">
 						<div class="form-group">
 							<div class="col-xs-12">
 								<label class="control-label" for="avatar">avatar image</label>
@@ -135,14 +135,14 @@
 								</div>
 							</div>
 						</div>
-					</d-wrapper-field>
+					</d-field>
 				</section>
 			</xd-page>
 			
 			<xd-page class="hidden">
 				<h3>Personal Data</h3>
 				<section>
-					<d-wrapper-field name="name" required>
+					<d-field name="name" required>
 						<div class="form-group has-feedback">
 							<div class="col-xs-12">
 								<label class="control-label" for="name">name</label>
@@ -153,9 +153,9 @@
 								<span class="glyphicon glyphicon-remove form-control-feedback"></span>	
 							</div>
 						</div>
-					</d-wrapper-field>
+					</d-field>
 					
-					<d-wrapper-field name="familyname" required>
+					<d-field name="familyname" required>
 						<div class="form-group has-feedback">
 							<div class="col-xs-12">
 								<label class="control-label" for="familyname">familyname</label>
@@ -166,9 +166,9 @@
 								<span class="glyphicon glyphicon-remove form-control-feedback"></span>		
 							</div>
 						</div>
-					</d-wrapper-field>
+					</d-field>
 					
-					<d-wrapper-field name="age" required>
+					<d-field name="age" required>
 						<div class="form-group has-feedback">
 							<div class="col-xs-12">
 								<label class="control-label" for="age">age</label>
@@ -188,7 +188,7 @@
 								<d-message class="label label-info" condition="age >=110">You are really alive?</d-message>
 							</div>
 						</div>
-					</d-wrapper-field>
+					</d-field>
 				</section>			
 			</xd-page>-->
 				
@@ -197,50 +197,52 @@
 				<section>
 					<d-list name="social" required>
 						<template>
-							<div class="panel">
-								<div class="panel-heading">
-									<div>
-										social reference
-										<d-delete-row class="btn btn-danger pull-right">remove</d-delete-row>
+							<d-row>
+								<div class="panel">
+									<div class="panel-heading">
+										<div>
+											social reference
+											<d-delete-row class="btn btn-danger pull-right">remove</d-delete-row>
+										</div>
 									</div>
-								</div>
-								<section class="panel-body">
-									<div class="row">
-										<d-wrapper-field class="col-xs-12" name="socaltype" required>
+									<section class="panel-body">
+										<div class="row">
+											<d-field class="col-xs-12" name="socaltype" required>
+												
+												<div class="form-group has-feedback">
+													<div class="col-xs-12">
+														<label class="control-label" for="socaltype">social type</label>
+													</div>
+													<div class="col-xs-12">
+														<select class="form-control" name="socaltype">
+															<option value="" selected="selected">---------</option>
+															<option value="facebook">facebook</option>
+															<option value="google">google</option>
+															<option value="youtube">youtube</option>
+															<option value="instagram">instagram</option>
+														</select>
+														<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+														<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+													</div>
+												</div>
+											</d-field>
 											
-											<div class="form-group has-feedback">
-												<div class="col-xs-12">
-													<label class="control-label" for="socaltype">social type</label>
+											<d-field class="col-xs-12" name="socialid" required condition="$item.socaltype != undefined && $item.socaltype != ''">
+												<div class="form-group has-feedback">
+													<div class="col-xs-12">
+														<label class="control-label" for="socialid">your social id</label>
+													</div>
+													<div class="col-xs-12">
+														<input type="text" class="form-control" name="socialid" />
+														<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+														<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+													</div>
 												</div>
-												<div class="col-xs-12">
-													<select class="form-control" name="socaltype">
-														<option value="" selected="selected">---------</option>
-														<option value="facebook">facebook</option>
-														<option value="google">google</option>
-														<option value="youtube">youtube</option>
-														<option value="instagram">instagram</option>
-													</select>
-													<span class="glyphicon glyphicon-ok form-control-feedback"></span>
-													<span class="glyphicon glyphicon-remove form-control-feedback"></span>
-												</div>
-											</div>
-										</d-wrapper-field>
-										
-										<d-wrapper-field class="col-xs-12" name="socialid" required condition="$item.socaltype != undefined && $item.socaltype != ''">
-											<div class="form-group has-feedback">
-												<div class="col-xs-12">
-													<label class="control-label" for="socialid">your social id</label>
-												</div>
-												<div class="col-xs-12">
-													<input type="text" class="form-control" name="socialid" />
-													<span class="glyphicon glyphicon-ok form-control-feedback"></span>
-													<span class="glyphicon glyphicon-remove form-control-feedback"></span>
-												</div>
-											</div>
-										</d-wrapper-field>
-									</div>
-								</section>
-							</div>
+											</d-field>
+										</div>
+									</section>
+								</div>
+							</d-row>
 						</template>
 						<div>
 							<label class="control-label">social references:</label>

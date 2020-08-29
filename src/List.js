@@ -128,6 +128,7 @@ class List extends BaseField {
 		});
 
 		this.validate();
+		this.publishValue();
 	}
 
 	readonlyUpdated() {
