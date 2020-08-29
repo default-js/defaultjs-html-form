@@ -1,10 +1,12 @@
 import Field from "../Field";
 
 export default class Wrapper {
-	static accept(field) { }
-
-	constructor(field) {
+	
+	static findInput(field){ return null;}
+	
+	constructor(field, input) {
 		this.field = field;
+		this.input = input;
 		this.init();
 	}
 
@@ -26,5 +28,9 @@ export default class Wrapper {
 	
 	get value(){
 		return null;
+	}
+	
+	get valid(){
+		return true;
 	}
 }

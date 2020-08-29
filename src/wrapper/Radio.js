@@ -24,13 +24,36 @@ const init = (wrapper) => {
 };
 
 export default class Radio extends Wrapper {
-	static accept(field) {
-		return field.find(INPUTSELECTOR).length > 0;
+	static findInput(field) {
+		const input = field.find(INPUTSELECTOR);
+		if (input.length == 0)
+			return null;
+
+		return input;
 	}
-	constructor(field) {
-		super(field);
-		init(this);
+
+	constructor(field, input) {
+		super(field, input);
 	}
+
+	init() {
+		const { field, input } = this;
+		const name = field.name + getRandomInt();
+		for (let radio of input) radio.name = name;
+		input.on(
+			"input",
+			toTimeoutHandle(
+				() => {
+					field.trigger(EVENTS.input, this.normalizeValue(this.value));
+				},
+				false,
+				true
+			)
+		);
+
+		field.trigger(EVENTS.input, this.normalizeValue(this.value));
+	}
+
 
 	set readonly(readonly) {
 		this.input.attr("disabled", readonly ? "" : null);
@@ -43,7 +66,24 @@ export default class Radio extends Wrapper {
 		return value.values().next().value;
 	}
 
-	set value(value) {
-		this.input.val(value);
+	normalizeValue(value) {
+		if (value)
+			return value;
+
+		return null;
+	}
+
+	acceptValue(value) {
+		if (value == null || typeof value === "undefined")
+			return true;
+		else{
+			const type = typeof value;
+			return type === "string" || type === "boolean";
+		}
+	}
+
+	updatedValue(value) {
+		if (this.field.value != this.value)
+			this.input.val(value ? value : null);
 	}
 }

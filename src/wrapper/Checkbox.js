@@ -4,27 +4,35 @@ import Wrapper from "./Wrapper";
 
 const INPUTSELECTOR = 'input[type="checkbox"]';
 
-const init = (wrapper) => {
-	const { field } = wrapper;
-	wrapper.input = field.find(INPUTSELECTOR);
-	if (wrapper.input.length == 1) wrapper.input = wrapper.input.first();
-	wrapper.input.on(
-		"change input",
-		toTimeoutHandle(() => {
-			field.trigger( EVENTS.changeValue);
-		}),
-		false,
-		true,
-	);
-};
 
 export default class Checkbox extends Wrapper {
-	static accept(field) {
-		return field.find(INPUTSELECTOR).length > 0;
+	static findInput(field) {
+		const input = field.find(INPUTSELECTOR);
+		if (input.length == 0)
+			return null;
+			
+		return input.length == 1 ? input.first() : input;
 	}
-	constructor(field) {
-		super(field);
-		init(this);
+
+	constructor(field, input) {
+		super(field, input);
+	}
+
+	init() {
+		const { field, input } = this;
+		this.multiple = input instanceof NodeList;
+		input.on(
+			"input",
+			toTimeoutHandle(
+				() => {
+					field.trigger(EVENTS.input, this.normalizeValue(this.value));
+				},
+				false,
+				true
+			)
+		);
+
+		field.trigger(EVENTS.input, this.normalizeValue(this.value));
 	}
 
 	set readonly(readonly) {
@@ -44,7 +52,32 @@ export default class Checkbox extends Wrapper {
 		return values;
 	}
 
-	set value(value) {
-		this.input.val(value);
+	normalizeValue(value) {
+		if (value) {
+			if (this.multiple) {
+				value = value.filter((item) => !!item);
+				return value.length != 0 ? value : null;
+			} else {
+				return value;
+			}
+		}
+
+		return null;
+	}
+
+	acceptValue(value) {
+		if (value == null || typeof value === "undefined")
+			return true;
+		else if (this.multiple)
+			return value instanceof Array;
+		else{
+			const type = typeof value;
+			return type === "string" || type === "boolean";
+		}
+	}
+
+	updatedValue(value) {
+		if (this.field.value != this.value)
+			this.input.val(value ? value : null);
 	}
 }

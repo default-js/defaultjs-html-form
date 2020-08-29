@@ -21,6 +21,9 @@ class Field extends BaseField {
 	async initField() {
 		await this.initBaseField();		
 		this.wrapper = findWrapper(this);
+		this.validator.addCustomCheck(async () => {
+			return this.wrapper.valid;
+		});
 	}
 
 	readonlyUpdated() {

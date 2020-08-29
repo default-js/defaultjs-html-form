@@ -4,27 +4,29 @@ import Wrapper from "./Wrapper";
 
 const INPUTSELECTOR = 'select';
 
-const init = (wrapper) => {
-	const { field } = wrapper;
-	const input = (wrapper.input = field.find(INPUTSELECTOR).first());
-	input.on(
-		"change input",
-		toTimeoutHandle(() => {
-			field.trigger(EVENTS.changeValue);
-		}),
-		false,
-		true,
-	);
-};
-
 export default class Text extends Wrapper {
-	static accept(field) {
-		return field.find(INPUTSELECTOR).length > 0;
+	static findInput(field) {
+		return field.find(INPUTSELECTOR).first();
 	}
 
-	constructor(field) {
-		super(field);
-		init(this);
+	constructor(field, input) {
+		super(field, input);
+	}
+
+	init() {
+		const { field, input } = this;
+		input.on(
+			"input, changed",
+			toTimeoutHandle(
+				() => {
+					field.trigger(EVENTS.input, this.value);
+				},
+				false,
+				true
+			)
+		);
+
+		field.trigger(EVENTS.input, this.value);
 	}
 
 	set readonly(readonly) {
@@ -32,13 +34,34 @@ export default class Text extends Wrapper {
 	}
 
 	get value() {
-		if(this.input.multiple)
-			return this.input.val();
+		return this.normalizeValue(this.input.multiple ? this.input.val() : this.input.value);
+	}
+	
+	normalizeValue(value) {
+		if (value) {
+			if(this.input.multiple){
+				value = value.filter((item) => item && item.trim().length > 0);
+				return value.length != 0 ? value : null;
+			} else{
+				value = value.trim();
+				return value.length != 0 ? value : null;	
+			}				
+		}
 		
-		return this.input.value;
+		return null;
 	}
 
-	set value(value) {
-		this.input.val(value ? value : null);
+	acceptValue(value) {
+		if (value == null || typeof value === "undefined")
+			return true;
+		else if (this.input.multiple)
+			return value instanceof Array;
+		else
+			return typeof value === "string";
+	}
+
+	updatedValue(value) {
+		if (this.field.value != this.value)
+			this.input.val(value ? value : null);
 	}
 }
