@@ -1,5 +1,5 @@
 function loadData() {
-
+	console.log("loadData");
 	const form = document.querySelector("d-form");
 	form.data = {
 		nofiled : "nofield",
@@ -42,3 +42,7 @@ function loadData() {
 		]
 	};
 }
+
+document.ready(() => {
+	loadData();
+});
