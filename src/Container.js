@@ -8,7 +8,7 @@ const ATTRIBUTES = [];
 
 const NAME_SPLITTER = /\./g;
 
-const valueHelper = function(data, name, value){
+const valueHelper = function(data, name, value) {
 	if (data == null || typeof data === "undefined")
 		return null;
 
@@ -29,7 +29,8 @@ const valueHelper = function(data, name, value){
 
 	if (update)
 		data[names[0]] = value;
-	return data[names[0]] ? data[names[0]] : null;
+	else
+		return data[names[0]] ? data[names[0]] : null;
 };
 
 class Container extends BaseField {
