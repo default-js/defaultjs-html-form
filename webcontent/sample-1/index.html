@@ -44,8 +44,8 @@
 					</a>
 				</li>
 			</ul>
-<!-- 
-			<xd-page class="hidden">
+
+			<d-page>
 				<h3>Registation Data</h3>
 				<section>
 					<d-field  name="loginname" required>
@@ -137,9 +137,9 @@
 						</div>
 					</d-field>
 				</section>
-			</xd-page>
+			</d-page>
 			
-			<xd-page class="hidden">
+			<d-page>
 				<h3>Personal Data</h3>
 				<section>
 					<d-field name="name" required>
@@ -174,28 +174,28 @@
 								<label class="control-label" for="age">age</label>
 							</div>
 							<div class="col-xs-12">
-								<input type="number" class="form-control" name="age" />
+								<input type="number" class="form-control" name="age" min="0"/>
 								<span class="glyphicon glyphicon-ok form-control-feedback"></span>
 								<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 							</div>
 							<div class="col-xs-12">
 								<d-validation class="label label-danger" condition="$value >= 0">You are not existing! You are not born!</d-validation>
-								<d-message class="label label-info" condition="age >= 0 && age < 14">child</d-message>
-								<d-message class="label label-info" condition="age >= 14 && age < 18">Teenager</d-message>
-								<d-message class="label label-info" condition="age >= 18 && age < 21">young adult</d-message>
-								<d-message class="label label-info" condition="age >= 21 && age < 70">adult</d-message>
-								<d-message class="label label-info" condition="age >=70 && age < 100">You are really old!</d-message>
-								<d-message class="label label-info" condition="age >=110">You are really alive?</d-message>
+								<d-message class="label label-info" condition="age && age >= 0 && age < 14">child</d-message>
+								<d-message class="label label-info" condition="age && age >= 14 && age < 18">Teenager</d-message>
+								<d-message class="label label-info" condition="age && age >= 18 && age < 21">young adult</d-message>
+								<d-message class="label label-info" condition="age && age >= 21 && age < 70">adult</d-message>
+								<d-message class="label label-info" condition="age && age >=70 && age < 100">You are really old!</d-message>
+								<d-message class="label label-info" condition="age && age >=110">You are really alive?</d-message>
 							</div>
 						</div>
 					</d-field>
 				</section>			
-			</xd-page>-->
+			</d-page>
 				
-			<d-page xxxcondition="${age && age >= 18}">
+			<d-page condition="${age && age >= 18}">
 				<h3>Social Information</h3>
 				<section>
-					<d-list name="social" required>
+					<d-list name="social">
 						<template>
 							<d-row>
 								<div class="panel">

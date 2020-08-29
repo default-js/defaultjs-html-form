@@ -11,15 +11,18 @@ const text = {
 	accept: (value) => { return typeof value === "string" },
 	value: (input) => { return input.value; },
 	normalize: (value) => {
-		value = value.trim();
-		return value.length > 0 ? value : null;
+		if (value) {
+			value = value.trim();
+			return value.length > 0 ? value : null;
+		}
+		return value;
 	}
 };
 const number = {
 	accept: (value) => { return typeof value === "number"; },
 	value: (input) => { return input.valueAsNumber; },
 	normalize: (value) => {
-		if (Number.isNaN(value))
+		if (value && Number.isNaN(value))
 			return null;
 		return value;
 	}
@@ -31,7 +34,7 @@ const date = {
 		return value;
 	}
 };
-const TYPES = { text, number, date, time: date};
+const TYPES = { text, number, date, time: date };
 
 export default class Text extends Wrapper {
 

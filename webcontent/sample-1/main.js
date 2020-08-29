@@ -1,13 +1,20 @@
-function loadData(){
+function loadData() {
 
-    const form = document.querySelector("d-form");
-    form.data = {
-        textinput: "textinput",
-        textarea: "textarea",
-        singleCheckbox: true,
-        multiCheckbox : ["value-2", "value-3"],
-        radioinput: "value-2",
-		select : "value-3",
-		selectMultiple : ["value-1", "value-3"],
-    };
+	const form = document.querySelector("d-form");
+	form.data = {
+		"loginname": "user",
+		"password": "test",
+		"password_check": "test",
+		"displayname": "test",
+		"avatar": null,
+		"name": "test",
+		"familyname": "test",
+		"age": 20,
+		"social": [
+			{
+				"socaltype": "facebook",
+				"socialid": "test"
+			}
+		]
+	};
 }

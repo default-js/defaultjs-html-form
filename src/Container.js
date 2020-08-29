@@ -6,6 +6,30 @@ import BaseField from "./BaseField";
 
 const ATTRIBUTES = [];
 
+const NAME_SPLITTER = /\./g;
+
+const valueHelper = (data, name, value) => {
+	if (data == null || typeof data === "undefined")
+		return null;
+
+	const names = name.split(NAME_SPLITTER);
+	while (names.length > 1) {
+		const key = names.shift();
+		let temp = data[key];
+		const has = typeof temp !== "undefiend" && temp != null;
+		if (!has && !value)
+			return null;
+		else if (!has && value)
+			temp = data[key] = {};
+
+		data = temp;
+	}
+
+	if (value)
+		data[names[0]] = value;
+	return data[names[0]] ? data[names[0]] : null;
+};
+
 class Container extends BaseField {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(BaseField.observedAttributes);
@@ -19,9 +43,9 @@ class Container extends BaseField {
 			(event) => {
 				if (event.target != this) {
 					const { name, value } = event.target;
-					
+
 					if (name)
-						this.__value__[name] = value
+						valueHelper(this.__value__, name, value);
 					else if (value != null)
 						ObjectUtils.merge(this.__value__, value);
 
@@ -85,7 +109,7 @@ class Container extends BaseField {
 		const { value, fields } = this;
 		if (fields)
 			for (let field of fields) {
-				if (field.name) field.value = value[field.name];
+				if (field.name) field.value = valueHelper(value, field.name);
 				else if (field instanceof Container) field.value = value;
 			}
 	}
