@@ -1,10 +1,11 @@
+import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE } from "./Constants";
+import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD } from "./Constants";
 import Message from "./Message";
 import Page from "./Page";
 import Control from "./Control";
 
-const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE];
+const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD];
 
 const readonly = (form, readonly) => {
 	for (let page of form.pages) {
@@ -169,12 +170,31 @@ class Form extends HTMLElement {
 		}
 	}
 
-	summary() {
+	async summary() {
 		this.state = FORMSTATES.summary;
 	}
 
-	submit() {
+	async submit() {
 		this.state = FORMSTATES.finished;
+		const data = this.data;
+
+		let endpoint = this.attr(ATTRIBUTE_ENDPOINT);
+		if (endpoint) {
+			endpoint = await ExpressionResolver.resolveText(endpoint, data, endpoint);
+			const url = new URL(endpoint, location.origin);
+			
+			return await fetch(url.toString(), {
+				method : (this.attr(ATTRIBUTE_METHOD) || "post").toLowerCase(),
+				credentials : "include",
+				mode : "cors",
+				headers: {
+					"content-type": "application/json"
+				},
+				body : JSON.stringify(data)
+			});
+		}
+
+		this.trigger(EVENTS.submit, data);
 	}
 }
 window.customElements.define(NODENAMES.Form, Form);

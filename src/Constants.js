@@ -61,6 +61,8 @@ export const EVENTS = {
 	formStateChanged: EVENT_PREFIX + "form-state-changed",
 	/* */
 	allPublishValue: EVENT_PREFIX + "all-publish-value",
+	/* */
+	submit: EVENT_PREFIX + "submit",
 	
 	//old need to be refactored
 
@@ -87,6 +89,9 @@ export const SPECIALVARS = {
 //ATTRIBUTES
 
 export const ATTRIBUTE_NAME = "name";
+export const ATTRIBUTE_ENDPOINT = "endpoint";
+export const ATTRIBUTE_METHOD = "method";
+
 export const ATTRIBUTE_STEP = "step";
 export const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
 export const ATTRIBUTE_REQUIRED = "required";
