@@ -1,4 +1,3 @@
-import "@default-js/defaultjs-extdom";
 import { NODENAMES, EVENTS, ATTRIBUTE_STEP } from "./Constants";
 import Container from "./Container";
 

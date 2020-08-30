@@ -1,4 +1,3 @@
-import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE } from "./Constants";
 import Message from "./Message";

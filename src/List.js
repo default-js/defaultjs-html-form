@@ -1,4 +1,3 @@
-import "@default-js/defaultjs-extdom";
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_MAX, ATTRIBUTE_INVALID } from "./Constants";
 import { toTimeoutHandle } from "./utils/EventHelper";
 import { treeFilter } from "./utils/NodeHelper";

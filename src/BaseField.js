@@ -1,4 +1,3 @@
-import "@default-js/defaultjs-extdom";
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_REQUIRED_ON_ACTIVE_ONLY, ATTRIBUTE_NOVALUE } from "./Constants";
 import { toTimeoutHandle } from "./utils/EventHelper";
 import { updateValidState } from "./utils/StateHelper";

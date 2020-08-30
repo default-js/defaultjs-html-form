@@ -19,7 +19,7 @@ module.exports = merge(common, {
         port : 80
     },
     output : {
-	    filename : project.buildname + '.js',
+	    filename: '[name]-' + project.buildname + '.js',
         path : path.resolve(__dirname, 'dist')
     },
     plugins : [ new webpack.HotModuleReplacementPlugin() ]  

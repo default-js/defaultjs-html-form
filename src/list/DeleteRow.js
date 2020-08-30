@@ -1,4 +1,3 @@
-import "@default-js/defaultjs-extdom";
 import { NODENAMES, EVENTS } from "../Constants";
 import FormButton from "../FormButton";
 

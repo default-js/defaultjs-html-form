@@ -1,7 +1,11 @@
 const path = require('path');
 
 module.exports = {
-	entry: './browser.js',
+	entry: {
+		browser: './browser.js',
+		module: './module.js',
+		bundle: './bundle.js'
+	},
 	resolve: {
 		alias: {
 			"@src": path.resolve(__dirname + '/src'),

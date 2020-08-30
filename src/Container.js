@@ -1,4 +1,3 @@
-import "@default-js/defaultjs-extdom";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { NODENAMES, EVENTS } from "./Constants";
 import { findFields } from "./utils/NodeHelper";

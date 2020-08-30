@@ -12,7 +12,7 @@ module.exports = merge(common, {
     },
     devtool : 'inline-source-map',
     output : {
-	    filename : project.buildname + '.js',
+	    filename: '[name]-' + project.buildname + '.js',
         path : path.resolve(__dirname, 'dist')
     }, plugins : [ new ReplaceInFileWebpackPlugin([ 
 			{

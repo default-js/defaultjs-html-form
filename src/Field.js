@@ -1,4 +1,3 @@
-import "@default-js/defaultjs-extdom";
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import BaseField from "./BaseField";
 import { findWrapper } from "./wrapper";
