@@ -18,7 +18,11 @@ class Page extends Container {
 
 	async initPage() {
 		await this.initContainer();
-	}	
+	}
+
+	get step(){
+		return this.attr(ATTRIBUTE_STEP);
+	}
 	
 	conditionUpdated(){}
 }

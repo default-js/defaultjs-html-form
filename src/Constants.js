@@ -21,12 +21,13 @@ export const NODENAMES = {
 	Container: HTML_TAG_PREFIX + "container",
 	Validation: HTML_TAG_PREFIX + "validation",
 	Message: HTML_TAG_PREFIX + "message",
+	ProgressBar: HTML_TAG_PREFIX + "progress-bar",
+	Step: HTML_TAG_PREFIX + "step",
 };
 export const FORMSTATES = {
 	init: "init",
 	input: "input",
 	summary: "summary",
-	submit: "submit",
 	finished: "finished",
 };
 
@@ -39,9 +40,9 @@ export const EVENT_PREFIX = HTML_TAG_PREFIX + "event-";
 
 export const EVENTS = {
 	initialize: EVENT_PREFIX + "initialize",
-	/* fired by change value from an field implementation 
-	 * and consumed by the reference implementation of 
-	 * BaseField to make validation and fire valueChanged 
+	/* fired by change value from an field implementation
+	 * and consumed by the reference implementation of
+	 * BaseField to make validation and fire valueChanged
 	 * event
 	 */
 	input: EVENT_PREFIX + "input",
@@ -55,7 +56,7 @@ export const EVENTS = {
 	conditionStateChanged: EVENT_PREFIX + "condition-state-changed",
 	/* */
 	validStateChanged: EVENT_PREFIX + "valid-state-changed",
-    /* */
+	/* */
 	siteChanged: EVENT_PREFIX + "site-changed",
 	/* */
 	formStateChanged: EVENT_PREFIX + "form-state-changed",
@@ -63,7 +64,9 @@ export const EVENTS = {
 	allPublishValue: EVENT_PREFIX + "all-publish-value",
 	/* */
 	submit: EVENT_PREFIX + "submit",
-	
+	/* */
+	progressbarChanged : EVENT_PREFIX + "progress-bar-changed",
+
 	//old need to be refactored
 
 	added: EVENT_PREFIX + "added",
@@ -83,14 +86,15 @@ export const EVENTS = {
 
 export const SPECIALVARS = {
 	CURRENTVALUE: "$value",
-	CURRENTLISTROW: "$item"
-}
+	CURRENTLISTROW: "$item",
+};
 
 //ATTRIBUTES
 
 export const ATTRIBUTE_NAME = "name";
 export const ATTRIBUTE_ENDPOINT = "endpoint";
 export const ATTRIBUTE_METHOD = "method";
+export const ATTRIBUTE_STATE = "state";
 
 export const ATTRIBUTE_STEP = "step";
 export const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
@@ -106,4 +110,4 @@ export const ATTRIBUTE_INVALID = "invalid";
 export const ATTRIBUTE_CONDITION_VALID = "condition-valid";
 export const ATTRIBUTE_CONDITION_INVALID = "condition-invalid";
 export const ATTRIBUTE_MAX = "max";
-
+export const ATTRIBUTE_PROGRESS = "progress";

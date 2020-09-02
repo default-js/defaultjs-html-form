@@ -1,11 +1,12 @@
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD } from "./Constants";
-import Message from "./Message";
-import Page from "./Page";
-import Control from "./Control";
+import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE } from "./Constants";
+import "./Message";
+import "./Page";
+import "./Control";
+import "./ProgressBar";
 
-const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD];
+const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE];
 
 const readonly = (form, readonly) => {
 	for (let page of form.pages) {
@@ -13,7 +14,6 @@ const readonly = (form, readonly) => {
 		page.active = readonly;
 	}
 };
-
 
 const init = (form) => {
 	form.state = FORMSTATES.init;
@@ -39,20 +39,16 @@ class Form extends HTMLElement {
 		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
 		this.activePageIndex = -1;
 
-		this.on(EVENTS.valueChanged,
-			(event) => {
-				const { name, value } = event.target;
-				if (name)
-					this.__data__[name] = value
-				else if (value != null)
-					ObjectUtils.merge(this.__data__, value);
+		this.on(EVENTS.valueChanged, (event) => {
+			const { name, value } = event.target;
+			if (name) this.__data__[name] = value;
+			else if (value != null) ObjectUtils.merge(this.__data__, value);
 
-				this.trigger(EVENTS.executeValidate, event.detail[0]);
+			this.trigger(EVENTS.executeValidate, event.detail[0]);
 
-				event.preventDefault();
-				event.stopPropagation();
-			}
-		);
+			event.preventDefault();
+			event.stopPropagation();
+		});
 	}
 
 	connectedCallback() {
@@ -75,13 +71,12 @@ class Form extends HTMLElement {
 		if (actual == FORMSTATES.input && state != FORMSTATES.input) readonly(this, true);
 		else if (actual != FORMSTATES.input && state == FORMSTATES.input) {
 			readonly(this, false);
-			if (this.activePage)
-				this.activePage.active = true;
+			if (this.activePage) this.activePage.active = true;
 		}
 		this._state = state;
 
-		if (actual != state)
-			this.trigger(EVENTS.formStateChanged);
+		if (actual != state) this.trigger(EVENTS.formStateChanged);
+		this.attr(ATTRIBUTE_STATE, this._state);
 	}
 
 	get valid() {
@@ -98,16 +93,13 @@ class Form extends HTMLElement {
 
 	set data(data) {
 		if (this.state == FORMSTATES.input) {
-			this.__data__ = {};//data;
+			this.__data__ = {}; //data;
 			for (let page of this.pages) {
-				if (page.name)
-					page.value = data[page.name];
-				else
-					page.value = data;
+				if (page.name) page.value = data[page.name];
+				else page.value = data;
 			}
 
 			this.trigger(EVENTS.allPublishValue);
-
 		}
 	}
 
@@ -123,6 +115,7 @@ class Form extends HTMLElement {
 			if (current) current.active = false;
 			this.activePageIndex = this.pages.indexOf(page);
 			page.active = true;
+			if (this.state != FORMSTATES.input) this.state = FORMSTATES.input;
 
 			this.trigger(EVENTS.siteChanged);
 		}
@@ -161,12 +154,11 @@ class Form extends HTMLElement {
 		const next = await this.nextPage;
 		if (next) {
 			this.activePage = next;
-			if (this.state == FORMSTATES.init)
-				this._state = FORMSTATES.input;
+			if (this.state == FORMSTATES.init) this._state = FORMSTATES.input;
 		} else if (this.useSummaryPage) {
 			this.summary();
 		} else {
-			this.submit()
+			this.submit();
 		}
 	}
 
@@ -182,15 +174,15 @@ class Form extends HTMLElement {
 		if (endpoint) {
 			endpoint = await ExpressionResolver.resolveText(endpoint, data, endpoint);
 			const url = new URL(endpoint, location.origin);
-			
+
 			return await fetch(url.toString(), {
-				method : (this.attr(ATTRIBUTE_METHOD) || "post").toLowerCase(),
-				credentials : "include",
-				mode : "cors",
+				method: (this.attr(ATTRIBUTE_METHOD) || "post").toLowerCase(),
+				credentials: "include",
+				mode: "cors",
 				headers: {
-					"content-type": "application/json"
+					"content-type": "application/json",
 				},
-				body : JSON.stringify(data)
+				body: JSON.stringify(data),
 			});
 		}
 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="/css/style.css" />
+	</head>
+	<body>
+		<d-form use-summary-page>
+			<d-progress-bar>
+				<div class="progress"></div>
+				<d-step name="1">1</d-step>
+				<d-step name="2">2</d-step>
+				<d-step name="3">3</d-step>
+				<d-step name="summary">summary</d-step>
+				<d-step name="finished">submited</d-step>
+			</d-progress-bar>
+
+			<d-page step="1">
+				<h3>page 1</h3>
+			</d-page>
+			<d-page step="2">
+				<h3>page 2-1</h3>
+			</d-page>
+			<d-page step="2">
+				<h3>page 2-2</h3>
+			</d-page>
+			<d-page step="3">
+				<h3>page 3</h3>
+			</d-page>
+
+			<d-control>
+				<d-control-back>back</d-control-back>
+				<d-control-next>next</d-control-next>
+				<d-control-summary>sumary</d-control-summary>
+				<d-control-submit>submit</d-control-submit>
+			</d-control>
+		</d-form>
+
+
+		<div>
+			<button id="load" onclick="loadData()">load data</button>
+
+		</div>
+
+		<script type="application/javascript" src="/bundle-defaultjs-html-form.js"></script>
+		<script type="application/javascript" src="main.js"></script>
+
+
+	</body>
+</html>
