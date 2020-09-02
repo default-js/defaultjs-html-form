@@ -68,7 +68,7 @@ class ProgressBar extends HTMLElement {
 				}
 			}
 
-            this.progress = state != FORMSTATES.summary || state == FORMSTATES.finished ? progress : 100;
+            this.progress = state == FORMSTATES.summary || state == FORMSTATES.finished ? 100 : progress;
             
             this.trigger(EVENTS.progressbarChanged);
 		});
