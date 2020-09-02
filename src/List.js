@@ -27,7 +27,6 @@ const createRow = (list, value) => {
 
 	if (value) {
 		setTimeout(() => {
-			console.log("set value to row", { row, value });
 			row.value = value;
 		}, TRIGGER_TIMEOUT);
 	}

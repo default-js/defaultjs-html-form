@@ -11,41 +11,18 @@
 	<body>
 	 <div class="container">
 		<h1>User Registration</h1>
-		<d-form class=" form-horizontal" endpoint="/api/test/${loginname}" method="post" >			
-			<ul class="nav nav-pills nav-justified thumbnail " data-form-step-panel="">
-				<li data-form-step="1">
-					<a>
-						<span class="list-group-item-heading">Registation Data</span>
-					</a>
-				</li>
-				<li data-form-step="2">
-					<a>
-						<span class="list-group-item-heading">Personal Data</span>
-					</a>
-				</li>
-				<li data-form-step="3">
-					<a>
-						<span class="list-group-item-heading">Social Information</span>
-					</a>
-				</li>
-				<li data-form-step="4">
-					<a>
-						<span class="list-group-item-heading">Something about yourself</span>
-					</a>
-				</li>
-				<li data-form-step="form-step-summary">
-					<a>
-						<span class="list-group-item-heading">Summary</span>
-					</a>
-				</li>
-				<li data-form-step="form-step-submitted">
-					<a>
-						<span class="list-group-item-heading">Submitted</span>
-					</a>
-				</li>
-			</ul>
+		<d-form class=" form-horizontal" endpoint="/api/test/${loginname}" method="post" use-summary-page>			
+			<d-progress-bar>
+				<div class="progress"></div>
+				<d-step name="reg-data">Registation Data</d-step>
+				<d-step name="person-data">Personal Data</d-step>
+				<d-step name="social-data">Social Information</d-step>
+				<d-step name="4">Something about yourself</d-step>
+				<d-step name="summary">Summary</d-step>
+				<d-step name="finished">Submitted</d-step>
+			</d-progress-bar>
 
-			<d-page>
+			<d-page step="reg-data">
 				<h3>Registation Data</h3>
 				<section>
 					<d-field  name="loginname" required>
@@ -139,7 +116,7 @@
 				</section>
 			</d-page>
 			
-			<d-page>
+			<d-page step="person-data">
 				<h3>Personal Data</h3>
 				<section>
 					<d-field name="name" required>
@@ -192,7 +169,7 @@
 				</section>			
 			</d-page>
 				
-			<d-page condition="${age && age >= 18}">
+			<d-page step="social-data" condition="${age && age >= 18}">
 				<h3>Social Information</h3>
 				<section>
 					<d-list name="social">
