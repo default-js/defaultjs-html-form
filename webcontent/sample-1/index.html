@@ -17,7 +17,7 @@
 				<d-step name="reg-data">Registation Data</d-step>
 				<d-step name="person-data">Personal Data</d-step>
 				<d-step name="social-data">Social Information</d-step>
-				<d-step name="4">Something about yourself</d-step>
+				<d-step name="private-data">Something about yourself</d-step>
 				<d-step name="summary">Summary</d-step>
 				<d-step name="finished">Submitted</d-step>
 			</d-progress-bar>
@@ -232,7 +232,63 @@
 						</div>	
 					</d-list>
 				</section>
-			</d-page>	
+			</d-page>
+			
+			<d-page step="private-data" data-form-condition="age >= 18">
+				<h3>Something about yourself</h3>
+				<section>
+					<div class="row">
+						<d-field class="col-xs-12" name="job" required>
+							<div class="form-group has-feedback">
+								<div class="col-xs-12">
+									<label class="control-label" for="job">job</label>
+								</div>
+								<div class="col-xs-12">
+									<select class="form-control" name="job">
+										<option value="" selected="selected">---------</option>
+										<option value="student">student</option>
+										<option value="employee">employee</option>
+										<option value="independent">independent</option>
+										<option value="unemployed">unemployed</option>
+									</select>
+									<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+									<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+								</div>
+
+							</div>
+						</d-field>
+					</div>
+					<div class="row">
+						<d-field class="col-xs-12" name="school" condition="job == 'student'" required>
+							<div class="form-group has-feedback">
+								<div class="col-xs-12">
+									<label class="control-label" for="name">name of your school</label>
+								</div>
+								<div class="col-xs-12">
+									<input type="text" class="form-control" name="school" />
+									<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+									<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+								</div>
+							</div>
+						</d-field>
+					</div>
+					
+					<div class="row">
+						<d-field class="col-xs-12" name="company" condition="job == 'employee' || job == 'independent'" required>
+							<div class="form-group has-feedback" >
+								<div class="col-xs-12">
+									<label class="control-label" for="name">name of your company</label>
+								</div>
+								<div class="col-xs-12">
+									<input type="text" class="form-control" name="company" />
+									<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+									<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+								</div>
+							</div>
+						</d-field>
+					</div>
+				</section>
+			</d-page>
 				
 			<d-control>
 				<d-control-back class="btn btn-primary">back</d-control-back>
