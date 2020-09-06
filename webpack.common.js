@@ -2,8 +2,8 @@ const path = require('path');
 
 module.exports = {
 	entry: {
+		module: './index.js',
 		browser: './browser.js',
-		module: './module.js',
 		bundle: './bundle.js'
 	},
 	resolve: {
