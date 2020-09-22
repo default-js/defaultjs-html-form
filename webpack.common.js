@@ -4,7 +4,8 @@ module.exports = {
 	entry: {
 		module: './index.js',
 		browser: './browser.js',
-		bundle: './bundle.js'
+		bundle: './bundle.js',
+		'module-bundle': './module-bundle.js'
 	},
 	resolve: {
 		alias: {
