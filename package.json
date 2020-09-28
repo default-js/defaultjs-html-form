@@ -1,7 +1,7 @@
 {
 	"name": "@default-js/defaultjs-html-form",
 	"buildname": "defaultjs-html-form",
-	"version": "1.0.0-beta.2",
+	"version": "1.0.0-beta.3",
 	"description": "a formular engine to support multi page, list, condition of visual, validations, messages depends on data and custom field. The result of an filled form would be a valid json. Ready to send so any rest services.",
 	"main": "./index.js",
 	"scripts": {
@@ -17,7 +17,7 @@
 	"author": "Frank Schüler",
 	"license": "MIT",
 	"devDependencies": {
-		"karma": "^5.2.2",
+		"karma": "^5.2.3",
 		"karma-chrome-launcher": "^3.1.0",
 		"karma-coverage": "^2.0.3",
 		"karma-firefox-launcher": "^1.3.0",
@@ -44,7 +44,8 @@
 	"dependencies": {
 		"@default-js/defaultjs-common-utils": "^0.6.0",
 		"@default-js/defaultjs-expression-language": "^1.0.0-beta.12",
-		"@default-js/defaultjs-extdom": "^1.0.0-beta.24"
+		"@default-js/defaultjs-extdom": "^1.0.0-beta.25",
+		"@default-js/defaultjs-html-components": "^1.0.0-beta.8"
 	},
 	"directories": {
 		"test": "test"

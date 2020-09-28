@@ -1,6 +1,7 @@
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_MAX, ATTRIBUTE_INVALID } from "./Constants";
 import { toTimeoutHandle } from "./utils/EventHelper";
 import { treeFilter } from "./utils/NodeHelper";
+import defineElement from "./utils/DefineElement";
 import BaseField from "./BaseField";
 import Row from "./list/Row";
 import AddRow from "./list/AddRow";
@@ -16,7 +17,7 @@ const findAddButton = (list) => {
 			if (element instanceof AddRow) return { accept: true, stop: true };
 			else if (element instanceof BaseField) return { accept: false, stop: true };
 			return { accept: false };
-		}
+		},
 	})[0];
 };
 
@@ -34,10 +35,13 @@ const createRow = (list, value) => {
 	return row;
 };
 
-
 class List extends BaseField {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(BaseField.observedAttributes);
+	}
+
+	static get NODENAME(){
+		return NODENAMES.List;
 	}
 
 	constructor(value = null) {
@@ -45,24 +49,22 @@ class List extends BaseField {
 		this.template = this.find("template").first();
 		this.container = this.find(NODENAMES.ListRows).first();
 
-		this.on([EVENTS.valueChanged, EVENTS.initialize],
-			(event) => {
-				if (event.target instanceof Row) {
-					const rows = this.rows;
-					const row = event.target;
-					const { value } = row;
+		this.on([EVENTS.valueChanged, EVENTS.initialize], (event) => {
+			if (event.target instanceof Row) {
+				const rows = this.rows;
+				const row = event.target;
+				const { value } = row;
 
-					const index = rows.indexOf(row);
-					this.__value__[index] = value;
+				const index = rows.indexOf(row);
+				this.__value__[index] = value;
 
-					this.validate();
-					this.publishValue(event.detail ? event.detail[0] : [row]);
+				this.validate();
+				this.publishValue(event.detail ? event.detail[0] : [row]);
 
-					event.preventDefault();
-					event.stopPropagation();
-				}
+				event.preventDefault();
+				event.stopPropagation();
 			}
-		);
+		});
 	}
 
 	async init() {
@@ -74,7 +76,7 @@ class List extends BaseField {
 		const { container, template, validator } = this;
 		const addButton = findAddButton(this);
 
-		validator.addCustomCheck(async ({ }) => {
+		validator.addCustomCheck(async ({}) => {
 			const { rows, max, readonly } = this;
 			const length = rows.length;
 			if (!readonly) {
@@ -154,8 +156,7 @@ class List extends BaseField {
 	}
 
 	get value() {
-		if (this.__value__.length > 0)
-			return this.__value__;
+		if (this.__value__.length > 0) return this.__value__;
 
 		return null;
 	}
@@ -167,12 +168,11 @@ class List extends BaseField {
 			this.container.children.remove();
 			this.__value__ = [];
 			if (value) {
-				for (let val of value)
-					createRow(this, val);
+				for (let val of value) createRow(this, val);
 			}
 		}
 	}
 }
 
-customElements.define(NODENAMES.List, List);
+defineElement(List);
 export default List;

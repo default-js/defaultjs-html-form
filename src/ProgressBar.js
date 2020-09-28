@@ -1,4 +1,6 @@
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, FORMSTATES, progress, ATTRIBUTE_PROGRESS } from "./Constants";
+import Component from "@default-js/defaultjs-html-components/src/Component";
+import defineElement from "./utils/DefineElement";
 import "./Step";
 
 const ATTRIBUTES = [ATTRIBUTE_PROGRESS];
@@ -12,9 +14,13 @@ const firstStepPageIndex = (pages, step, activePage) => {
 	return null;
 };
 
-class ProgressBar extends HTMLElement {
+class ProgressBar extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
+	}
+
+	static get NODENAME() {
+		return NODENAMES.ProgressBar;
 	}
 
 	constructor() {
@@ -41,7 +47,7 @@ class ProgressBar extends HTMLElement {
 		});
 	}
 
-	connectedCallback() {
+	async init() {
 		this.form = this.parent(NODENAMES.Form);
 		this.steps = this.find(NODENAMES.Step);
 		this.form.on([EVENTS.initialize, EVENTS.siteChanged, EVENTS.formStateChanged], () => {
@@ -83,18 +89,7 @@ class ProgressBar extends HTMLElement {
             this.style.setProperty("--progress", progress + "%");
 		this.attr(ATTRIBUTE_PROGRESS, Math.max(0, Math.min(progress, 100)));
 	}
-
-	adoptedCallback() {
-		this.connectedCallback();
-	}
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue != newValue) {
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
-		}
-	}
 }
 
-window.customElements.define(NODENAMES.ProgressBar, ProgressBar);
+defineElement(ProgressBar);
 export default ProgressBar;

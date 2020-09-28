@@ -1,9 +1,11 @@
 import { NODENAMES, TRIGGER_TIMEOUT, EVENTS, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_INVALID } from "./Constants";
+import Component from "@default-js/defaultjs-html-components/src/Component";
 import { updateActiveState } from "./utils/StateHelper";
+import Ready from "./Ready";
 
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID];
 
-class Base extends HTMLElement {
+class Base extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
@@ -18,24 +20,6 @@ class Base extends HTMLElement {
 
 	async initBase() {
 		this.form = this.parent(NODENAMES.Form);
-	}
-
-	connectedCallback() {
-		Promise.resolve(this.init())
-			.then(() => {
-				this.trigger(EVENTS.initialize);
-			});
-	}
-
-	adoptedCallback() {
-		this.connectedCallback();
-	}
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue != newValue) {
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
-		}
 	}
 
 	get active() {

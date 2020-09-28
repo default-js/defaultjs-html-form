@@ -1,35 +1,27 @@
 import { NODENAMES, EVENTS } from "./Constants";
+import Component from "@default-js/defaultjs-html-components/src/Component";
+import defineElement from "./utils/DefineElement";
 
 export const ATTRIBUTE_ACTIVE = "active";
 export const ATTRIBUTE_CONDITION = "condition";
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_CONDITION];
 
-const init = (validation) => {
-	validation.active = false;
-};
 
-class Validation extends HTMLElement {
+class Validation extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
 
-	static init(validation) {
-		init(validation);
+	static get NODENAME() {
+		return NODENAMES.Validation;
 	}
 
 	constructor() {
 		super();
 	}
 
-	connectedCallback() {
-		Validation.init(this);
-	}
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue != newValue) {
-			this.trigger(EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(EVENTS.change);
-		}
+	async init() {
+		this.active = false;
 	}
 
 	get active() {
@@ -43,5 +35,5 @@ class Validation extends HTMLElement {
 		return this.attr(ATTRIBUTE_CONDITION);
 	}
 }
-window.customElements.define(NODENAMES.Validation, Validation);
+defineElement(Validation);
 export default Validation;

@@ -1,55 +1,38 @@
 import { FORMSTATES, NODENAMES, EVENTS } from "./Constants";
+import Component from "@default-js/defaultjs-html-components/src/Component";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 import { BackButton, NextButton, SummaryButton, SubmitButton, CancelButton } from "./controls";
 import Page from "./Page";
+import defineElement from "./utils/DefineElement";
 
 const ATTRIBUTES = [];
-
-const init = (control) => {
-	control.form = control.parent(NODENAMES.Form);
-	control.back = control.find(NODENAMES.BackButton).first();
-	control.next = control.find(NODENAMES.NextButton).first();
-	control.summary = control.find(NODENAMES.SummaryButton).first();
-	control.submit = control.find(NODENAMES.SubmitButton).first();
-
-	control.form.on(
-		[EVENTS.validStateChanged, EVENTS.conditionStateChanged],
-		(event) => {
-			if(event.target instanceof Page)
-				control.update();
-		}
-	);
-
-	control.form.on(
-		[EVENTS.formStateChanged, EVENTS.siteChanged],
-		(event) => {
-			control.update();
-		}
-	);
-};
-
-class Control extends HTMLElement {
+class Control extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
 
-	static init(control) {
-		init(control);
+	static get NODENAME() {
+		return NODENAMES.Control;
 	}
 
 	constructor() {
 		super();
 	}
 
-	connectedCallback() {
-		Control.init(this);
-	}
+	async init() {
+		this.form = this.parent(NODENAMES.Form);
+		this.back = this.find(NODENAMES.BackButton).first();
+		this.next = this.find(NODENAMES.NextButton).first();
+		this.summary = this.find(NODENAMES.SummaryButton).first();
+		this.submit = this.find(NODENAMES.SubmitButton).first();
 
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue != newValue) {
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
-		}
+		this.form.on([EVENTS.validStateChanged, EVENTS.conditionStateChanged], (event) => {
+			if (event.target instanceof Page) this.update();
+		});
+
+		this.form.on([EVENTS.formStateChanged, EVENTS.siteChanged], (event) => {
+			this.update();
+		});
 	}
 
 	update() {
@@ -75,8 +58,8 @@ class Control extends HTMLElement {
 			submit.disabled = !form.valid;
 		} else if (state == FORMSTATES.input) {
 			back.disabled = activePageIndex <= 0;
-			
-			if (nextPage || (!activePage.valid && (activePageIndex + 1 < pages.length))) {
+
+			if (nextPage || (!activePage.valid && activePageIndex + 1 < pages.length)) {
 				next.active = true;
 				next.disabled = !activePage.valid;
 			} else if (useSummaryPage && state == FORMSTATES.input) {
@@ -87,8 +70,7 @@ class Control extends HTMLElement {
 				submit.disabled = !form.valid;
 			}
 		}
-
 	}
 }
-window.customElements.define(NODENAMES.Control, Control);
+defineElement(Control);
 export default Control;

@@ -1,28 +1,20 @@
 import { NODENAMES, EVENTS } from "../Constants";
-
+import Component from "@default-js/defaultjs-html-components/src/Component";
 
 const ATTRIBUTES = [];
-
-const init = (element) => {
-};
-
-class ListRows extends HTMLElement {
+class ListRows extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(ATTRIBUTES);
 	}
 
-	static init(listRows){
-		init(listRows);
+	static get NODENAME() {
+		return NODENAMES.ListRows;
 	}
 
 	constructor() {
-		super();		
-	}
-
-	connectedCallback() {
-		ListRows.init(this);
+		super();
 	}
 }
 
-customElements.define(NODENAMES.ListRows, ListRows);
+customElements.define(ListRows.NODENAME, ListRows);
 export default ListRows;

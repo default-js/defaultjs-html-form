@@ -3,10 +3,13 @@ import Container from "../Container";
 import DeleteRow from "./DeleteRow";
 
 const ATTRIBUTES = [];
-
 class ListRow extends Container {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(Container.observedAttributes);
+	}
+
+	static get NODENAME() {
+		return NODENAMES.ListRow;
 	}
 	
 	constructor() {
@@ -27,5 +30,5 @@ class ListRow extends Container {
 	}
 }
 
-customElements.define(NODENAMES.ListRow, ListRow);
+customElements.define(ListRow.NODENAME, ListRow);
 export default ListRow;

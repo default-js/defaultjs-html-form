@@ -1,5 +1,6 @@
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY } from "./Constants";
 import { updateActiveState } from "./utils/StateHelper";
+import defineElement from "./utils/DefineElement";
 
 const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY];
 
@@ -8,22 +9,13 @@ class Step extends HTMLElement {
 		return ATTRIBUTES;
 	}
 
+	static get NODENAME() {
+		return NODENAMES.Step;
+	}
+
 	constructor() {
 		super();
 	}
-
-	connectedCallback() {}
-
-	adoptedCallback() {
-		this.connectedCallback();
-	}
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue != newValue) {
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
-		}
-    }
 
     get name(){
         return this.attr(ATTRIBUTE_NAME);
@@ -49,5 +41,5 @@ class Step extends HTMLElement {
 	}
 }
 
-window.customElements.define(NODENAMES.Step, Step);
+defineElement(Step);
 export default Step;

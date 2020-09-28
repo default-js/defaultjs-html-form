@@ -1,6 +1,6 @@
 import { NODENAMES, EVENTS } from "../Constants";
 import FormButton from "../FormButton";
-
+import defineElement from "../utils/DefineElement";
 
 const ATTRIBUTES = [];
 class AddRow extends FormButton {
@@ -8,24 +8,23 @@ class AddRow extends FormButton {
 		return ATTRIBUTES.concat(ATTRIBUTES);
 	}
 
-	
-	static init(button) {
-		FormButton.init(button);
-		button.active	= true;
+	static get NODENAME(){
+		return NODENAMES.ButtonAddRow;
 	}
 
 	constructor() {
-		super();	
+		super();
 	}
 
-	connectedCallback() {
-		AddRow.init(this);
+	async init() {
+		FormButton.init(this);
+		this.active = true;
 	}
 
-	execute(){
+	execute() {
 		this.trigger(100, EVENTS.listRowAdd);
 	}
 }
 
-customElements.define(NODENAMES.ButtonAddRow, AddRow);
+defineElement(AddRow);
 export default AddRow;

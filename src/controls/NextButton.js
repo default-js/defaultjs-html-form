@@ -1,5 +1,6 @@
 import { NODENAMES } from "../Constants";
 import FormButton from "../FormButton";
+import defineElement from "../utils/DefineElement";
 
 const ATTRIBUTES = [];
 class NextButton extends FormButton {
@@ -7,8 +8,8 @@ class NextButton extends FormButton {
 		return ATTRIBUTES;
 	}
 	
-	static init(button) {
-		FormButton.init(button);
+	static get NODENAME() {
+		return NODENAMES.NextButton;
 	}
 
 	constructor() {
@@ -20,4 +21,4 @@ class NextButton extends FormButton {
 	}
 }
 export default NextButton;
-window.customElements.define(NODENAMES.NextButton, NextButton);
+defineElement(NextButton);

@@ -1,40 +1,30 @@
 import { NODENAMES, ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED } from "./Constants";
+import Component from "@default-js/defaultjs-html-components/src/Component";
 
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED];
 
-const init = (button) => {
-	button.form = button.parent(NODENAMES.Form);
-	button.active = false;
-	button.disabled = false;
-	button.on("click", (event) => {
-		if (button.active && !button.disabled) button.execute();
-		event.preventDefault();
-		event.stopPropagation();
-	});
-};
-
-class FormButton extends HTMLElement {
+class FormButton extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
 
-	static init(controlButton) {
-		init(controlButton);
+	static init(button) {
+		button.form = button.parent(NODENAMES.Form);
+		button.active = false;
+		button.disabled = false;
+		button.on("click", (event) => {
+			if (button.active && !button.disabled) button.execute();
+			event.preventDefault();
+			event.stopPropagation();
+		});
 	}
 
 	constructor() {
 		super();
 	}
 
-	connectedCallback() {
+	async init() {
 		FormButton.init(this);
-	}
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue != newValue) {
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
-		}
 	}
 
 	get active() {

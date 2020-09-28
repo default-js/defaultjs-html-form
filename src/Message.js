@@ -1,9 +1,10 @@
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import Base from "./Base";
+import Component from "@default-js/defaultjs-html-components/src/Component";
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
 import { evaluationData } from "./utils/DataHelper";
-
+import defineElement from "./utils/DefineElement";
 
 export const ATTRIBUTE_ACTIVE = "active";
 export const ATTRIBUTE_CONDITION = "condition";
@@ -19,41 +20,27 @@ export const findParentBase = (message) => {
 	return null;
 };
 
-const init = (message) => {
-	message.reference = findParentBase(message);
-	message.form = message.parent(NODENAMES.Form);
-
-	message.form.on(
-		toEvents(EVENTS.executeValidate),
-		(event) => {
-			message.update();
-		},
-	);
-	message.update();
-};
-
-class Message extends HTMLElement {
+class Message extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
 
-	static init(message) {
-		init(message);
+	static get NODENAME() {
+		return NODENAMES.Message;
 	}
 
 	constructor() {
 		super();
 	}
 
-	connectedCallback() {
-		Message.init(this);
-	}
+	async init() {
+		this.reference = findParentBase(this);
+		this.form = this.parent(NODENAMES.Form);
 
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue != newValue) {
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
-		}
+		this.form.on(EVENTS.executeValidate, () => {
+			this.update();
+		});
+		this.update();
 	}
 
 	get active() {
@@ -68,9 +55,10 @@ class Message extends HTMLElement {
 	}
 
 	async update() {
+		await this.ready;
 		const data = evaluationData(this.reference);
 		this.active = await ExpressionResolver.resolve(this.condition, data, false);
 	}
 }
-window.customElements.define(NODENAMES.Message, Message);
+defineElement(Message);
 export default Message;

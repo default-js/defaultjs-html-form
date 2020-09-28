@@ -1,5 +1,6 @@
 import { NODENAMES, EVENTS } from "../Constants";
 import FormButton from "../FormButton";
+import defineElement from "../utils/DefineElement";
 
 const ATTRIBUTES = [];
 
@@ -8,17 +9,17 @@ class DeleteRow extends FormButton {
 		return ATTRIBUTES.concat(ATTRIBUTES);
 	}
 
-	static init(button) {
-		FormButton.init(button);
-		button.active	= true;
+	static get NODENAME() {
+		return NODENAMES.ButtonDeleteRow;
 	}
 
 	constructor() {
 		super();
 	}
 
-	connectedCallback() {
-		DeleteRow.init(this);
+	async init(){
+		FormButton.init(this);
+		this.active	= true;
 	}
 
 	execute() {
@@ -26,5 +27,5 @@ class DeleteRow extends FormButton {
 	}
 }
 
-customElements.define(NODENAMES.ButtonDeleteRow, DeleteRow);
+defineElement(DeleteRow);
 export default DeleteRow;

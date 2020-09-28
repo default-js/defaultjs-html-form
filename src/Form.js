@@ -1,6 +1,8 @@
+import Component from "@default-js/defaultjs-html-components/src/Component";
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE } from "./Constants";
+import defineElement from "./utils/DefineElement";
 import "./Message";
 import "./Page";
 import "./Control";
@@ -15,30 +17,19 @@ const readonly = (form, readonly) => {
 	}
 };
 
-const init = (form) => {
-	form.state = FORMSTATES.init;
-	form.useSummaryPage = form.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
-	form.pages = form.find(NODENAMES.Page);
-	form.activePageIndex = -1;
-	if (form.pages.length > 0) form.toNextPage();
-};
-
-class Form extends HTMLElement {
+class Form extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
 
-	static init(form) {
-		init(form);
+	static get NODENAME() {
+		return NODENAMES.Form;
 	}
 
 	constructor() {
-		super();
+		super();		
 		this.__data__ = {};
-		this.state = FORMSTATES.init;
-		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
-		this.activePageIndex = -1;
-
+		this.__state__ = null;
 		this.on(EVENTS.valueChanged, (event) => {
 			const { name, value } = event.target;
 			if (name) this.__data__[name] = value;
@@ -51,19 +42,22 @@ class Form extends HTMLElement {
 		});
 	}
 
-	connectedCallback() {
-		Form.init(this);
-	}
+	async init() {		
+		this.__data__ = {};
+		this.state = FORMSTATES.init;
+		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
+		this.activePageIndex = -1;
 
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue != newValue) {
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.changeAttributeEventBuilder(name));
-			this.trigger(TRIGGER_TIMEOUT, EVENTS.change);
-		}
+
+		this.state = FORMSTATES.init;
+		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
+		this.pages = this.find(NODENAMES.Page);
+		this.activePageIndex = -1;
+		if (this.pages.length > 0) this.toNextPage();
 	}
 
 	get state() {
-		return this._state;
+		return this.__state__;
 	}
 
 	set state(state) {
@@ -73,10 +67,10 @@ class Form extends HTMLElement {
 			readonly(this, false);
 			if (this.activePage) this.activePage.active = true;
 		}
-		this._state = state;
+		this.__state__ = state;
 
 		if (actual != state) this.trigger(EVENTS.formStateChanged);
-		this.attr(ATTRIBUTE_STATE, this._state);
+		this.attr(ATTRIBUTE_STATE, this.__state__);
 	}
 
 	get valid() {
@@ -189,5 +183,5 @@ class Form extends HTMLElement {
 		this.trigger(EVENTS.submit, data);
 	}
 }
-window.customElements.define(NODENAMES.Form, Form);
+defineElement(Form);
 export default Form;

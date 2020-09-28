@@ -18,7 +18,7 @@ export const findParentField = (field) => {
 
 const updateHasValue = (hasValue, field) => {
 	field.attr(ATTRIBUTE_NOVALUE, !hasValue ? "" : null);
-}
+};
 
 class BaseField extends Base {
 	static get observedAttributes() {
@@ -40,36 +40,28 @@ class BaseField extends Base {
 		this.parentField = findParentField(this);
 		this.validator = new Validator(this);
 
-		this.on(EVENTS.conditionStateChanged,
-			(event) => {
-				if (event.target == this) this.conditionUpdated();
-			}
-		);
+		this.on(EVENTS.conditionStateChanged, (event) => {
+			if (event.target == this) this.conditionUpdated();
+		});
 
-		this.on(EVENTS.input,
-			(event) => {
-				if (event.target == this) {
-					this.__value__ = event.detail ? event.detail[0] : null;
-					this.validate();
-					this.publishValue();
-				}
+		this.on(EVENTS.input, (event) => {
+			if (event.target == this) {
+				this.__value__ = event.detail ? event.detail[0] : null;
+				this.validate();
+				this.publishValue();
 			}
-		);
+		});
 
-		this.form.on(
-			EVENTS.executeValidate,
-			async (event) => {
-				const chain = event.detail[0];
-				if (chain.indexOf(this) < 0) {
-					const current = this.valid;
-					const valid = await this.validate();
-					if (current != valid)
-						this.publishValue();
-				}
+		this.form.on(EVENTS.executeValidate, async (event) => {
+			const chain = event.detail[0];
+			if (chain.indexOf(this) < 0) {
+				const current = this.valid;
+				const valid = await this.validate();
+				if (current != valid) this.publishValue();
 			}
-		);
-		
-		this.form.on(EVENTS.allPublishValue, ()=> {
+		});
+
+		this.form.on(EVENTS.allPublishValue, () => {
 			this.publishValue();
 		});
 
@@ -98,21 +90,22 @@ class BaseField extends Base {
 	}
 
 	set value(value) {
-		if (this.__value__ != value && this.acceptValue(value)) {
-			value = this.normalizeValue(value);
-			if (this.__value__ != value) {
-				this.__value__ = value;
-				this.updatedValue(value);
-				this.validate();
-				this.publishValue();
+		this.ready.then(() => {
+			if (this.__value__ != value && this.acceptValue(value)) {
+				value = this.normalizeValue(value);
+				if (this.__value__ != value) {
+					this.__value__ = value;
+					this.updatedValue(value);
+					this.validate();
+					this.publishValue();
+				}
 			}
-		}
+		});
 	}
 
 	async validate() {
 		updateHasValue(this.hasValue, this);
-		if (!this.validator)
-			return false;
+		if (!this.validator) return false;
 
 		const valid = await this.validator.validate();
 		return valid;
@@ -137,6 +130,6 @@ class BaseField extends Base {
 		return value;
 	}
 
-	async updatedValue() { }
+	async updatedValue() {}
 }
 export default BaseField;

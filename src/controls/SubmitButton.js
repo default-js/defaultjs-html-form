@@ -1,14 +1,15 @@
 import { NODENAMES } from "../Constants";
 import FormButton from "../FormButton";
+import defineElement from "../utils/DefineElement";
 
 const ATTRIBUTES = [];
 class SubmitButton extends FormButton {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
-	
-	static init(button) {
-		FormButton.init(button);
+
+	static get NODENAME() {
+		return NODENAMES.SubmitButton;
 	}
 
 	constructor() {
@@ -19,4 +20,4 @@ class SubmitButton extends FormButton {
 	}
 }
 export default SubmitButton;
-window.customElements.define(NODENAMES.SubmitButton, SubmitButton);
+defineElement(SubmitButton);

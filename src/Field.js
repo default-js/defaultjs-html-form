@@ -1,12 +1,17 @@
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
 import BaseField from "./BaseField";
 import { findWrapper } from "./wrapper";
+import defineElement from "./utils/DefineElement";
 
 const ATTRIBUTES = ["file-format"];
 
 class Field extends BaseField {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(BaseField.observedAttributes);
+	}
+
+	static get NODENAME(){
+		return NODENAMES.Field;
 	}
 
 	constructor() {
@@ -27,8 +32,7 @@ class Field extends BaseField {
 	}
 
 	readonlyUpdated() {
-		if (this.wrapper)
-			this.wrapper.readonly = this.readonly;
+		if (this.wrapper) this.wrapper.readonly = this.readonly;
 	}
 
 	acceptValue(value) {
@@ -36,17 +40,15 @@ class Field extends BaseField {
 	}
 
 	normalizeValue(value) {
-		if (this.wrapper)
-			return this.wrapper.normalizeValue(value);
+		if (this.wrapper) return this.wrapper.normalizeValue(value);
 
 		return value;
 	}
 
 	updatedValue(value) {
-		if (this.wrapper)
-			this.wrapper.updatedValue(value);
+		if (this.wrapper) this.wrapper.updatedValue(value);
 	}
 }
 
-customElements.define(NODENAMES.Field, Field);
+defineElement(Field);
 export default Field;
