@@ -18,7 +18,12 @@ class Base extends Component {
 	}
 
 	async initBase() {
-		this.form = this.parent(NODENAMES.Form);
+	}
+	
+	get form(){
+		if(!this.__form__)
+			this.__form__ = this.parent(NODENAMES.Form);
+		return this.__form__;
 	}
 
 	get active() {
