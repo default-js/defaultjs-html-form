@@ -46,8 +46,6 @@ class List extends BaseField {
 
 	constructor(value = null) {
 		super(value ? value : []);
-		this.template = this.find("template").first();
-		this.container = this.find(NODENAMES.ListRows).first();
 
 		this.on([EVENTS.valueChanged, EVENTS.initialize], (event) => {
 			if (event.target instanceof Row) {
@@ -73,6 +71,9 @@ class List extends BaseField {
 
 	async initList() {
 		await this.initBaseField();
+		this.__value__ = [];		
+		this.template = this.find("template").first();
+		this.container = this.find(NODENAMES.ListRows).first();
 		const { container, template, validator } = this;
 		const addButton = findAddButton(this);
 

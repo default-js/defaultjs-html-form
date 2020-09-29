@@ -41,7 +41,6 @@ class Container extends BaseField {
 	constructor(value = null) {
 		super(value ? value : {});
 		this.fields = [];
-
 		this.on(EVENTS.valueChanged, (event) => {
 			if (event.target != this) {
 				const { name, value } = event.target;
@@ -64,7 +63,6 @@ class Container extends BaseField {
 
 	async initContainer() {
 		await this.initBaseField();
-
 		this.fields = findFields(this);
 		this.on(EVENTS.initialize, (event) => {
 			if (event.target != this) {
