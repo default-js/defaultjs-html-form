@@ -3,7 +3,7 @@ import NextButton from "./NextButton";
 import SummaryButton from "./SummaryButton";
 import SubmitButton from "./SubmitButton";
 
-export default {
+export {
 	BackButton,
 	NextButton,
 	SummaryButton,

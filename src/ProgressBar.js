@@ -25,7 +25,6 @@ class ProgressBar extends Component {
 
 	constructor() {
         super();
-        this.progress = 0;
 
 		this.on("click", ({ target }) => {
             if (!this.form) return;
@@ -47,7 +46,8 @@ class ProgressBar extends Component {
 		});
 	}
 
-	async init() {
+	async init() {		
+        this.progress = 0;
 		this.form = this.parent(NODENAMES.Form);
 		this.steps = this.find(NODENAMES.Step);
 		this.form.on([EVENTS.initialize, EVENTS.siteChanged, EVENTS.formStateChanged], () => {
