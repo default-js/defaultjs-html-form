@@ -36,7 +36,7 @@ export const REQUIREDSTATES = {
 	onActive: "on-active",
 };
 
-export const EVENT_PREFIX = HTML_TAG_PREFIX + "event-";
+export const EVENT_PREFIX = HTML_TAG_PREFIX + "form-";
 
 export const EVENTS = {
 	initialize: EVENT_PREFIX + "initialize",
@@ -45,9 +45,9 @@ export const EVENTS = {
 	 * BaseField to make validation and fire valueChanged
 	 * event
 	 */
-	input: EVENT_PREFIX + "input",
+	input: EVENT_PREFIX + "field-input",
 	/* internal event for publish that a value of field has changed (event after validation) */
-	valueChanged: EVENT_PREFIX + "value-changed",
+	valueChanged: EVENT_PREFIX + "field-value-changed",
 	/* internal event to start validation at elements -> only fired at form*/
 	executeValidate: EVENT_PREFIX + "execute-validate",
 	/* */
@@ -59,7 +59,7 @@ export const EVENTS = {
 	/* */
 	siteChanged: EVENT_PREFIX + "site-changed",
 	/* */
-	formStateChanged: EVENT_PREFIX + "form-state-changed",
+	formStateChanged: EVENT_PREFIX + "state-changed",
 	/* */
 	allPublishValue: EVENT_PREFIX + "all-publish-value",
 	/* */
@@ -98,6 +98,7 @@ export const ATTRIBUTE_STATE = "state";
 
 export const ATTRIBUTE_STEP = "step";
 export const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
+export const ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT = "input-mode-after-submit";
 export const ATTRIBUTE_REQUIRED = "required";
 export const ATTRIBUTE_REQUIRED_ON_ACTIVE_ONLY = "required-on-active-only";
 export const ATTRIBUTE_CONDITION = "condition";

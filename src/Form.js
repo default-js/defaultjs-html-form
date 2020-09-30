@@ -1,14 +1,14 @@
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE } from "./Constants";
+import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT } from "./Constants";
 import defineElement from "./utils/DefineElement";
 import "./Message";
 import "./Page";
 import "./Control";
 import "./ProgressBar";
 
-const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE];
+const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT];
 
 const readonly = (form, readonly) => {
 	for (let page of form.pages) {
@@ -27,7 +27,8 @@ class Form extends Component {
 	}
 
 	constructor() {
-		super();		
+		super();
+		this.__initialized__ = false;
 		this.__data__ = {};
 		this.__state__ = null;
 		this.on(EVENTS.valueChanged, (event) => {
@@ -42,18 +43,25 @@ class Form extends Component {
 		});
 	}
 
-	async init() {		
-		this.__data__ = {};
-		this.state = FORMSTATES.init;
-		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
-		this.activePageIndex = -1;
+	async init() {
+		if (this.__initialized__)
+			this.state = FORMSTATES.init;
+		else {
+
+			this.__data__ = {};
+			this.state = FORMSTATES.init;
+			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
+			this.activePageIndex = -1;
 
 
-		this.state = FORMSTATES.init;
-		this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
-		this.pages = this.find(NODENAMES.Page);
+			this.state = FORMSTATES.init;
+			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
+			this.pages = this.find(NODENAMES.Page);
+		}
+
 		this.activePageIndex = -1;
 		if (this.pages.length > 0) this.toNextPage();
+		this.__initialized__ = true;
 	}
 
 	get state() {
@@ -161,7 +169,7 @@ class Form extends Component {
 	}
 
 	async submit() {
-		this.state = FORMSTATES.finished;
+		this.state = this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? FORMSTATES.input : FORMSTATES.finished;
 		const data = this.data;
 
 		let endpoint = this.attr(ATTRIBUTE_ENDPOINT);
