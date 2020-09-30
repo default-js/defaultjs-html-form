@@ -1,4 +1,5 @@
 import { EVENTS } from "../Constants";
+import {noValue} from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
 
@@ -23,7 +24,7 @@ const number = {
 	accept: (value) => { return typeof value === "number"; },
 	value: (input) => { return input.valueAsNumber; },
 	normalize: (value) => {
-		if (value && !Number.isNaN(value))
+		if (!noValue(value) && !Number.isNaN(value))
 			return value;
 			
 		return null;

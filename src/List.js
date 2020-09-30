@@ -1,4 +1,5 @@
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_MAX, ATTRIBUTE_INVALID } from "./Constants";
+import {noValue} from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { toTimeoutHandle } from "./utils/EventHelper";
 import { treeFilter } from "./utils/NodeHelper";
 import defineElement from "./utils/DefineElement";
@@ -149,7 +150,7 @@ class List extends BaseField {
 	}
 
 	acceptValue(value) {
-		return !value || value instanceof Array;
+		return value instanceof Array;
 	}
 
 	normalizeValue(value) {
@@ -163,13 +164,14 @@ class List extends BaseField {
 	}
 
 	set value(value) {
-		if (this.acceptValue(value)) {
-			value = this.normalizeValue(value);
-
+		const isNull = noValue(value);
+		if (isNull || this.acceptValue(value)) {			
 			this.container.children.remove();
 			this.__value__ = [];
-			if (value) {
-				for (let val of value) createRow(this, val);
+			
+			if(!isNull){
+				value = this.normalizeValue(value);
+				for (let val of value) createRow(this, val);				
 			}
 		}
 	}

@@ -175,7 +175,7 @@ class Form extends Component {
 		let endpoint = this.attr(ATTRIBUTE_ENDPOINT);
 		if (endpoint) {
 			endpoint = await ExpressionResolver.resolveText(endpoint, data, endpoint);
-			const url = new URL(endpoint, location.origin);
+			const url = new URL(endpoint, location.href);
 
 			return await fetch(url.toString(), {
 				method: (this.attr(ATTRIBUTE_METHOD) || "post").toLowerCase(),
