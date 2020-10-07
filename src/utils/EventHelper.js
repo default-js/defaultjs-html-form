@@ -4,16 +4,16 @@ export const toEvents = function() {
     return Array.from(arguments).join(" ");
 };
 
-export const toTimeoutHandle = (handle, preventDefault, stopPropagation) => {
-    let timeout = null;
+export const toTimeoutHandle = (handle, preventDefault, stopPropagation, timeout) => {
+    let id = null;
     return function(event) {
-        if(timeout)
-            clearTimeout(timeout);
+        if(id)
+            clearTimeout(id);
 
-        timeout = setTimeout(function() {
-            timeout = null;
+        id = setTimeout(() => {
+            id = null;
             handle(event);
-        }, EVENTHANDLE_TIMEOUT);
+        }, timeout || EVENTHANDLE_TIMEOUT);
 
         if(preventDefault)
             event.preventDefault();

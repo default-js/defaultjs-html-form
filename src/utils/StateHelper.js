@@ -1,4 +1,4 @@
-import { EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_ACTIVE, ATTRIBUTE_VALID, ATTRIBUTE_INVALID, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID } from "../Constants";
+import { EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_ACTIVE, ATTRIBUTE_VALID, ATTRIBUTE_INVALID, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_EDITABLE, ATTRIBUTE_READONLY } from "../Constants";
 
 export const updateValidState = (target, valid, initial = false) => {
 	const oldState = target.valid;
@@ -12,7 +12,7 @@ export const updateValidState = (target, valid, initial = false) => {
 		target.attr(ATTRIBUTE_INVALID, "");
 		target.attr(ATTRIBUTE_VALID, null);
 	}
-	
+
 	if (oldState != valid || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.validStateChanged);
 };
 
@@ -32,4 +32,16 @@ export const updateActiveState = (target, active, initial = false) => {
 	const oldState = target.active;
 	active ? target.attr(ATTRIBUTE_ACTIVE, "") : target.attr(ATTRIBUTE_ACTIVE, null);
 	if (oldState != active || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.activeStateChanged);
+};
+
+export const updateEditableState = (target, editable, initial = false) => {
+	const oldState = target.editable;
+	if (editable) {
+		target.attr(ATTRIBUTE_EDITABLE, "");
+		target.attr(ATTRIBUTE_READONLY, null);
+	} else {
+		target.attr(ATTRIBUTE_EDITABLE, null);
+		target.attr(ATTRIBUTE_READONLY, "");
+	}
+	if (oldState != editable || initial) target.trigger(TRIGGER_TIMEOUT, EVENTS.editableStateChanged);
 };

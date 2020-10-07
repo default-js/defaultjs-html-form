@@ -78,8 +78,8 @@ class Container extends BaseField {
 			}
 		});
 
-		this.validator.addCustomCheck(async ({ data, target }) => {
-			const { fields } = target;
+		this.validator.addCustomCheck(async ({ data, base }) => {
+			const { fields } = base;
 			if (fields) {
 				const length = fields.length;
 				for (let i = 0; i < length; i++) {

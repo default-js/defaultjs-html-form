@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Document</title>
+<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="boostrap.addons.css" />
+<link rel="stylesheet" type="text/css" href="form.css" />
+</head>
+<body>
+	<div class="container">
+		<h1>keep input mode after submit</h1>
+		<d-form class="form-horizontal" input-mode-after-submit> 
+		<d-page>
+			<h3>TEST</h3>
+			<section>
+				<d-field name="test" required>
+					<div class="form-group has-feedback">
+						<div class="col-xs-12">
+							<label class="control-label">test</label>
+						</div>
+						<div class="col-xs-12">
+							<input type="text" class="form-control" />
+							<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+							<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+						</div>
+					</div>
+				</d-field>
+				<d-field name="editable" required editable-condition="${typeof test === 'undefined' || test == null}">
+					<div class="form-group has-feedback">
+						<div class="col-xs-12">
+							<label class="control-label">test</label>
+						</div>
+						<div class="col-xs-12">
+							<input type="text" class="form-control" />
+							<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+							<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+						</div>
+					</div>
+				</d-field>
+			</section>
+		</d-page> 
+			<d-control> <d-control-back class="btn btn-primary">back</d-control-back> 
+			<d-control-next class="btn btn-primary">next</d-control-next> 
+			<d-control-summary class="btn btn-primary">sumary</d-control-summary> 
+			<d-control-submit class="btn btn-primary">submit</d-control-submit> 
+			</d-control> 
+		</d-form>
+	</div>
+
+	<script type="application/javascript" src="/bundle-defaultjs-html-form.js"></script>
+	<script type="application/javascript" src="main.js"></script>
+
+</body>
+</html>

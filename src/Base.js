@@ -1,8 +1,8 @@
-import { NODENAMES, TRIGGER_TIMEOUT, EVENTS, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_INVALID } from "./Constants";
+import { NODENAMES, TRIGGER_TIMEOUT, EVENTS, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_INVALID, ATTRIBUTE_EDITABLE_CONDITION, ATTRIBUTE_EDITABLE } from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
-import { updateActiveState } from "./utils/StateHelper";
+import { updateActiveState, updateEditableState } from "./utils/StateHelper";
 
-const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID];
+const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_EDITABLE_CONDITION];
 
 class Base extends Component {
 	static get observedAttributes() {
@@ -19,9 +19,9 @@ class Base extends Component {
 
 	async initBase() {
 	}
-	
-	get form(){
-		if(!this.__form__)
+
+	get form() {
+		if (!this.__form__)
 			this.__form__ = this.parent(NODENAMES.Form);
 		return this.__form__;
 	}
@@ -46,11 +46,24 @@ class Base extends Component {
 	}
 
 	set readonly(readonly) {
-		readonly ? this.attr(ATTRIBUTE_READONLY, "") : this.attr(ATTRIBUTE_READONLY, null);
+		updateEditableState(this, !readonly, !this.ready.resolved);
 		this.readonlyUpdated();
 	}
 
 	readonlyUpdated() { }
+	
+	get editable(){
+		return this.hasAttribute(ATTRIBUTE_EDITABLE);		
+	}
+	
+	set editable(editable){		
+		updateEditableState(this, editable, !this.ready.resolved);
+		this.editableUpdated();		
+	}
+	
+	editableUpdated(){
+		this.readonlyUpdated();
+	}
 
 	get condition() {
 		return !this.hasAttribute(ATTRIBUTE_CONDITION_INVALID);

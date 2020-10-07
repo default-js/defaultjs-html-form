@@ -47,7 +47,8 @@ export default class Radio extends Wrapper {
 					field.trigger(EVENTS.input, this.normalizeValue(this.value));
 				},
 				false,
-				true
+				true,
+				EVENTHANDLE_INPUT_TIMEOUT
 			)
 		);
 

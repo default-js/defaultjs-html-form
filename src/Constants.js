@@ -1,6 +1,7 @@
 export const HTML_TAG_PREFIX = "d-";
 export const TRIGGER_TIMEOUT = 10;
 export const EVENTHANDLE_TIMEOUT = 10;
+export const EVENTHANDLE_INPUT_TIMEOUT = 50 * EVENTHANDLE_TIMEOUT;
 
 export const NODENAMES = {
 	Form: HTML_TAG_PREFIX + "form",
@@ -82,6 +83,8 @@ export const EVENTS = {
 	//LIST EVENTS
 	listRowAdd: EVENT_PREFIX + "list-row-add",
 	listRowDelete: EVENT_PREFIX + "list-row-delete",
+	
+	editableStateChanged: EVENT_PREFIX + "editable-state-changed"
 };
 
 export const SPECIALVARS = {
@@ -104,6 +107,8 @@ export const ATTRIBUTE_REQUIRED_ON_ACTIVE_ONLY = "required-on-active-only";
 export const ATTRIBUTE_CONDITION = "condition";
 export const ATTRIBUTE_ACTIVE = "active";
 export const ATTRIBUTE_DISABLED = "disabled";
+export const ATTRIBUTE_EDITABLE = "editable";
+export const ATTRIBUTE_EDITABLE_CONDITION = "editable-condition";
 export const ATTRIBUTE_READONLY = "readonly";
 export const ATTRIBUTE_NOVALUE = "no-value";
 export const ATTRIBUTE_VALID = "valid";
