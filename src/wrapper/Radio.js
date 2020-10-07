@@ -1,4 +1,4 @@
-import { EVENTS } from "../Constants";
+import { EVENTS, EVENTHANDLE_INPUT_TIMEOUT } from "../Constants";
 import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
 
