@@ -1,7 +1,7 @@
 {
 	"name": "@default-js/defaultjs-html-form",
 	"buildname": "defaultjs-html-form",
-	"version": "1.0.0-beta.10",
+	"version": "1.0.0-beta.11",
 	"description": "a formular engine to support multi page, list, condition of visual, validations, messages depends on data and custom field. The result of an filled form would be a valid json. Ready to send so any rest services.",
 	"main": "./index.js",
 	"scripts": {
@@ -43,9 +43,9 @@
 	"homepage": "https://github.com/default-js/defaultjs-html-form#readme",
 	"dependencies": {
 		"@default-js/defaultjs-common-utils": "^0.10.0",
-		"@default-js/defaultjs-expression-language": "^1.0.0-beta.12",
+		"@default-js/defaultjs-expression-language": "^1.0.0-beta.13",
 		"@default-js/defaultjs-extdom": "^1.0.0-beta.25",
-		"@default-js/defaultjs-html-components": "^1.0.0-beta.24"
+		"@default-js/defaultjs-html-components": "^1.0.0-beta.25"
 	},
 	"directories": {
 		"test": "test"

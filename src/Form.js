@@ -27,8 +27,7 @@ class Form extends Component {
 	}
 
 	constructor() {
-		super();
-		this.__initialized__ = false;
+		super();		
 		this.__data__ = {};
 		this.__state__ = null;
 		this.on(EVENTS.valueChanged, (event) => {
@@ -37,22 +36,17 @@ class Form extends Component {
 			else if (value != null) ObjectUtils.merge(this.__data__, value);
 
 			this.trigger(EVENTS.executeValidate, event.detail[0]);
-
-			event.preventDefault();
-			event.stopPropagation();
 		});
 	}
 
 	async init() {
-		if (this.__initialized__)
+		if (this.ready.resolved)
 			this.state = FORMSTATES.init;
 		else {
-
 			this.__data__ = {};
 			this.state = FORMSTATES.init;
 			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
 			this.activePageIndex = -1;
-
 
 			this.state = FORMSTATES.init;
 			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
@@ -61,7 +55,6 @@ class Form extends Component {
 
 		this.activePageIndex = -1;
 		if (this.pages.length > 0) this.toNextPage();
-		this.__initialized__ = true;
 	}
 
 	get state() {
@@ -82,9 +75,8 @@ class Form extends Component {
 	}
 
 	get valid() {
-		for (let page of this.pages) {
+		for (let page of this.pages)
 			if (!page.valid) return false;
-		}
 
 		return true;
 	}

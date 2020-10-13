@@ -1,9 +1,13 @@
 import { FORMSTATES, NODENAMES, EVENTS } from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
-import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
-import { BackButton, NextButton, SummaryButton, SubmitButton, CancelButton } from "./controls";
+import "./controls";
 import Page from "./Page";
 import defineElement from "./utils/DefineElement";
+
+const BUTTONDUMMY = {
+	active: true,
+	disabled: true,
+};
 
 const ATTRIBUTES = [];
 class Control extends Component {
@@ -20,19 +24,21 @@ class Control extends Component {
 	}
 
 	async init() {
-		this.form = this.parent(NODENAMES.Form);
-		this.back = this.find(NODENAMES.BackButton).first();
-		this.next = this.find(NODENAMES.NextButton).first();
-		this.summary = this.find(NODENAMES.SummaryButton).first();
-		this.submit = this.find(NODENAMES.SubmitButton).first();
+		if (!this.ready.resolved) {
+			this.form = this.parent(NODENAMES.Form);
+			this.back = this.find(NODENAMES.BackButton).first() || BUTTONDUMMY;
+			this.next = this.find(NODENAMES.NextButton).first() || BUTTONDUMMY;
+			this.summary = this.find(NODENAMES.SummaryButton).first() || BUTTONDUMMY;
+			this.submit = this.find(NODENAMES.SubmitButton).first() || BUTTONDUMMY;
 
-		this.form.on([EVENTS.validStateChanged, EVENTS.conditionStateChanged], (event) => {
-			if (event.target instanceof Page) this.update();
-		});
+			this.form.on([EVENTS.validStateChanged, EVENTS.conditionStateChanged], (event) => {
+				if (event.target instanceof Page) this.update();
+			});
 
-		this.form.on([EVENTS.formStateChanged, EVENTS.siteChanged], (event) => {
-			this.update();
-		});
+			this.form.on([EVENTS.formStateChanged, EVENTS.siteChanged], (event) => {
+				this.update();
+			});
+		}
 	}
 
 	update() {
