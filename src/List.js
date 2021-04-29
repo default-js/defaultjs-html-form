@@ -58,7 +58,7 @@ class List extends BaseField {
 				this.__value__[index] = value;
 
 				this.validate();
-				this.publishValue(event.detail ? event.detail[0] : [row]);
+				this.publishValue(event.detail ? event.detail : row);
 
 				event.preventDefault();
 				event.stopPropagation();

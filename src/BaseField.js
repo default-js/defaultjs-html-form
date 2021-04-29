@@ -46,14 +46,14 @@ class BaseField extends Base {
 
 		this.on(EVENTS.input, (event) => {
 			if (event.target == this) {
-				this.__value__ = event.detail ? event.detail[0] : null;
+				this.__value__ = event.detail ? event.detail : null;
 				this.validate();
 				this.publishValue();
 			}
 		});
 
 		this.form.on(EVENTS.executeValidate, async (event) => {
-			const chain = event.detail[0];
+			const chain = event.detail;
 			if (chain.indexOf(this) < 0) {
 				const current = this.valid;
 				const valid = await this.validate();

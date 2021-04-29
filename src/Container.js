@@ -49,7 +49,7 @@ class Container extends BaseField {
 				else if (value != null) ObjectUtils.merge(this.__value__, value);
 
 				this.validate();
-				this.publishValue(event.detail[0]);
+				this.publishValue(event.detail);
 
 				event.preventDefault();
 				event.stopPropagation();

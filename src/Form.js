@@ -35,7 +35,7 @@ class Form extends Component {
 			if (name) this.__data__[name] = value;
 			else if (value != null) ObjectUtils.merge(this.__data__, value);
 
-			this.trigger(EVENTS.executeValidate, event.detail[0]);
+			this.trigger(EVENTS.executeValidate, event.detail);
 		});
 	}
 
