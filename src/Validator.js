@@ -44,6 +44,8 @@ class Validator {
 		const { hasValue, required, requiredOnlyOnActive } = base;
 		const hasChecks = customChecks.length > 0 || validations.length > 0;
 		const data = evaluationData(base);
+		const initial = this.inital;
+		this.inital = false;
 
 
 		const conditionValid = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
@@ -70,7 +72,7 @@ class Validator {
 			if(!editable)
 				valid = true;
 			updateValidState(base, valid, this.inital);
-			this.inital = false;
+			
 		}
 		return valid;
 

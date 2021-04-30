@@ -24,6 +24,7 @@ class Control extends Component {
 	}
 
 	async init() {
+		await super.init();
 		if (!this.ready.resolved) {
 			this.form = this.parent(NODENAMES.Form);
 			this.back = this.find(NODENAMES.BackButton).first() || BUTTONDUMMY;

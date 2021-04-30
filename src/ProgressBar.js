@@ -24,14 +24,14 @@ class ProgressBar extends Component {
 	}
 
 	constructor() {
-        super();
+		super();
 
 		this.on("click", ({ target }) => {
-            if (!this.form) return;
-            if(target == this) return;
+			if (!this.form) return;
+			if (target == this) return;
 
-            const step = target.is(NODENAMES.Step) ? target : target.parent(NODENAMES.Step).first();
-            
+			const step = target.is(NODENAMES.Step) ? target : target.parent(NODENAMES.Step).first();
+
 			if (!step) return;
 
 			const state = this.form.state;
@@ -46,38 +46,42 @@ class ProgressBar extends Component {
 		});
 	}
 
-	async init() {		
-        this.progress = 0;
-		this.form = this.parent(NODENAMES.Form);
-		this.steps = this.find(NODENAMES.Step);
-		this.form.on([EVENTS.initialize, EVENTS.siteChanged, EVENTS.formStateChanged], () => {
-			const state = this.form.state;
-			const activePage = this.form.activePage;
-			if (!activePage) return;
+	async init() {
+		await super.init();
+		const ready = this.ready;
+		this.progress = 0;
+		if (!ready.resolved) {
+			this.form = this.parent(NODENAMES.Form);
+			this.steps = this.find(NODENAMES.Step);
+			this.form.on([EVENTS.initialize, EVENTS.siteChanged, EVENTS.formStateChanged], () => {
+				const state = this.form.state;
+				const activePage = this.form.activePage;
+				if (!activePage) return;
 
-			const index = this.form.activePageIndex;
-			const count = this.form.pages.length;
-			const pageStep = activePage ? activePage.step : FORMSTATES.init;
-			const progress = Math.floor((index * 100) / count);
+				const index = this.form.activePageIndex;
+				const count = this.form.pages.length;
+				const pageStep = activePage ? activePage.step : FORMSTATES.init;
+				const progress = Math.floor((index * 100) / count);
 
-			for (let step of this.steps) {
-				const name = step.name;
-				if (state == FORMSTATES.input) {
-					step.active = name == pageStep;
-					step.readonly = false;
-				} else if (state == FORMSTATES.summary) {
-					step.active = name == FORMSTATES.summary;
-					step.readonly = false;
-				} else {
-					step.active = name == FORMSTATES.finished;
-					step.readonly = true;
+				for (let step of this.steps) {
+					const name = step.name;
+					if (state == FORMSTATES.input) {
+						step.active = name == pageStep;
+						step.readonly = false;
+					} else if (state == FORMSTATES.summary) {
+						step.active = name == FORMSTATES.summary;
+						step.readonly = false;
+					} else {
+						step.active = name == FORMSTATES.finished;
+						step.readonly = true;
+					}
 				}
-			}
 
-            this.progress = state == FORMSTATES.summary || state == FORMSTATES.finished ? 100 : progress;
-            
-            this.trigger(EVENTS.progressbarChanged);
-		});
+				this.progress = state == FORMSTATES.summary || state == FORMSTATES.finished ? 100 : progress;
+
+				this.trigger(EVENTS.progressbarChanged);
+			});
+		}
 	}
 
 	get progress() {
@@ -85,8 +89,7 @@ class ProgressBar extends Component {
 	}
 
 	set progress(progress) {
-        if(this.style.setProperty)
-            this.style.setProperty("--progress", progress + "%");
+		if (this.style.setProperty) this.style.setProperty("--progress", progress + "%");
 		this.attr(ATTRIBUTE_PROGRESS, Math.max(0, Math.min(progress, 100)));
 	}
 }

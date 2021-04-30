@@ -1,5 +1,5 @@
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_MAX, ATTRIBUTE_INVALID } from "./Constants";
-import {noValue} from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { toTimeoutHandle } from "./utils/EventHelper";
 import { treeFilter } from "./utils/NodeHelper";
 import defineElement from "./utils/DefineElement";
@@ -41,7 +41,7 @@ class List extends BaseField {
 		return ATTRIBUTES.concat(BaseField.observedAttributes);
 	}
 
-	static get NODENAME(){
+	static get NODENAME() {
 		return NODENAMES.List;
 	}
 
@@ -49,6 +49,9 @@ class List extends BaseField {
 		super(value ? value : []);
 
 		this.on([EVENTS.valueChanged, EVENTS.initialize], (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+
 			if (event.target instanceof Row) {
 				const rows = this.rows;
 				const row = event.target;
@@ -59,46 +62,13 @@ class List extends BaseField {
 
 				this.validate();
 				this.publishValue(event.detail ? event.detail : row);
-
-				event.preventDefault();
-				event.stopPropagation();
 			}
-		});
-	}
-
-	async init() {
-		this.initList();
-	}
-
-	async initList() {
-		await this.initBaseField();
-		this.__value__ = [];		
-		this.template = this.find("template").first();
-		this.container = this.find(NODENAMES.ListRows).first();
-		const { container, template, validator } = this;
-		const addButton = findAddButton(this);
-
-		validator.addCustomCheck(async ({}) => {
-			const { rows, max, readonly } = this;
-			const length = rows.length;
-			if (!readonly) {
-				if (length == max) addButton.disabled = true;
-				else if (length < max) addButton.disabled = false;
-			}
-			return length <= max;
-		});
-
-		validator.addCustomCheck(async () => {
-			const { rows } = this;
-			if (rows)
-				for (let row of rows) {
-					if (!row.valid) return false;
-				}
-
-			return true;
 		});
 
 		this.on(EVENTS.listRowAdd, (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+
 			const { readonly, __value__ } = this;
 			if (!readonly) {
 				const row = createRow(this);
@@ -107,11 +77,12 @@ class List extends BaseField {
 				this.validate();
 				this.publishValue();
 			}
-			event.preventDefault();
-			event.stopPropagation();
 		});
 
 		this.on(EVENTS.listRowDelete, (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+
 			const { rows, readonly, __value__ } = this;
 			if (!readonly) {
 				const row = event.target.parent(NODENAMES.ListRow);
@@ -125,9 +96,39 @@ class List extends BaseField {
 					this.publishValue();
 				}
 			}
-			event.preventDefault();
-			event.stopPropagation();
 		});
+	}
+
+	async init() {
+		await super.init();
+		this.__value__ = [];
+		const ready = this.ready;
+		if (!ready.resolved) {
+			this.template = this.find("template").first();
+			this.container = this.find(NODENAMES.ListRows).first();
+			const { container, template, validator } = this;
+			const addButton = findAddButton(this);
+
+			validator.addCustomCheck(async ({}) => {
+				const { rows, max, readonly } = this;
+				const length = rows.length;
+				if (!readonly) {
+					if (length == max) addButton.disabled = true;
+					else if (length < max) addButton.disabled = false;
+				}
+				return length <= max;
+			});
+
+			validator.addCustomCheck(async () => {
+				const { rows } = this;
+				if (rows)
+					for (let row of rows) {
+						if (!row.valid) return false;
+					}
+
+				return true;
+			});
+		}
 
 		this.validate();
 		this.publishValue();
@@ -165,13 +166,13 @@ class List extends BaseField {
 
 	set value(value) {
 		const isNull = noValue(value);
-		if (isNull || this.acceptValue(value)) {			
+		if (isNull || this.acceptValue(value)) {
 			this.container.children.remove();
 			this.__value__ = [];
-			
-			if(!isNull){
+
+			if (!isNull) {
 				value = this.normalizeValue(value);
-				for (let val of value) createRow(this, val);				
+				for (let val of value) createRow(this, val);
 			}
 		}
 	}

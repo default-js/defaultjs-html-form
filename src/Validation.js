@@ -21,6 +21,7 @@ class Validation extends Component {
 	}
 
 	async init() {
+		await super.init();
 		this.active = false;
 	}
 

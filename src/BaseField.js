@@ -28,45 +28,47 @@ class BaseField extends Base {
 	constructor(value = null) {
 		super();
 		this.__value__ = value;
+		this.__valueChanged__ = true;
+
+		this.on(EVENTS.conditionStateChanged, (event) => {
+			if (event.target == this) {
+				this.conditionUpdated();
+			}
+		});
 	}
 
 	async init() {
-		await this.initBaseField();
-	}
+		await super.init();
+		const ready = this.ready;
+		if (!ready.resolved) {
+			this.parentField = findParentField(this);
+			this.validator = new Validator(this);
 
-	async initBaseField() {
-		await this.initBase();
+			this.form.on(EVENTS.executeValidate, async (event) => {
+				const chain = event.detail;
+				if (chain.indexOf(this) < 0) {
+					const current = this.valid;
+					const valid = await this.validate();
+					if (current != valid) {
+						console.log("publishValue after form execute validate", this);
+						this.publishValue();
+					}
+				}
+			});
 
-		this.parentField = findParentField(this);
-		this.validator = new Validator(this);
-
-		this.on(EVENTS.conditionStateChanged, (event) => {
-			if (event.target == this) this.conditionUpdated();
-		});
-
-		this.on(EVENTS.input, (event) => {
-			if (event.target == this) {
-				this.__value__ = event.detail ? event.detail : null;
-				this.validate();
+			this.form.on(EVENTS.allPublishValue, () => {
 				this.publishValue();
-			}
-		});
-
-		this.form.on(EVENTS.executeValidate, async (event) => {
-			const chain = event.detail;
-			if (chain.indexOf(this) < 0) {
-				const current = this.valid;
-				const valid = await this.validate();
-				if (current != valid) this.publishValue();
-			}
-		});
-
-		this.form.on(EVENTS.allPublishValue, () => {
-			this.publishValue();
-		});
+			});
+		}
 
 		this.validate();
 	}
+
+	/*trigger(){
+		if(this.nodeName != "D-PAGE")
+			console.log("trigger", arguments, this);
+		super.trigger.apply(this, arguments);
+	}*/
 
 	conditionUpdated() {
 		this.active = this.condition;
@@ -90,17 +92,15 @@ class BaseField extends Base {
 	}
 
 	set value(value) {
-		this.ready.then(() => {
-			if (this.__value__ != value && this.acceptValue(value)) {
-				value = this.normalizeValue(value);
-				if (this.__value__ != value) {
-					this.__value__ = value;
-					this.updatedValue(value);
-					this.validate();
-					this.publishValue();
-				}
+		if (this.__value__ != value && this.acceptValue(value)) {
+			value = this.normalizeValue(value);
+			if (this.__value__ != value) {
+				this.__value__ = value;
+				this.updatedValue(value);
+				this.validate();
+				this.publishValue();
 			}
-		});
+		}
 	}
 
 	async validate() {
@@ -112,14 +112,11 @@ class BaseField extends Base {
 	}
 
 	async publishValue(chain = []) {
+		console.log("publish-value", this);
 		chain.push(this);
-		let value = null;
-		//if (this.condition)
-		value = this.value;
 
-		setTimeout(() => {
-			this.trigger(EVENTS.valueChanged, chain);
-		}, TRIGGER_TIMEOUT);
+		this.trigger(EVENTS.valueChanged, chain);
+		//setTimeout(() => {}, TRIGGER_TIMEOUT);
 	}
 
 	acceptValue(value) {

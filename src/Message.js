@@ -34,12 +34,16 @@ class Message extends Component {
 	}
 
 	async init() {
-		this.reference = findParentBase(this);
-		this.form = this.parent(NODENAMES.Form);
+		await super.init();
+		const ready = this.ready;		
 
-		this.form.on(EVENTS.executeValidate, () => {
-			this.update();
-		});
+		if (!ready.resolved) {			
+			this.reference = findParentBase(this);
+			this.form = this.parent(NODENAMES.Form);
+			this.form.on(EVENTS.executeValidate, () => {
+				this.update();
+			});
+		}
 		this.update();
 	}
 

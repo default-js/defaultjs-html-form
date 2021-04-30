@@ -3,6 +3,7 @@ import ExpressionResolver from "@default-js/defaultjs-expression-language/src/Ex
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT } from "./Constants";
 import defineElement from "./utils/DefineElement";
+import {toTimeoutHandle} from "./utils/EventHelper"
 import "./Message";
 import "./Page";
 import "./Control";
@@ -29,26 +30,25 @@ class Form extends Component {
 	constructor() {
 		super();		
 		this.__data__ = {};
-		this.__state__ = null;
-		this.on(EVENTS.valueChanged, (event) => {
+		this.__state__ = null;		
+		this.on(EVENTS.valueChanged, toTimeoutHandle((event) => {
 			const { name, value } = event.target;
 			if (name) this.__data__[name] = value;
 			else if (value != null) ObjectUtils.merge(this.__data__, value);
 
 			this.trigger(EVENTS.executeValidate, event.detail);
-		});
+		}, true, true));
 	}
 
 	async init() {
-		if (this.ready.resolved)
-			this.state = FORMSTATES.init;
-		else {
+		await super.init();		
+		this.state = FORMSTATES.init;
+		const ready = this.ready;
+		if (!ready.resolved) {
 			this.__data__ = {};
-			this.state = FORMSTATES.init;
 			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
 			this.activePageIndex = -1;
-
-			this.state = FORMSTATES.init;
+			
 			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
 			this.pages = this.find(NODENAMES.Page);
 		}
@@ -56,6 +56,11 @@ class Form extends Component {
 		this.activePageIndex = -1;
 		if (this.pages.length > 0) this.toNextPage();
 	}
+
+	/*trigger(event, data){
+		console.log("trigger", arguments, this);
+		super.trigger.apply(this, arguments);
+	}*/
 
 	get state() {
 		return this.__state__;

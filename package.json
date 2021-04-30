@@ -42,9 +42,9 @@
 	},
 	"homepage": "https://github.com/default-js/defaultjs-html-form#readme",
 	"dependencies": {
-		"@default-js/defaultjs-common-utils": "^0.10.0",
-		"@default-js/defaultjs-expression-language": "^1.0.0-beta.13",
-		"@default-js/defaultjs-extdom": "^1.0.1",
+		"@default-js/defaultjs-common-utils": "^0.14.1",
+		"@default-js/defaultjs-expression-language": "^1.0.0-beta.14",
+		"@default-js/defaultjs-extdom": "^1.0.2",
 		"@default-js/defaultjs-html-components": "^1.1.4"
 	},
 	"directories": {

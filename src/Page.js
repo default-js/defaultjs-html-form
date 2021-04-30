@@ -18,11 +18,7 @@ class Page extends Container {
 	}
 
 	async init() {
-		await this.initPage();
-	}
-
-	async initPage() {
-		await this.initContainer();
+		await super.init();
 	}
 
 	get step(){

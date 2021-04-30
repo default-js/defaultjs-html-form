@@ -17,7 +17,7 @@ class AddRow extends FormButton {
 	}
 
 	async init() {
-		FormButton.init(this);
+		await super.init();
 		this.active = true;
 	}
 

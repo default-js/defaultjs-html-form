@@ -60,6 +60,7 @@ export default class Text extends Wrapper {
 			"input",
 			toTimeoutHandle(
 				() => {
+					console.log("update wrapper field value");
 					field.trigger(EVENTS.input, this.normalizeValue(this.value));
 				},
 				false,

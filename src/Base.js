@@ -14,10 +14,7 @@ class Base extends Component {
 	}
 
 	async init() {
-		await this.initBase();
-	}
-
-	async initBase() {
+		await super.init();
 	}
 
 	get form() {

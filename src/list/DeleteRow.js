@@ -18,7 +18,7 @@ class DeleteRow extends FormButton {
 	}
 
 	async init(){
-		FormButton.init(this);
+		await super.init();
 		this.active	= true;
 	}
 

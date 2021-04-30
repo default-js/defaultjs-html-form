@@ -9,22 +9,24 @@ class FormButton extends Component {
 	}
 
 	static init(button) {
-		button.form = button.parent(NODENAMES.Form);
-		button.active = false;
-		button.disabled = false;
-		button.on("click", (event) => {
-			if (button.active && !button.disabled) button.execute();
-			event.preventDefault();
-			event.stopPropagation();
-		});
+	
 	}
 
 	constructor() {
 		super();
+		this.active = false;
+		this.disabled = false;
+		this.on("click", (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+
+			if (this.active && !this.disabled) this.execute();
+		});
 	}
 
 	async init() {
-		FormButton.init(this);
+		await super.init();
+		this.form = this.parent(NODENAMES.Form);
 	}
 
 	get active() {

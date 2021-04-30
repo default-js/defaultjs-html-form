@@ -10,25 +10,42 @@ class Field extends BaseField {
 		return ATTRIBUTES.concat(BaseField.observedAttributes);
 	}
 
-	static get NODENAME(){
+	static get NODENAME() {
 		return NODENAMES.Field;
 	}
 
 	constructor() {
-		super();
+		super();		
+		this.__valueChanged__ = true;
+		this.on(EVENTS.input, (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+			//if (event.target == this) {}
+
+			const value = event.detail ? event.detail : null;
+			const valueChanged = this.__value__ != value;
+			if (valueChanged) {
+				this.__valueChanged__ = valueChanged;
+				this.__value__ = value;
+				(async () => {
+					console.log("field-input", this, event);
+					await this.validate();
+					this.publishValue();
+				})();
+			}
+		});
 	}
 
 	async init() {
-		await this.initField();
-	}
-
-	async initField() {
-		await this.initBaseField();
-		this.wrapper = findWrapper(this);
-		if (this.wrapper)
-			this.validator.addCustomCheck(async () => {
-				return this.wrapper.valid;
-			});
+		await super.init();
+		const ready = this.ready;
+		if (!ready.resolved) {
+			this.wrapper = findWrapper(this);
+			if (this.wrapper)
+				this.validator.addCustomCheck(async () => {
+					return this.wrapper.valid;
+				});
+		}
 	}
 
 	readonlyUpdated() {
@@ -46,7 +63,15 @@ class Field extends BaseField {
 	}
 
 	updatedValue(value) {
+		this.__valueChanged__ = true;
 		if (this.wrapper) this.wrapper.updatedValue(value);
+	}
+
+	async publishValue(chain = []) {
+		if(this.__valueChanged__){
+			this.__valueChanged__ = false;
+			await super.publishValue(chain);
+		}
 	}
 }
 
