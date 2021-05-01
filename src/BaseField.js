@@ -50,7 +50,6 @@ class BaseField extends Base {
 					const current = this.valid;
 					const valid = await this.validate();
 					if (current != valid) {
-						console.log("publishValue after form execute validate", this);
 						this.publishValue();
 					}
 				}
@@ -63,12 +62,6 @@ class BaseField extends Base {
 
 		this.validate();
 	}
-
-	/*trigger(){
-		if(this.nodeName != "D-PAGE")
-			console.log("trigger", arguments, this);
-		super.trigger.apply(this, arguments);
-	}*/
 
 	conditionUpdated() {
 		this.active = this.condition;
@@ -83,21 +76,22 @@ class BaseField extends Base {
 	}
 
 	get hasValue() {
-		const value = this.value;
+		const value = this.__value__;
 		return value != null && typeof value !== "undefined";
 	}
 
-	get value() {
-		return this.__value__;
-	}
+	async value() {
+		if(arguments.length == 0)
+			return this.__value__;
 
-	set value(value) {
-		if (this.__value__ != value && this.acceptValue(value)) {
-			value = this.normalizeValue(value);
+		let value = arguments[0];
+		await this.ready;
+		if (this.__value__ != value && (await this.acceptValue(value))) {
+			value = (await this.normalizeValue(value));
 			if (this.__value__ != value) {
 				this.__value__ = value;
-				this.updatedValue(value);
-				this.validate();
+				await this.updatedValue(value);
+				await this.validate();
 				this.publishValue();
 			}
 		}
@@ -112,18 +106,15 @@ class BaseField extends Base {
 	}
 
 	async publishValue(chain = []) {
-		console.log("publish-value", this);
 		chain.push(this);
-
 		this.trigger(EVENTS.valueChanged, chain);
-		//setTimeout(() => {}, TRIGGER_TIMEOUT);
 	}
 
-	acceptValue(value) {
+	async acceptValue(value) {
 		return true;
 	}
 
-	normalizeValue(value) {
+	async normalizeValue(value) {
 		return value;
 	}
 

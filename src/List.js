@@ -27,10 +27,7 @@ const createRow = async (list, value) => {
 	const row = document.importNode(template.content, true).children[0];
 	container.append(row);
 
-	if (value) {
-		await row.ready;
-		row.value = value;
-	}
+	if (value) await row.value(value);
 
 	return row;
 };
@@ -47,22 +44,26 @@ class List extends BaseField {
 	constructor(value = null) {
 		super(value ? value : []);
 
-		this.on([EVENTS.valueChanged, EVENTS.initialize], (event) => {
-			event.preventDefault();
-			event.stopPropagation();
+		this.on(
+			EVENTS.valueChanged,
+			toTimeoutHandle(
+				async (event) => {
+					const row = event.target;
+					if (row instanceof Row) {
+						const rows = this.rows;
+						const value  = await row.value();
 
-			if (event.target instanceof Row) {
-				const rows = this.rows;
-				const row = event.target;
-				const { value } = row;
+						const index = rows.indexOf(row);
+						this.__value__[index] = value;
 
-				const index = rows.indexOf(row);
-				this.__value__[index] = value;
-
-				this.validate();
-				this.publishValue(event.detail ? event.detail : row);
-			}
-		});
+						await this.validate();
+						await this.publishValue(event.detail ? event.detail : null);
+					}
+				},
+				true,
+				(event) => {return event.target != this}
+			),
+		);
 
 		this.on(EVENTS.listRowAdd, (event) => {
 			event.preventDefault();
@@ -150,30 +151,18 @@ class List extends BaseField {
 	}
 
 	acceptValue(value) {
-		return value instanceof Array;
+		return !value || value instanceof Array;
 	}
 
 	normalizeValue(value) {
 		return value.filter((item) => !!item);
 	}
 
-	get value() {
-		if (this.__value__.length > 0) return this.__value__;
+	async updatedValue(value) {
+		this.container.children.remove();
+		this.__value__ = [];
 
-		return null;
-	}
-
-	set value(value) {
-		const isNull = noValue(value);
-		if (isNull || this.acceptValue(value)) {
-			this.container.children.remove();
-			this.__value__ = [];
-
-			if (!isNull) {
-				value = this.normalizeValue(value);
-				for (let val of value) createRow(this, val);
-			}
-		}
+		for (let val of value) await createRow(this, val);
 	}
 }
 

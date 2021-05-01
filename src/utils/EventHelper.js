@@ -19,10 +19,14 @@ export const makeEventCopy = (event) => {
 
 export const toTimeoutHandle = (handle, preventDefault, stopPropagation, timeout) => {
     let id = null;
+
+    const prevent = typeof preventDefault === "function" ? preventDefault : () => preventDefault;
+    const stop = typeof stopPropagation === "function" ? stopPropagation : () => stopPropagation;
+
     return (event) => {
-        if(preventDefault)
+        if(prevent(event))
             event.preventDefault();
-        if(stopPropagation)
+        if(stop(event))
             event.stopPropagation();
 
         const eventCopy = makeEventCopy(event);

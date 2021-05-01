@@ -43,7 +43,7 @@ class Validator {
 		const { base, validations, customChecks, condition, editableCondition } = this;
 		const { hasValue, required, requiredOnlyOnActive } = base;
 		const hasChecks = customChecks.length > 0 || validations.length > 0;
-		const data = evaluationData(base);
+		const data = await evaluationData(base);
 		const initial = this.inital;
 		this.inital = false;
 

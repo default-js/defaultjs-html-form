@@ -14,7 +14,6 @@ export const updateValidState = (target, valid, initial = false) => {
 	}
 
 	if (oldState != valid || initial){ 
-		console.log("trigger valid state changed", target, "initial", initial, "oldState", oldState, "newState", valid);
 		target.trigger(EVENTS.validStateChanged);
 	}
 };
@@ -30,7 +29,6 @@ export const updateConditionState = (target, valid, initial = false) => {
 		target.attr(ATTRIBUTE_CONDITION_INVALID, "");
 	}
 	if (oldState != valid || initial) {		
-		console.log("trigger condition state changed", target, "initial", initial, "oldState", oldState, "newState", valid);
 		target.trigger(EVENTS.conditionStateChanged);
 	}
 };

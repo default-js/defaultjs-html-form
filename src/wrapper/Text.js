@@ -1,49 +1,57 @@
 import { EVENTS, EVENTHANDLE_INPUT_TIMEOUT } from "../Constants";
-import {noValue} from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
 
-const INPUTSELECTOR = 'input:not([type=\"file\"]):not([type=\"radio\"]):not([type=\"checkbox\"]) ,input:not([type]), textarea';
+const INPUTSELECTOR = 'input:not([type="file"]):not([type="radio"]):not([type="checkbox"]) ,input:not([type]), textarea';
 
 const DEFAULTTYPE = "text";
 
-
 const text = {
-	accept: (value) => { return typeof value === "string" },
-	value: (input) => { return input.value; },
+	accept: (value) => {
+		return typeof value === "string";
+	},
+	value: (input) => {
+		return input.value;
+	},
 	normalize: (value) => {
 		if (value) {
 			value = value.trim();
 			return value.length > 0 ? value : null;
 		}
-		
+
 		return null;
-	}
+	},
 };
 const number = {
-	accept: (value) => { return typeof value === "number"; },
-	value: (input) => { return input.valueAsNumber; },
+	accept: (value) => {
+		return typeof value === "number";
+	},
+	value: (input) => {
+		return input.valueAsNumber;
+	},
 	normalize: (value) => {
-		if (!noValue(value) && !Number.isNaN(value))
-			return value;
-			
+		if (!noValue(value) && !Number.isNaN(value)) return value;
+
 		return null;
-	}
+	},
 };
 const date = {
-	accept: (value) => { return value instanceof Date },
-	value: (input) => { return input.valueAsDate; },
+	accept: (value) => {
+		return value instanceof Date;
+	},
+	value: (input) => {
+		return input.valueAsDate;
+	},
 	normalize: (value) => {
-		if(value)
-			return value;
-	
+		if (value) return value;
+
 		return null;
-	}
+	},
 };
 const TYPES = { text, number, date, time: date };
 
 export default class Text extends Wrapper {
-
 	static findInput(field) {
 		return field.find(INPUTSELECTOR).first();
 	}
@@ -60,34 +68,29 @@ export default class Text extends Wrapper {
 			"input",
 			toTimeoutHandle(
 				() => {
-					console.log("update wrapper field value");
 					field.trigger(EVENTS.input, this.normalizeValue(this.value));
 				},
 				false,
 				true,
-				EVENTHANDLE_INPUT_TIMEOUT
-			)
+			),
 		);
 
 		field.trigger(EVENTS.input, this.normalizeValue(this.value));
 	}
 
 	acceptValue(value) {
-		if (value == null || typeof value === "undefined")
-			return true;
+		if (value == null || typeof value === "undefined") return true;
 
 		return this.type.accept(value);
 	}
 
 	normalizeValue(value) {
-		if (value == null && typeof value === "undefined")
-			return null;
+		if (value == null && typeof value === "undefined") return null;
 
 		return this.type.normalize(value);
 	}
 	updatedValue(value) {
-		if (this.field.value != this.input.value)
-			this.input.val(value ? value : null);
+		if (this.field.value != this.input.value) this.input.val(value ? value : null);
 	}
 
 	set readonly(readonly) {

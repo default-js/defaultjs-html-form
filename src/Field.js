@@ -20,7 +20,6 @@ class Field extends BaseField {
 		this.on(EVENTS.input, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
-			//if (event.target == this) {}
 
 			const value = event.detail ? event.detail : null;
 			const valueChanged = this.__value__ != value;
@@ -28,9 +27,8 @@ class Field extends BaseField {
 				this.__valueChanged__ = valueChanged;
 				this.__value__ = value;
 				(async () => {
-					console.log("field-input", this, event);
 					await this.validate();
-					this.publishValue();
+					await this.publishValue();
 				})();
 			}
 		});
@@ -52,17 +50,18 @@ class Field extends BaseField {
 		if (this.wrapper) this.wrapper.readonly = this.readonly;
 	}
 
-	acceptValue(value) {
+	async acceptValue(value) {
 		return this.wrapper ? this.wrapper.acceptValue(value) : false;
 	}
 
-	normalizeValue(value) {
+	async normalizeValue(value) {
 		if (this.wrapper) return this.wrapper.normalizeValue(value);
 
 		return value;
 	}
 
-	updatedValue(value) {
+	async updatedValue(value) {
+		await this.ready;
 		this.__valueChanged__ = true;
 		if (this.wrapper) this.wrapper.updatedValue(value);
 	}

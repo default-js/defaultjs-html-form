@@ -1,17 +1,17 @@
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { SPECIALVARS, NODENAMES } from "../Constants"
 
-export const evaluationData = (base) => {
+export const evaluationData = async (base) => {
 	const data = {};
-	data[SPECIALVARS.CURRENTVALUE] = base.value;
+	data[SPECIALVARS.CURRENTVALUE] = await base.value();
 
 	let row = base.parent(NODENAMES.ListRow);
 	let temp = data;
 	while (row) {
-		temp[SPECIALVARS.CURRENTLISTROW] = row.value
+		temp[SPECIALVARS.CURRENTLISTROW] = await row.value();
 		temp = temp[SPECIALVARS.CURRENTLISTROW];
 		row = row.parent(NODENAMES.ListRow);
 	}
 
-	return ObjectUtils.merge( data,base.form.data);
+	return ObjectUtils.merge( data, await base.form.data());
 }

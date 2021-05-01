@@ -1,9 +1,9 @@
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { NODENAMES, EVENTS } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
+import { toTimeoutHandle } from "./utils/EventHelper";
 import BaseField from "./BaseField";
 import defineElement from "./utils/DefineElement";
-
 
 const ATTRIBUTES = [];
 
@@ -41,20 +41,26 @@ class Container extends BaseField {
 	constructor(value = null) {
 		super(value ? value : {});
 		this.fields = [];
-		this.on(EVENTS.valueChanged, (event) => {
-			if (event.target != this) {
-				event.preventDefault();
-				event.stopPropagation();
+		this.on(
+			EVENTS.valueChanged,
+			toTimeoutHandle(
+				async (event) => {
+					if (event.target != this) {
+						const field = event.target;
+						const name = await field.name;
+						const value = await field.value();					
 
-				const { name, value } = event.target;
+						if (name) valueHelper(this.__value__, name, value);
+						else if (value != null) ObjectUtils.merge(this.__value__, value);
 
-				if (name) valueHelper(this.__value__, name, value);
-				else if (value != null) ObjectUtils.merge(this.__value__, value);
-
-				this.validate();
-				this.publishValue(event.detail);
-			}
-		});
+						this.validate();
+						this.publishValue(event.detail);
+					}
+				},
+				true,
+				(event) => {return event.target != this}
+			),
+		);
 	}
 
 	async init() {
@@ -101,9 +107,8 @@ class Container extends BaseField {
 		const { fields } = this;
 		if (fields)
 			for (let field of fields) {
-				await field.ready;
-				if (field.name) field.value = valueHelper(value, field.name);
-				else if (field instanceof Container) field.value = value;
+				if (field.name) await field.value(valueHelper(value, field.name));
+				else if (field instanceof Container) await field.value(value);
 			}
 	}
 }
