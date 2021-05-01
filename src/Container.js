@@ -101,6 +101,7 @@ class Container extends BaseField {
 		const { fields } = this;
 		if (fields)
 			for (let field of fields) {
+				await field.ready;
 				if (field.name) field.value = valueHelper(value, field.name);
 				else if (field instanceof Container) field.value = value;
 			}

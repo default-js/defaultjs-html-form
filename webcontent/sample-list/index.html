@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="boostrap.addons.css" />
+		<link rel="stylesheet" type="text/css" href="form.css" />
+	</head>
+	<body>
+		<div class="container">
+			<h1>User Registration</h1>
+			<d-form class="form-horizontal" endpoint="/api/test/${loginname}" method="post" use-summary-page>
+				<d-progress-bar>
+					<div class="progress"></div>
+					<d-step name="site-1">site 1</d-step>
+					<d-step name="summary">Summary</d-step>
+					<d-step name="finished">Submitted</d-step>
+				</d-progress-bar>
+
+				<d-page step="site-1">
+					<h3>Registation Data</h3>
+					<section>
+						<d-list name="list" max="5" required>
+							<h3>list</h3>
+							<template>
+								<d-row>
+									<d-delete-row>delete</d-delete-row>
+									<d-field name="input" required>
+										<div class="form-group has-feedback">
+											<div class="col-xs-12">
+												<label class="control-label" for="input">input</label>
+											</div>
+											<div class="col-xs-12">
+												<input type="text" class="form-control" name="input" />
+												<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+												<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+											</div>
+											<div class="col-xs-12">
+												<d-validation condition="${$value == 'test'}">
+													<span class="label label-danger">valid input is "test"!</span>
+												</d-validation>
+											</div>
+										</div>
+									</d-field>
+								</d-row>
+							</template>
+							<d-rows> </d-rows>
+							<d-add-row>add</d-add-row>
+						</d-list>
+					</section>
+				</d-page>
+
+				<d-control>
+					<d-control-back class="btn btn-primary">back</d-control-back>
+					<d-control-next class="btn btn-primary">next</d-control-next>
+					<d-control-summary class="btn btn-primary">sumary</d-control-summary>
+					<d-control-submit class="btn btn-primary">submit</d-control-submit>
+				</d-control>
+			</d-form>
+		</div>
+		<div>
+			<button id="load" onclick="loadData()">load data</button>
+		</div>
+
+		<script type="application/javascript" src="/bundle-defaultjs-html-form.js" async></script>
+		<script type="application/javascript" src="main.js" async></script>
+	</body>
+</html>

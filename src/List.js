@@ -22,15 +22,14 @@ const findAddButton = (list) => {
 	})[0];
 };
 
-const createRow = (list, value) => {
+const createRow = async (list, value) => {
 	const { container, template } = list;
 	const row = document.importNode(template.content, true).children[0];
 	container.append(row);
 
 	if (value) {
-		setTimeout(() => {
-			row.value = value;
-		}, TRIGGER_TIMEOUT);
+		await row.ready;
+		row.value = value;
 	}
 
 	return row;
