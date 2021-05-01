@@ -1,7 +1,7 @@
 function loadData() {
 
 	const form = document.querySelector("d-form");
-	form.data = {
+	form.data({
 		"input": "test"
-	};
+	});
 }

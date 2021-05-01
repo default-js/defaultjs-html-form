@@ -14,16 +14,15 @@ export default class Wrapper {
 
 	set readonly(disabled) { }
 
-	acceptValue(value) {
+	async acceptValue(value) {
 		return true;
 	}
 
-	normalizeValue(value) {
+	async normalizeValue(value) {
 		return value;
 	}
 
-	updatedValue() {
-
+	async updatedValue() {
 	}
 	
 	get value(){

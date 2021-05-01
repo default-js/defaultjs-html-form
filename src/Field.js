@@ -15,15 +15,17 @@ class Field extends BaseField {
 	}
 
 	constructor() {
-		super();		
+		super();
 		this.__valueChanged__ = true;
 		this.on(EVENTS.input, (event) => {
+			console.log("field input", event);
 			event.preventDefault();
 			event.stopPropagation();
 
 			const value = event.detail ? event.detail : null;
-			const valueChanged = this.__value__ != value;
+			const valueChanged = !this.__valueChanged__ ? this.__value__ != value :  true;
 			if (valueChanged) {
+				console.log("field input value changed");
 				this.__valueChanged__ = valueChanged;
 				this.__value__ = value;
 				(async () => {
@@ -60,14 +62,14 @@ class Field extends BaseField {
 		return value;
 	}
 
-	async updatedValue(value) {
+	async updatedValue(value) {		
 		await this.ready;
 		this.__valueChanged__ = true;
-		if (this.wrapper) this.wrapper.updatedValue(value);
+		if (this.wrapper) await this.wrapper.updatedValue(value);
 	}
 
 	async publishValue(chain = []) {
-		if(this.__valueChanged__){
+		if (this.__valueChanged__) {
 			this.__valueChanged__ = false;
 			await super.publishValue(chain);
 		}

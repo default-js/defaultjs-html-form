@@ -89,8 +89,9 @@ export default class Text extends Wrapper {
 
 		return this.type.normalize(value);
 	}
-	updatedValue(value) {
-		if (this.field.value != this.input.value) this.input.val(value ? value : null);
+	async updatedValue(value) {
+		if (value != this.input.value)
+			this.input.val(value ? value : null);
 	}
 
 	set readonly(readonly) {
