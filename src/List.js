@@ -46,23 +46,16 @@ class List extends BaseField {
 
 		this.on(
 			EVENTS.valueChanged,
-			toTimeoutHandle(
-				async (event) => {
+				(event) => {
 					const row = event.target;
 					if (row instanceof Row) {
-						const rows = this.rows;
-						const value  = await row.value();
-
-						const index = rows.indexOf(row);
-						this.__value__[index] = value;
-
-						await this.validate();
-						await this.publishValue(event.detail ? event.detail : null);
+						event.preventDefault();
+						event.stopPropagation();
+				
+						const chain = event.detail;
+						this.childValueChanged(row, chain);
 					}
-				},
-				true,
-				(event) => {return event.target != this}
-			),
+				}
 		);
 
 		this.on(EVENTS.listRowAdd, (event) => {
@@ -163,6 +156,18 @@ class List extends BaseField {
 		this.__value__ = [];
 
 		for (let val of value) await createRow(this, val);
+	}
+
+	async childValueChanged(row, chain){
+		await this.ready;
+		const rows = this.rows;
+		const value  = await row.value();
+
+		const index = rows.indexOf(row);
+		this.__value__[index] = value;
+
+		await this.validate();
+		await this.publishValue(chain);
 	}
 }
 

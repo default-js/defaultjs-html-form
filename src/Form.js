@@ -101,7 +101,7 @@ class Form extends Component {
 				else await page.value(data);
 			}
 
-			this.trigger(EVENTS.allPublishValue);
+			//this.trigger(EVENTS.allPublishValue);
 		}
 	}
 

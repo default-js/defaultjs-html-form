@@ -43,18 +43,12 @@ class Container extends BaseField {
 		this.fields = [];
 		this.on(EVENTS.valueChanged, (event) => {
 			const field = event.target;
-			if (field != this) {
-				const detail = event.detail;
-				(async () => {
-					await this.ready;
-					const name = await field.name;
-					const value = await field.value();
-					if (name) valueHelper(this.__value__, name, value);
-					else if (value != null) ObjectUtils.merge(this.__value__, value);
-
-					this.validate();
-					this.publishValue(event.detail);
-				})();
+			if (field != this) {				
+				event.preventDefault();
+				event.stopPropagation();
+				
+				const chain = event.detail;
+				this.childValueChanged(field, chain);
 			}
 		});
 	}
@@ -106,6 +100,17 @@ class Container extends BaseField {
 				if (field.name) await field.value(valueHelper(value, field.name));
 				else if (field instanceof Container) await field.value(value);
 			}
+	}
+
+	async childValueChanged(field, chain){
+		await this.ready;
+		const name = await field.name;
+		const value = await field.value();
+		if (name) valueHelper(this.__value__, name, value);
+		else if (value != null) ObjectUtils.merge(this.__value__, value);
+
+		this.validate();
+		this.publishValue(chain);
 	}
 }
 

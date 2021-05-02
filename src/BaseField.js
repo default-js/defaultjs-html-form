@@ -107,7 +107,10 @@ class BaseField extends Base {
 
 	async publishValue(chain = []) {
 		chain.push(this);
-		this.trigger(EVENTS.valueChanged, chain);
+		if(this.parentField)
+			await this.parentField.childValueChanged(this, chain)
+		else
+			this.trigger(EVENTS.valueChanged, chain);
 	}
 
 	async acceptValue(value) {
@@ -119,5 +122,6 @@ class BaseField extends Base {
 	}
 
 	async updatedValue() {}
+	async childValueChanged(child, chain){}
 }
 export default BaseField;
