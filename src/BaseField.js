@@ -83,9 +83,9 @@ class BaseField extends Base {
 	async value() {
 		if(arguments.length == 0)
 			return this.__value__;
-
 		let value = arguments[0];
 		await this.ready;
+
 		if (this.__value__ != value && (await this.acceptValue(value))) {
 			value = (await this.normalizeValue(value));
 			if (this.__value__ != value) {

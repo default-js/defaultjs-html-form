@@ -90,8 +90,10 @@ class Form extends Component {
 
 	async data() {
 		if (arguments.length == 0) return this.__data__;
+
 		const data = arguments[0];
 		await this.ready;
+
 		if (this.state == FORMSTATES.input) {
 			this.__data__ = {}; //data;
 			for (let page of this.pages) {

@@ -18,14 +18,12 @@ class Field extends BaseField {
 		super();
 		this.__valueChanged__ = true;
 		this.on(EVENTS.input, (event) => {
-			console.log("field input", event);
 			event.preventDefault();
 			event.stopPropagation();
 
 			const value = event.detail ? event.detail : null;
 			const valueChanged = !this.__valueChanged__ ? this.__value__ != value :  true;
 			if (valueChanged) {
-				console.log("field input value changed");
 				this.__valueChanged__ = valueChanged;
 				this.__value__ = value;
 				(async () => {
@@ -35,7 +33,7 @@ class Field extends BaseField {
 			}
 		});
 	}
-
+	
 	async init() {
 		await super.init();
 		const ready = this.ready;
@@ -46,6 +44,9 @@ class Field extends BaseField {
 					return this.wrapper.valid;
 				});
 		}
+		
+		this.__valueChanged__ = true;
+		this.publishValue();
 	}
 
 	readonlyUpdated() {
@@ -63,15 +64,15 @@ class Field extends BaseField {
 	}
 
 	async updatedValue(value) {		
-		await this.ready;
+		await this.ready;		
 		this.__valueChanged__ = true;
 		if (this.wrapper) await this.wrapper.updatedValue(value);
 	}
 
 	async publishValue(chain = []) {
 		if (this.__valueChanged__) {
+			await super.publishValue(chain);			
 			this.__valueChanged__ = false;
-			await super.publishValue(chain);
 		}
 	}
 }

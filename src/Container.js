@@ -41,26 +41,22 @@ class Container extends BaseField {
 	constructor(value = null) {
 		super(value ? value : {});
 		this.fields = [];
-		this.on(
-			EVENTS.valueChanged,
-			toTimeoutHandle(
-				async (event) => {
-					if (event.target != this) {
-						const field = event.target;
-						const name = await field.name;
-						const value = await field.value();					
+		this.on(EVENTS.valueChanged, (event) => {
+			const field = event.target;
+			if (field != this) {
+				const detail = event.detail;
+				(async () => {
+					await this.ready;
+					const name = await field.name;
+					const value = await field.value();
+					if (name) valueHelper(this.__value__, name, value);
+					else if (value != null) ObjectUtils.merge(this.__value__, value);
 
-						if (name) valueHelper(this.__value__, name, value);
-						else if (value != null) ObjectUtils.merge(this.__value__, value);
-
-						this.validate();
-						this.publishValue(event.detail);
-					}
-				},
-				true,
-				(event) => {return event.target != this}
-			),
-		);
+					this.validate();
+					this.publishValue(event.detail);
+				})();
+			}
+		});
 	}
 
 	async init() {
