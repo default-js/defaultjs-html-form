@@ -1,7 +1,7 @@
 function loadData() {
 
 	const form = document.querySelector("d-form");
-	form.data = {
+	form.data({
 		"loginname": "user",
 		"password": "test",
 		"password_check": "test",
@@ -16,5 +16,5 @@ function loadData() {
 				"socialid": "test"
 			}
 		]
-	};
+	});
 }
