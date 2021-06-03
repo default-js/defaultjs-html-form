@@ -86,14 +86,14 @@ class BaseField extends Base {
 		let value = arguments[0];
 		await this.ready;
 
-		if (this.__value__ != value && (await this.acceptValue(value))) {
+		if (await this.acceptValue(value)) {
 			value = (await this.normalizeValue(value));
 			if (this.__value__ != value) {
 				this.__value__ = value;
 				await this.updatedValue(value);
-				await this.validate();
+				await this.validate();				
 				this.publishValue();
-			}
+			}			
 		}
 	}
 

@@ -97,11 +97,12 @@ class Form extends Component {
 		if (this.state == FORMSTATES.input) {
 			this.__data__ = {}; //data;
 			for (let page of this.pages) {
+				await page.value(null);// reset all values
 				if (page.name) await page.value(data[page.name]);
 				else await page.value(data);
 			}
 
-			//this.trigger(EVENTS.allPublishValue);
+			this.trigger(EVENTS.allPublishValue);
 		}
 	}
 

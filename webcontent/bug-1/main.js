@@ -1,20 +1,13 @@
-function loadData() {
-	const form = document.querySelector("d-form");
+const form = document.querySelector("d-form");
+
+function loadDataMessage() {
 	form.data({
-		input: "test",
-		container: {
-			input: "test",
-		},
-		list: [
-			{
-				input: "test",
-			},
-			{
-				input: "test",
-			},
-			{
-				input: "test",
-			},
-		],
+		field1: "message"
+	});
+}
+
+function loadDataInvalid() {
+	form.data({
+		field1: "valid"
 	});
 }

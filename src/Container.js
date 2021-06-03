@@ -43,10 +43,10 @@ class Container extends BaseField {
 		this.fields = [];
 		this.on(EVENTS.valueChanged, (event) => {
 			const field = event.target;
-			if (field != this) {				
+			if (field != this) {
 				event.preventDefault();
 				event.stopPropagation();
-				
+
 				const chain = event.detail;
 				this.childValueChanged(field, chain);
 			}
@@ -54,34 +54,37 @@ class Container extends BaseField {
 	}
 
 	async init() {
+		const ready = this.ready;
 		await super.init();
 		this.fields = findFields(this);
-		this.on(EVENTS.initialize, (event) => {
-			if (event.target != this) {
-				const field = event.target;
-				if (field instanceof BaseField) {
-					if (this.fields.indexOf(field) < 0) {
-						this.fields.push(field);
+		if (!ready.resolved) {
+			this.on(EVENTS.initialize, (event) => {
+				if (event.target != this) {
+					const field = event.target;
+					if (field instanceof BaseField) {
+						if (this.fields.indexOf(field) < 0) {
+							this.fields.push(field);
+						}
+
+						event.preventDefault();
+						event.stopPropagation();
 					}
-
-					event.preventDefault();
-					event.stopPropagation();
 				}
-			}
-		});
+			});
 
-		this.validator.addCustomCheck(async ({ data, base }) => {
-			const { fields } = base;
-			if (fields) {
-				const length = fields.length;
-				for (let i = 0; i < length; i++) {
-					const field = fields[i];
-					if (field.condition && !field.valid) return false;
+			this.validator.addCustomCheck(async ({ data, base }) => {
+				const { fields } = base;
+				if (fields) {
+					const length = fields.length;
+					for (let i = 0; i < length; i++) {
+						const field = fields[i];
+						if (field.condition && !field.valid) return false;
+					}
 				}
-			}
 
-			return true;
-		});
+				return true;
+			});
+		}
 	}
 
 	readonlyUpdated() {
@@ -96,13 +99,13 @@ class Container extends BaseField {
 		this.__value__ = {};
 		const { fields } = this;
 		if (fields)
-			for (let field of fields) {
+			for (let field of fields) {				
 				if (field.name) await field.value(valueHelper(value, field.name));
 				else if (field instanceof Container) await field.value(value);
 			}
 	}
 
-	async childValueChanged(field, chain){
+	async childValueChanged(field, chain) {
 		await this.ready;
 		const name = await field.name;
 		const value = await field.value();

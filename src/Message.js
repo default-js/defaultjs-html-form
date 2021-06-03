@@ -60,7 +60,7 @@ class Message extends Component {
 
 	async update() {
 		await this.ready;
-		const data = evaluationData(this.reference);
+		const data = await evaluationData(this.reference);
 		this.active = await ExpressionResolver.resolve(this.condition, data, false);
 	}
 }
