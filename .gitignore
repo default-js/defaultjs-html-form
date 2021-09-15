@@ -1,7 +1,5 @@
-/.settings/
-/.project
-/node_modules/
-
+# temp folder
+runtime
 
 # Logs
 logs
@@ -67,3 +65,6 @@ typings/
 
 # eclipse
 .project
+.settings
+.project
+node_modules

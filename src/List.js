@@ -148,14 +148,15 @@ class List extends BaseField {
 	}
 
 	normalizeValue(value) {
-		return value.filter((item) => !!item);
+		return value ? value.filter((item) => !!item) : null;
 	}
 
 	async updatedValue(value) {
 		this.container.children.remove();
-		this.__value__ = [];
+		this.__value__ = value;
 
-		for (let val of value) await createRow(this, val);
+		if(value)
+			for (let val of value) await createRow(this, val);
 	}
 
 	async childValueChanged(row, chain){
@@ -164,6 +165,9 @@ class List extends BaseField {
 		const value  = await row.value();
 
 		const index = rows.indexOf(row);
+		if(!this.__value__)
+			this.__value__ = [];
+			
 		this.__value__[index] = value;
 
 		await this.validate();
