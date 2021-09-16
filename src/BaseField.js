@@ -80,6 +80,9 @@ class BaseField extends Base {
 
 	conditionUpdated() {
 		this.active = this.condition;
+		(async () => {
+			this.publishValue();
+		})();
 	}
 
 	get name() {
@@ -116,7 +119,7 @@ class BaseField extends Base {
 		updateHasValue(this.hasValue, this);
 		if (!this.validator) return false;
 
-		const valid = await this.validator.validate();
+		const valid = await this.validator.validate();		
 		return valid;
 	}
 

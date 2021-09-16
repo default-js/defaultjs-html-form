@@ -19,8 +19,10 @@ const formState = function (self, state) {
 const collectData = async (self) => {
 	await self.ready;
 	const data = {};
+	const activePage = self.activePage;
 	const pages = self.pages;
-	for (let page of pages) {
+
+	for (let page of pages) {		
 		if (page.condition) {
 			const name = page.name;
 			const value = await page.value();
@@ -120,8 +122,6 @@ class Form extends Component {
 				if (page.name) await page.value(data[page.name]);
 				else await page.value(data);
 			}
-
-			this.trigger(EVENTS.allPublishValue);
 		}
 	}
 
@@ -133,12 +133,13 @@ class Form extends Component {
 
 	set activePage(page) {
 		const current = this.activePage;
-		if (page != current) {
+		if (page != current || this.state != FORMSTATES.input) {
 			if (current) current.active = false;
 			this.activePageIndex = this.pages.indexOf(page);
 			page.active = true;
-			if (this.state != FORMSTATES.input) this.state = FORMSTATES.input;
+			if (this.state != FORMSTATES.input)	this.state = FORMSTATES.input;
 
+			this.scrollIntoView();
 			this.trigger(EVENTS.siteChanged);
 		}
 	}

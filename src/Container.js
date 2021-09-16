@@ -109,15 +109,15 @@ class Container extends BaseField {
 
 	async childValueChanged(field, chain) {
 		await this.ready;
-		const data = _value(this);
-		const name = await field.name;
-		const value = await field.value();
-		const hasValue = value != null && typeof value !== "undefined";
-		if (name) {
-			if (hasValue) data[name] = value;
-			else delete data[name];
-		} else if (hasValue) ObjectUtils.merge(data, value);
-
+			const data = _value(this);
+			const name = await field.name;
+			const value = field.condition ? await field.value() : null;
+			const hasValue = value != null && typeof value !== "undefined";
+			if (name) {
+				if (hasValue) data[name] = value;
+				else delete data[name];
+			} else if (hasValue) ObjectUtils.merge(data, value);
+		
 		this.validate();
 		this.publishValue(chain);
 	}

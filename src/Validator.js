@@ -9,9 +9,10 @@ import { evaluationData } from "./utils/DataHelper";
 const updateReadonly = async ({ data, valid, base, condition }) => {
 	const { form } = base;
 	if (form.state == FORMSTATES.input) {
-		if (!valid)
+		/*if (!valid)
 			base.readonly = false;
-		else if (condition) {
+		else */
+		if (condition) {
 			const test = await ExpressionResolver.resolve(condition, data, false);
 			base.editable = test;
 			return test;
