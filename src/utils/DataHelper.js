@@ -2,6 +2,7 @@ import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { SPECIALVARS, NODENAMES } from "../Constants"
 
 export const evaluationData = async (base) => {
+	await base.ready;
 	const data = {};
 	data[SPECIALVARS.CURRENTVALUE] = await base.value();
 
@@ -12,6 +13,6 @@ export const evaluationData = async (base) => {
 		temp = temp[SPECIALVARS.CURRENTLISTROW];
 		row = row.parent(NODENAMES.ListRow);
 	}
-
-	return ObjectUtils.merge( data, await base.form.data());
+	
+	return ObjectUtils.merge( data, await base.form.value());
 }

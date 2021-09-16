@@ -7,12 +7,5 @@ module.exports = {
 		bundle: './bundle.js',
 		'module-bundle': './module-bundle.js'
 	},
-	resolve: {
-		alias: {
-			"@src": path.resolve(__dirname + '/src'),
-			"@test": path.resolve(__dirname + '/test'),
-			"@modules": path.resolve(__dirname + '/node_modules')
-		}
-	},
 	target: "web"
 };

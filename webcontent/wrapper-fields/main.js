@@ -1,7 +1,7 @@
 function loadData() {
 
 	const form = document.querySelector("d-form");
-	form.data = {
+	form.value({
 		text: "textinput",
 		number: 42,
 		textarea: "textarea",
@@ -10,5 +10,5 @@ function loadData() {
 		radioinput: "value-2",
 		select: "value-3",
 		selectMultiple: ["value-1", "value-3"],
-	};
+	});
 }

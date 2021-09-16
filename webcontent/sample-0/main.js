@@ -1,7 +1,7 @@
 function loadData() {
 	console.log("load data");
 	const form = document.querySelector("d-form");
-	form.data({
+	form.value({
 		input: "test",
 		container: {
 			input: "test",

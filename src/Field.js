@@ -1,5 +1,5 @@
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
-import BaseField from "./BaseField";
+import BaseField, {_value} from "./BaseField";
 import { findWrapper } from "./wrapper";
 import defineElement from "./utils/DefineElement";
 
@@ -16,21 +16,13 @@ class Field extends BaseField {
 
 	constructor() {
 		super();
-		this.__valueChanged__ = true;
 		this.on(EVENTS.input, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 
 			const value = event.detail ? event.detail : null;
-			const valueChanged = !this.__valueChanged__ ? this.__value__ != value :  true;
-			if (valueChanged) {
-				this.__valueChanged__ = valueChanged;
-				this.__value__ = value;
-				(async () => {
-					await this.validate();
-					await this.publishValue();
-				})();
-			}
+			if(_value(this) != value)
+				this.value(value);
 		});
 	}
 	
@@ -45,7 +37,6 @@ class Field extends BaseField {
 				});
 		}
 		
-		this.__valueChanged__ = true;
 		this.publishValue();
 	}
 
@@ -64,16 +55,8 @@ class Field extends BaseField {
 	}
 
 	async updatedValue(value) {		
-		await this.ready;		
-		this.__valueChanged__ = true;
+		await this.ready;	
 		if (this.wrapper) await this.wrapper.updatedValue(value);
-	}
-
-	async publishValue(chain = []) {
-		if (this.__valueChanged__) {
-			await super.publishValue(chain);			
-			this.__valueChanged__ = false;
-		}
 	}
 }
 

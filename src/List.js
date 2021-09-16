@@ -3,7 +3,7 @@ import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { toTimeoutHandle } from "./utils/EventHelper";
 import { treeFilter } from "./utils/NodeHelper";
 import defineElement from "./utils/DefineElement";
-import BaseField from "./BaseField";
+import BaseField, { _value } from "./BaseField";
 import Row from "./list/Row";
 import AddRow from "./list/AddRow";
 import DeleteRow from "./list/DeleteRow";
@@ -44,28 +44,26 @@ class List extends BaseField {
 	constructor(value = null) {
 		super(value ? value : []);
 
-		this.on(
-			EVENTS.valueChanged,
-				(event) => {
-					const row = event.target;
-					if (row instanceof Row) {
-						event.preventDefault();
-						event.stopPropagation();
-				
-						const chain = event.detail;
-						this.childValueChanged(row, chain);
-					}
-				}
-		);
+		this.on(EVENTS.valueChanged, (event) => {
+			const row = event.target;
+			if (row instanceof Row) {
+				event.preventDefault();
+				event.stopPropagation();
+
+				const chain = event.detail;
+				this.childValueChanged(row, chain);
+			}
+		});
 
 		this.on(EVENTS.listRowAdd, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 
-			const { readonly, __value__ } = this;
+			const { readonly} = this;
+			const values = _value(this);
 			if (!readonly) {
 				const row = createRow(this);
-				__value__.push(row.value);
+				values.push(row.value);
 
 				this.validate();
 				this.publishValue();
@@ -76,14 +74,15 @@ class List extends BaseField {
 			event.preventDefault();
 			event.stopPropagation();
 
-			const { rows, readonly, __value__ } = this;
+			const { rows, readonly} = this;
+			const values = _value(this);
 			if (!readonly) {
 				const row = event.target.parent(NODENAMES.ListRow);
 				const index = rows.indexOf(row);
 				if (index >= 0) {
 					row.remove();
 					rows.splice(index, 1);
-					__value__.splice(index, 1);
+					values.splice(index, 1);
 
 					this.validate();
 					this.publishValue();
@@ -93,13 +92,12 @@ class List extends BaseField {
 	}
 
 	async init() {
-		await super.init();
-		this.__value__ = [];
+		await super.init();		
 		const ready = this.ready;
 		if (!ready.resolved) {
 			this.template = this.find("template").first();
 			this.container = this.find(NODENAMES.ListRows).first();
-			const { container, template, validator } = this;
+			const validator  = this.validator;
 			const addButton = findAddButton(this);
 
 			validator.addCustomCheck(async ({}) => {
@@ -153,22 +151,21 @@ class List extends BaseField {
 
 	async updatedValue(value) {
 		this.container.children.remove();
-		this.__value__ = value;
-
-		if(value)
-			for (let val of value) await createRow(this, val);
+		if (value) for (let val of value) await createRow(this, val);
 	}
 
-	async childValueChanged(row, chain){
-		await this.ready;
-		const rows = this.rows;
-		const value  = await row.value();
+	async childValueChanged(row, chain) {
+		await this.ready;		
+		let values = await _value(this);
+		if (!values) {
+			values = [];
+			_value(values);
+		}
 
-		const index = rows.indexOf(row);
-		if(!this.__value__)
-			this.__value__ = [];
-			
-		this.__value__[index] = value;
+		const rows = this.rows;
+		const value = await row.value();
+		const index = rows.indexOf(row);		
+		values[index] = value;
 
 		await this.validate();
 		await this.publishValue(chain);

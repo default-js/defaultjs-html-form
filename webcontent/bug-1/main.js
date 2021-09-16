@@ -1,13 +1,13 @@
 const form = document.querySelector("d-form");
 
 function loadDataMessage() {
-	form.data({
+	form.value({
 		field1: "message"
 	});
 }
 
 function loadDataInvalid() {
-	form.data({
+	form.value({
 		field1: "valid"
 	});
 }

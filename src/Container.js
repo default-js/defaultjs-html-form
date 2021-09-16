@@ -2,7 +2,7 @@ import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { NODENAMES, EVENTS } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
 import { toTimeoutHandle } from "./utils/EventHelper";
-import BaseField from "./BaseField";
+import BaseField, { _value } from "./BaseField";
 import defineElement from "./utils/DefineElement";
 
 const ATTRIBUTES = [];
@@ -96,21 +96,27 @@ class Container extends BaseField {
 	}
 
 	async updatedValue(value) {
-		this.__value__ = {};
+		await this.ready;
+		_value(this, {});
 		const { fields } = this;
-		if (fields)
-			for (let field of fields) {				
+		if (fields) {
+			for (let field of fields) {
 				if (field.name) await field.value(valueHelper(value, field.name));
 				else if (field instanceof Container) await field.value(value);
 			}
+		}
 	}
 
 	async childValueChanged(field, chain) {
 		await this.ready;
+		const data = _value(this);
 		const name = await field.name;
 		const value = await field.value();
-		if (name) valueHelper(this.__value__, name, value);
-		else if (value != null) ObjectUtils.merge(this.__value__, value);
+		const hasValue = value != null && typeof value !== "undefined";
+		if (name) {
+			if (hasValue) data[name] = value;
+			else delete data[name];
+		} else if (hasValue) ObjectUtils.merge(data, value);
 
 		this.validate();
 		this.publishValue(chain);

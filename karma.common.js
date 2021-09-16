@@ -1,4 +1,7 @@
 const path = require('path');
+const webpack = require("./webpack.test.js");
+const puppeteer = require('puppeteer');
+process.env.CHROME_BIN = puppeteer.executablePath();
 
 module.exports = {
 	// base path that will be used to resolve all patterns (eg. files,
@@ -70,5 +73,6 @@ module.exports = {
 	singleRun : false,
 	concurrency : Infinity,
 	browserDisconnectTimeout: 60000,
-	browserNoActivityTimeout: 60000
+	browserNoActivityTimeout: 60000,
+	webpack	
 };

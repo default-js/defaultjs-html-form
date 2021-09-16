@@ -1,6 +1,9 @@
 import { NODENAMES, TRIGGER_TIMEOUT, EVENTS, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_INVALID, ATTRIBUTE_EDITABLE_CONDITION, ATTRIBUTE_EDITABLE } from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
+import { privateProperty } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { updateActiveState, updateEditableState } from "./utils/StateHelper";
+
+const PRIVATE_FORM = "form";
 
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_EDITABLE_CONDITION];
 
@@ -18,9 +21,12 @@ class Base extends Component {
 	}
 
 	get form() {
-		if (!this.__form__)
-			this.__form__ = this.parent(NODENAMES.Form);
-		return this.__form__;
+		let form = privateProperty(this, PRIVATE_FORM);
+		if (!form) {
+			form = this.parent(NODENAMES.Form);
+			privateProperty(this, PRIVATE_FORM, form);
+		}
+		return form;
 	}
 
 	get active() {
@@ -35,8 +41,7 @@ class Base extends Component {
 		}
 	}
 
-	activeUpdated() {
-	}
+	activeUpdated() {}
 
 	get readonly() {
 		return this.hasAttribute(ATTRIBUTE_READONLY);
@@ -47,18 +52,18 @@ class Base extends Component {
 		this.readonlyUpdated();
 	}
 
-	readonlyUpdated() { }
-	
-	get editable(){
-		return this.hasAttribute(ATTRIBUTE_EDITABLE);		
+	readonlyUpdated() {}
+
+	get editable() {
+		return this.hasAttribute(ATTRIBUTE_EDITABLE);
 	}
-	
-	set editable(editable){		
+
+	set editable(editable) {
 		updateEditableState(this, editable, !this.ready.resolved);
-		this.editableUpdated();		
+		this.editableUpdated();
 	}
-	
-	editableUpdated(){
+
+	editableUpdated() {
 		this.readonlyUpdated();
 	}
 
@@ -66,9 +71,7 @@ class Base extends Component {
 		return !this.hasAttribute(ATTRIBUTE_CONDITION_INVALID);
 	}
 
-	conditionUpdated() {
-
-	}
+	conditionUpdated() {}
 
 	get valid() {
 		return this.hasAttribute(ATTRIBUTE_VALID);

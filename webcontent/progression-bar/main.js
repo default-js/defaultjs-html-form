@@ -1,7 +1,7 @@
 function loadData() {
 	console.log("loadData");
 	const form = document.querySelector("d-form");
-	form.data = {
+	form.value({
 		nofiled : "nofield",
 		foo: {
 			bar : {
@@ -40,7 +40,7 @@ function loadData() {
 				field4: "load 4"
 			}
 		]
-	};
+	});
 }
 
 document.ready(() => {

@@ -11,15 +11,15 @@ const loadData = async () => {
 	const testDataJson = JSON.stringify(testData);
 
 	const form = document.querySelector("d-form");
-	await form.data(testData);
-	const data = await form.data();
+	await form.value(testData);
+	const data = await form.value();
 	const dataJson = JSON.stringify(data);
 
 	console.log("eq", dataJson == testDataJson, testDataJson, dataJson, testData, data);
 	
 
 	setTimeout(async () => {
-		const data = await form.data();
+		const data = await form.value();
 		const dataJson = JSON.stringify(data);
 		console.log("eq after 5000ms", dataJson == testDataJson, testDataJson, dataJson, testData, data);
 	}, 5000);	

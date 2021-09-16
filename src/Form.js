@@ -1,6 +1,7 @@
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
+import { privateProperty } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT } from "./Constants";
 import defineElement from "./utils/DefineElement";
 import { toTimeoutHandle } from "./utils/EventHelper";
@@ -8,6 +9,29 @@ import "./Message";
 import "./Page";
 import "./Control";
 import "./ProgressBar";
+const PRIVATE_STATE = "state";
+
+const formState = function (self, state) {
+	if (arguments.length == 2) privateProperty(self, PRIVATE_STATE, state);
+	else return privateProperty(self, PRIVATE_STATE);
+};
+
+const collectData = async (self) => {
+	await self.ready;
+	const data = {};
+	const pages = self.pages;
+	for (let page of pages) {
+		if (page.condition) {
+			const name = page.name;
+			const value = await page.value();
+			const hasValue = value != null && typeof value !== "undefined";
+			if (name && hasValue) data[name] = value;
+			else if (hasValue) ObjectUtils.merge(data, value);
+		}
+	}
+
+	return data;
+};
 
 const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT];
 
@@ -29,23 +53,21 @@ class Form extends Component {
 
 	constructor() {
 		super();
-		this.__data__ = {};
-		this.__state__ = null;
+		formState(this, null);
+		let valueChangeTimeout = null;
 		this.on(
 			EVENTS.valueChanged,
-			toTimeoutHandle(
-				async (event) => {
-					const field = event.target;
-					const name = await field.name;
-					const value = await field.value();
-					if (name) this.__data__[name] = value;
-					else if (value != null) ObjectUtils.merge(this.__data__, value);
+			(event) => {
+				event.stopPropagation();
+				const detail = event.detail;
+				if(valueChangeTimeout)
+					clearTimeout(valueChangeTimeout);
 
-					this.trigger(EVENTS.executeValidate, event.detail);
-				},
-				true,
-				true,
-			),
+				valueChangeTimeout = setTimeout(() => {
+					valueChangeTimeout = null;
+					this.trigger(EVENTS.executeValidate, detail);
+				}, 1);
+			}
 		);
 	}
 
@@ -66,7 +88,7 @@ class Form extends Component {
 	}
 
 	get state() {
-		return this.__state__;
+		return formState(this);
 	}
 
 	set state(state) {
@@ -76,10 +98,10 @@ class Form extends Component {
 			readonly(this, false);
 			if (this.activePage) this.activePage.active = true;
 		}
-		this.__state__ = state;
+		formState(this, state);
 
 		if (actual != state) this.trigger(EVENTS.formStateChanged);
-		this.attr(ATTRIBUTE_STATE, this.__state__);
+		this.attr(ATTRIBUTE_STATE, state);
 	}
 
 	get valid() {
@@ -88,16 +110,13 @@ class Form extends Component {
 		return true;
 	}
 
-	async data() {
-		if (arguments.length == 0) return this.__data__;
+	async value(data) {
+		if (arguments.length == 0) return collectData(this); //return formData(this);
 
-		const data = arguments[0];
 		await this.ready;
-
 		if (this.state == FORMSTATES.input) {
-			this.__data__ = {}; //data;
 			for (let page of this.pages) {
-				await page.value(null);// reset all values
+				await page.value(null); // reset all values
 				if (page.name) await page.value(data[page.name]);
 				else await page.value(data);
 			}
@@ -171,15 +190,15 @@ class Form extends Component {
 
 	async submit() {
 		this.state = this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? FORMSTATES.input : FORMSTATES.finished;
-		const data = this.data;
+		const data = await this.value();
 
 		let endpoint = this.attr(ATTRIBUTE_ENDPOINT);
 		if (endpoint) {
 			endpoint = await ExpressionResolver.resolveText(endpoint, data, endpoint);
-			const url = new URL(endpoint, location.href);
+			const url = new URL(endpoint, location);
 
 			return await fetch(url.toString(), {
-				method: (this.attr(ATTRIBUTE_METHOD) || "post").toLowerCase(),
+				method: this.attr(ATTRIBUTE_METHOD) || "post",
 				credentials: "include",
 				mode: "cors",
 				headers: {

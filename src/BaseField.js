@@ -1,8 +1,16 @@
 import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_REQUIRED_ON_ACTIVE_ONLY, ATTRIBUTE_NOVALUE } from "./Constants";
-import { toTimeoutHandle } from "./utils/EventHelper";
-import { updateValidState } from "./utils/StateHelper";
 import Base from "./Base";
 import Validator from "./Validator";
+import { privateProperty } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
+
+const PRIVATE_PARENT = "parent";
+const PRIVATE_VALUE = "value";
+const PRIVATE_VALIDATOR = "validator";
+
+export const _value = function (self, value) {
+	if (arguments.length == 2) privateProperty(self, PRIVATE_VALUE, value);
+	else return privateProperty(self, PRIVATE_VALUE);
+};
 
 const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE];
 
@@ -27,8 +35,7 @@ class BaseField extends Base {
 
 	constructor(value = null) {
 		super();
-		this.__value__ = value;
-		this.__valueChanged__ = true;
+		_value(this, value);
 
 		this.on(EVENTS.conditionStateChanged, (event) => {
 			if (event.target == this) {
@@ -41,8 +48,8 @@ class BaseField extends Base {
 		await super.init();
 		const ready = this.ready;
 		if (!ready.resolved) {
-			this.parentField = findParentField(this);
-			this.validator = new Validator(this);
+			privateProperty(this, PRIVATE_PARENT, findParentField(this));
+			privateProperty(this, PRIVATE_VALIDATOR, new Validator(this));			
 
 			this.form.on(EVENTS.executeValidate, async (event) => {
 				const chain = event.detail;
@@ -63,6 +70,14 @@ class BaseField extends Base {
 		this.validate();
 	}
 
+	get validator() {
+		return privateProperty(this, PRIVATE_VALIDATOR);
+	}
+
+	get parentField() {
+		return privateProperty(this, PRIVATE_PARENT);
+	}
+
 	conditionUpdated() {
 		this.active = this.condition;
 	}
@@ -76,24 +91,24 @@ class BaseField extends Base {
 	}
 
 	get hasValue() {
-		const value = this.__value__;
+		const value = _value(this);
 		return value != null && typeof value !== "undefined";
 	}
 
-	async value() {
-		if(arguments.length == 0)
-			return this.__value__;
-		let value = arguments[0];
+	async value(value) {
+		if (arguments.length == 0) return _value(this);
+
 		await this.ready;
+		const currentValue = _value(this);
 
 		if (await this.acceptValue(value)) {
-			value = (await this.normalizeValue(value));
-			if (this.__value__ != value) {
-				this.__value__ = value;
-				await this.updatedValue(value);
-				await this.validate();				
+			value = await this.normalizeValue(value);
+			if (currentValue != value) {
+				_value(this, value);
+				await this.updatedValue(value);				
+				await this.validate();
 				this.publishValue();
-			}			
+			}
 		}
 	}
 
@@ -106,11 +121,10 @@ class BaseField extends Base {
 	}
 
 	async publishValue(chain = []) {
+		await this.ready;
 		chain.push(this);
-		if(this.parentField)
-			await this.parentField.childValueChanged(this, chain)
-		else
-			this.trigger(EVENTS.valueChanged, chain);
+		if (this.parentField) await this.parentField.childValueChanged(this, chain);
+		else this.trigger(EVENTS.valueChanged, chain);
 	}
 
 	async acceptValue(value) {
@@ -122,6 +136,6 @@ class BaseField extends Base {
 	}
 
 	async updatedValue() {}
-	async childValueChanged(child, chain){}
+	async childValueChanged(child, chain) {}
 }
 export default BaseField;

@@ -43,14 +43,14 @@ async function loadData() {
 	const testDataJson = JSON.stringify(testData);
 	const form = document.querySelector("d-form");
 	
-	await form.data(testData);
-	const data1 = await form.data();
+	await form.value(testData);
+	const data1 = await form.value();
 	const data1Json = JSON.stringify(data1);
 
 	console.log("eq", data1Json == testDataJson, testDataJson, data1Json, testData, data1);
 
 
-	const data2 = await form.data(data1);
+	const data2 = await form.value(data1);
 	const data2Json = JSON.stringify(data2);
 
 	console.log("eq", data1Json == data2Json, data1Json, data2Json, data1, data2);
