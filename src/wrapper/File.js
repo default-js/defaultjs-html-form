@@ -100,7 +100,7 @@ export default class File extends Wrapper {
 		else if (this.multiple)
 			return value instanceof Array;
 		else
-			return value instanceof "object";
+			return typeof value  === "object";
 	}
 
 	normalizeValue(value) {
@@ -116,14 +116,17 @@ export default class File extends Wrapper {
 		if (value != this.__value__) {
 			this.__value__ = value;
 
-			if (this.filenameTarget && value) {
+			const filename = this.filenameTarget;
+
+			if (filename && value) {
+				filename.empty();
 				if (this.multiple) {
 					for (let file of value) {
-						this.filenameTarget.append(`<span>${file.name}</span>`);
+						filename.append(`<span>${file.name}</span>`);
 					}
 				}
 				else {
-					this.filenameTarget.append(`<span>${value.name}</span>`);
+					filename.append(`<span>${value.name}</span>`);
 				}
 			}
 
