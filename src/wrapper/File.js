@@ -117,21 +117,21 @@ export default class File extends Wrapper {
 		const currentValue = _value(this);
 		if (value != currentValue) {
 			_value(this, value)
+			if(!value)			
+				this.input.value = null;
 
 			const filename = this.filenameTarget;
-			if (filename && value) {
+			if (filename) {
 				filename.empty();
-				if (this.multiple) {
-					for (let file of value) {
-						filename.append(`<span>${file.name}</span>`);
+				if(value){
+					if (this.multiple) {
+						for (let file of value) {
+							filename.append(`<span>${file.name}</span>`);
+						}
 					}
+					else
+						filename.append(`<span>${value.name}</span>`);
 				}
-				else {
-					filename.append(`<span>${value.name}</span>`);
-				}
-			}  else if(!value){
-				this.input.value = null;
-				filename.empty();
 			}
 
 		}
