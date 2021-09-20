@@ -1,6 +1,9 @@
 import { EVENTS } from "../Constants";
 import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
+import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
+
+const _value = privatePropertyAccessor("value");
 
 const INPUTSELECTOR = 'input[type="file"]';
 
@@ -92,8 +95,6 @@ export default class File extends Wrapper {
 		this.input.attr("disabled", readonly ? "" : null);
 	}
 
-
-
 	acceptValue(value) {
 		if (value == null || typeof value === "undefined")
 			return true;
@@ -113,11 +114,11 @@ export default class File extends Wrapper {
 	}
 
 	updatedValue(value) {
-		if (value != this.__value__) {
-			this.__value__ = value;
+		const currentValue = _value(this);
+		if (value != currentValue) {
+			_value(this, value)
 
 			const filename = this.filenameTarget;
-
 			if (filename && value) {
 				filename.empty();
 				if (this.multiple) {
@@ -128,17 +129,16 @@ export default class File extends Wrapper {
 				else {
 					filename.append(`<span>${value.name}</span>`);
 				}
+			}  else if(!value){
+				this.input.value = null;
+				filename.empty();
 			}
 
 		}
 	}
 
-	set readonly(readonly) {
-		this.input.attr("disabled", readonly ? "" : null);
-	}
-
 	get value() {
-		return this.__value__;
+		return _value(this);
 	}
 
 	get valid() {
