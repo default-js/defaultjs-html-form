@@ -7,49 +7,64 @@ const INPUTSELECTOR = 'input:not([type="file"]):not([type="radio"]):not([type="c
 
 const DEFAULTTYPE = "text";
 
-const text = {
-	accept: (value) => {
-		return typeof value === "string";
-	},
-	value: (input) => {
-		return input.value;
-	},
-	normalize: (value) => {
-		if (value) {
-			value = value.trim();
-			return value.length > 0 ? value : null;
+const text = (input) => {
+	return 	{
+		accept: (value) => {
+			return typeof value === "string"; 
+		},
+		getValue: () => {
+			return input.value;
+		},
+		setValue: () => {
+			return input.value;
+		},
+		normalize: (value) => {
+			if (value) {
+				value = value.trim();
+				return value.length > 0 ? value : null;
+			}
+
+			return null;
 		}
-
-		return null;
-	},
+	};
 };
-const number = {
-	accept: (value) => {
-		return typeof value === "number";
-	},
-	value: (input) => {
-		return input.valueAsNumber;
-	},
-	normalize: (value) => {
-		if (!noValue(value) && !Number.isNaN(value)) return value;
+const number = (input) =>{
+	return {
+		accept: (value) => {
+			return typeof value === "number";
+		},
+		getValue: () => {
+			return input.valueAsNumber;
+		},
+		setValue: (value) =>{
+			input.valueAsNumber = value;
+		},
+		normalize: (value) => {
+			if (!noValue(value) && !Number.isNaN(value)) return value;
 
-		return null;
-	},
+			return null;
+		},
+	};
 };
-const date = {
-	accept: (value) => {
-		return value instanceof Date;
-	},
-	value: (input) => {
-		return input.valueAsDate;
-	},
-	normalize: (value) => {
-		if (value) return value;
+const date = (input) => {
+	return {
+		accept: (value) => {
+			return value instanceof Date;
+		},
+		getValue: () => {
+			return input.valueAsDate;
+		},
+		setValue: (value) => {
+			input.valueAsDate = value;
+		},
+		normalize: (value) => {
+			if (value) return value;
 
-		return null;
-	},
+			return null;
+		},
+	};
 };
-const TYPES = { text, number, date, time: date };
+const TYPES = { text, number, date, time: date, range:number };
 
 export default class Text extends Wrapper {
 	static findInput(field) {
@@ -63,7 +78,7 @@ export default class Text extends Wrapper {
 	init() {
 		const { field, input } = this;
 		const type = (field.attr("input-type") || input.attr("type") || DEFAULTTYPE).trim().toLowerCase();
-		this.type = TYPES[type] || TYPES[DEFAULTTYPE];
+		this.type = (TYPES[type] || TYPES[DEFAULTTYPE])(input);
 		input.on(
 			"input",
 			toTimeoutHandle(
@@ -89,9 +104,11 @@ export default class Text extends Wrapper {
 
 		return this.type.normalize(value);
 	}
+
 	async updatedValue(value) {
-		if (value != this.input.value)
-			this.input.val(value ? value : null);
+		const currentValue =  this.type.getValue();
+		if (value != currentValue)
+			this.type.setValue(value)
 	}
 
 	set readonly(readonly) {
@@ -99,7 +116,7 @@ export default class Text extends Wrapper {
 	}
 
 	get value() {
-		return this.type.value(this.input);
+		return this.type.getValue();
 	}
 
 	get valid() {
