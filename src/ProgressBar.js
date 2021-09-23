@@ -30,13 +30,12 @@ class ProgressBar extends Component {
 			if (!this.form) return;
 			if (target == this) return;
 
-			const step = target.is(NODENAMES.Step) ? target : target.parent(NODENAMES.Step).first();
+			const step = target.is(NODENAMES.Step) ? target : target.parent(NODENAMES.Step);
 
 			if (!step) return;
 
 			const state = this.form.state;
 			const pages = this.form.pages;
-			const activePageIndex = this.form.activePageIndex;
 			const activePage = this.form.activePage;
 			const stepName = step.name;
 			if (state == FORMSTATES.input || state == FORMSTATES.summary) {

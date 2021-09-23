@@ -115,5 +115,6 @@ export const ATTRIBUTE_VALID = "valid";
 export const ATTRIBUTE_INVALID = "invalid";
 export const ATTRIBUTE_CONDITION_VALID = "condition-valid";
 export const ATTRIBUTE_CONDITION_INVALID = "condition-invalid";
+export const ATTRIBUTE_MIN = "min";
 export const ATTRIBUTE_MAX = "max";
 export const ATTRIBUTE_PROGRESS = "progress";

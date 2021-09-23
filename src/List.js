@@ -1,4 +1,4 @@
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_MAX, ATTRIBUTE_INVALID } from "./Constants";
+import { NODENAMES, EVENTS, ATTRIBUTE_MIN, ATTRIBUTE_MAX } from "./Constants";
 import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { toTimeoutHandle } from "./utils/EventHelper";
 import { treeFilter } from "./utils/NodeHelper";
@@ -9,7 +9,7 @@ import AddRow from "./list/AddRow";
 import DeleteRow from "./list/DeleteRow";
 import Rows from "./list/Rows";
 
-const ATTRIBUTES = [ATTRIBUTE_MAX];
+const ATTRIBUTES = [ATTRIBUTE_MIN, ATTRIBUTE_MAX];
 
 const findAddButton = (list) => {
 	return treeFilter({
@@ -101,13 +101,13 @@ class List extends BaseField {
 			const addButton = findAddButton(this);
 
 			validator.addCustomCheck(async ({}) => {
-				const { rows, max, readonly } = this;
+				const { rows, min, max, readonly } = this;
 				const length = rows.length;
-				if (!readonly) {
+				if (!readonly) {					
 					if (length == max) addButton.disabled = true;
 					else if (length < max) addButton.disabled = false;
 				}
-				return length <= max;
+				return min <= length && length <= max;
 			});
 
 			validator.addCustomCheck(async () => {
@@ -134,6 +134,12 @@ class List extends BaseField {
 
 	get rows() {
 		return Array.from(this.container.children);
+	}
+
+	get min() {
+		if (this.hasAttribute(ATTRIBUTE_MIN))
+			return Math.max(0, parseInt(this.attr(ATTRIBUTE_MIN)));
+		return 0;
 	}
 
 	get max() {
