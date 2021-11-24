@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="boostrap.addons.css" />
+		<link rel="stylesheet" type="text/css" href="form.css" />
+	</head>
+	<body>
+		<div class="container">
+			<h1>User Registration</h1>
+			<d-form use-summary-page>
+				<d-page>
+					<h3>page 1</h3>					
+					<d-field name="input1" required>
+						<div><input type="radio" value="hide" checked/><label>don't show page 2</label></div>
+						<div><input type="radio" value="show"/><label>show page 2</label></div>
+					</d-field>
+				</d-page>
+				<d-page condition="${input1 == 'show'}">
+					<h3>page 2</h3>					
+					<d-field name="input2" required>
+						<input/>
+					</d-field>
+				</d-page>
+				<d-page>
+					<h3>page 3</h3>					
+					<d-field name="input3" required>
+						<input/>
+					</d-field>
+				</d-page>
+				
+	
+				<d-control>
+					<d-control-back>back</d-control-back>
+					<d-control-next>next</d-control-next>
+					<d-control-summary>sumary</d-control-summary>
+					<d-control-submit>submit</d-control-submit>
+				</d-control>
+			</d-form>
+		</div>
+		<div>
+			<button id="logData" onclick="logData()">show data</button>
+		</div>
+		<div id="log"></div>
+
+		<script type="application/javascript" src="/bundle-defaultjs-html-form.js" async></script>
+		<script type="application/javascript" src="main.js" async></script>
+	</body>
+</html>

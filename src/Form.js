@@ -107,7 +107,7 @@ class Form extends Component {
 	}
 
 	get valid() {
-		for (let page of this.pages) if (!page.valid) return false;
+		for (let page of this.pages) if (page.condition && !page.valid) return false;
 
 		return true;
 	}
