@@ -15,8 +15,8 @@ const text = (input) => {
 		getValue: () => {
 			return input.value;
 		},
-		setValue: () => {
-			return input.value;
+		setValue: (value) => {
+			return input.value = value; 
 		},
 		normalize: (value) => {
 			if (value) {

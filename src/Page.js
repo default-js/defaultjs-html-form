@@ -13,8 +13,8 @@ class Page extends Container {
 		return NODENAMES.Page;
 	}
 
-	constructor() {
-		super();
+	constructor(value) {
+		super(value);
 	}
 
 	async init() {

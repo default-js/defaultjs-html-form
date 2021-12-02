@@ -4,7 +4,6 @@ import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { privateProperty } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT } from "./Constants";
 import defineElement from "./utils/DefineElement";
-import { toTimeoutHandle } from "./utils/EventHelper";
 import "./Message";
 import "./Page";
 import "./Control";

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="boostrap.addons.css" />
+		<link rel="stylesheet" type="text/css" href="form.css" />
+	</head>
+	<body>
+		<p>
+			The data of form must be the same order as the fields.
+		</p>
+
+		<div class="container">
+			<d-form>
+				<d-page>
+					<d-field name="p1_Input1" required>
+						<div><label>input 1</label></div>
+						<div><input/></div>
+					</d-field>
+					<d-field name="p1_input2" required>
+						<div><label>input 2</label></div>
+						<div><input/></div>
+					</d-field>
+					<d-field name="p1_input3" required>
+						<div><label>input 3</label></div>
+						<div><input/></div>
+					</d-field>
+					<d-field name="p1_input4" required>
+						<div><label>input 4</label></div>
+						<div><input/></div>
+					</d-field>
+					<d-container style="padding: 1rem; border: solid 0.1rem black;">
+						<d-field name="p1_input5" required>
+							<div><label>input 5</label></div>
+							<div><input/></div>
+						</d-field>
+						<d-field name="p1_input6" required>
+							<div><label>input 6</label></div>
+							<div><input/></div>
+						</d-field>
+					</d-container>
+					<d-container name="p1_input7" style="padding: 1rem; border: solid 0.1rem black;">
+						<d-field name="p1_input1" required>
+							<div><label>input 7.1</label></div>
+							<div><input/></div>
+						</d-field>
+						<d-field name="p1_input2" required>
+							<div><label>input 7.2</label></div>
+							<div><input/></div>
+						</d-field>
+					</d-container>
+					<d-list name="p1_input8" style="padding: 1rem; border: solid 0.1rem black;">
+						<template>
+							<d-row>
+								<d-delete-row>delete</d-delete-row>
+								<d-field name="input1" required>
+									<div><label>input 8.1</label></div>
+									<div><input/></div>
+								</d-field>
+								<d-field name="input2" required>
+									<div><label>input 8.2</label></div>
+									<div><input/></div>
+								</d-field>			
+							</d-row>
+						</template>
+						<d-rows> </d-rows>
+						<d-add-row>add</d-add-row>
+					</d-list>
+				</d-page>
+
+				<d-page>
+					<d-field name="p2_Input1" required>
+						<div><label>input 1</label></div>
+						<div><input/></div>
+					</d-field>
+					<d-field name="p2_input2" required>
+						<div><label>input 2</label></div>
+						<div><input/></div>
+					</d-field>
+					<d-field name="p2_input3" required>
+						<div><label>input 3</label></div>
+						<div><input/></div>
+					</d-field>
+					<d-field name="p2_input4" required>
+						<div><label>input 4</label></div>
+						<div><input/></div>
+					</d-field>
+					<d-container style="padding: 1rem; border: solid 0.1rem black;">
+						<d-field name="p2_input5" required>
+							<div><label>input 5</label></div>
+							<div><input/></div>
+						</d-field>
+						<d-field name="p2_input6" required>
+							<div><label>input 6</label></div>
+							<div><input/></div>
+						</d-field>
+					</d-container>
+					<d-container name="p2_input7" style="padding: 1rem; border: solid 0.1rem black;">
+						<d-field name="input1" required>
+							<div><label>input 7.1</label></div>
+							<div><input/></div>
+						</d-field>
+						<d-field name="input2" required>
+							<div><label>input 7.2</label></div>
+							<div><input/></div>
+						</d-field>
+					</d-container>
+				</d-page>
+				
+	
+				<d-control>
+					<d-control-back>back</d-control-back>
+					<d-control-next>next</d-control-next>
+					<d-control-summary>sumary</d-control-summary>
+					<d-control-submit>submit</d-control-submit>
+				</d-control>
+			</d-form>
+		</div>
+		<div>
+			<button id="logData" onclick="logData()">show data</button>
+		</div>
+		<div id="log"></div>
+
+		<script type="application/javascript" src="/bundle-defaultjs-html-form.js" async></script>
+		<script type="application/javascript" src="main.js" async></script>
+	</body>
+</html>

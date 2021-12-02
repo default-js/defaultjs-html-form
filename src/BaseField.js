@@ -110,7 +110,7 @@ class BaseField extends Base {
 				_value(this, value);
 				await this.updatedValue(value);				
 				await this.validate();
-				this.publishValue();
+				await this.publishValue();
 			}
 		}
 	}

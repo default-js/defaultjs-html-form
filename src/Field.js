@@ -14,8 +14,8 @@ class Field extends BaseField {
 		return NODENAMES.Field;
 	}
 
-	constructor() {
-		super();
+	constructor(value = null) {
+		super(value);
 		this.on(EVENTS.input, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
@@ -55,7 +55,7 @@ class Field extends BaseField {
 	}
 
 	async updatedValue(value) {		
-		await this.ready;	
+		await this.ready;
 		if (this.wrapper) await this.wrapper.updatedValue(value);
 	}
 }

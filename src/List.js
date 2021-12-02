@@ -42,7 +42,7 @@ class List extends BaseField {
 	}
 
 	constructor(value = null) {
-		super(value ? value : []);
+		super(value);
 
 		this.on(EVENTS.valueChanged, (event) => {
 			const row = event.target;
@@ -60,13 +60,9 @@ class List extends BaseField {
 			event.stopPropagation();
 
 			const { readonly} = this;
-			const values = _value(this);
 			if (!readonly) {
 				const row = createRow(this);
-				values.push(row.value);
-
-				this.validate();
-				this.publishValue();
+				this.childValueChanged();
 			}
 		});
 
@@ -75,17 +71,12 @@ class List extends BaseField {
 			event.stopPropagation();
 
 			const { rows, readonly} = this;
-			const values = _value(this);
 			if (!readonly) {
 				const row = event.target.parent(NODENAMES.ListRow);
 				const index = rows.indexOf(row);
 				if (index >= 0) {
-					row.remove();
-					rows.splice(index, 1);
-					values.splice(index, 1);
-
-					this.validate();
-					this.publishValue();
+					row.remove();				
+					this.childValueChanged();
 				}
 			}
 		});
@@ -161,17 +152,20 @@ class List extends BaseField {
 	}
 
 	async childValueChanged(row, chain) {
-		await this.ready;		
-		let values = await _value(this);
-		if (!values) {
-			values = [];
-			_value(values);
+		await this.ready;
+		
+		const values = [];
+
+		for (let row of this.rows){
+			const value = await row.value();
+			if(value)
+				values.push(value)
 		}
 
-		const rows = this.rows;
-		const value = await row.value();
-		const index = rows.indexOf(row);		
-		values[index] = value;
+		if(values.length > 0)
+			_value(this, values);
+		else
+			_value(this, null);
 
 		await this.validate();
 		await this.publishValue(chain);

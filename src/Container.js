@@ -29,6 +29,23 @@ const valueHelper = function (data, name, value) {
 	else return data[names[0]] ? data[names[0]] : null;
 };
 
+const refreshValue = async (self) => {
+	const data = {};
+	const fields = self.fields;
+
+	for (let field of fields) {
+		if (field.condition && field.hasValue) {
+			const name = field.name;
+			const value = await field.value();
+			if (name) data[name] = value;
+			else Object.assign(data, value);
+		}
+	}
+
+	if (Object.getOwnPropertyNames(data).length > 0) _value(self, data);
+	else _value(self, null);
+};
+
 class Container extends BaseField {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(BaseField.observedAttributes);
@@ -39,7 +56,7 @@ class Container extends BaseField {
 	}
 
 	constructor(value = null) {
-		super(value ? value : {});
+		super(value);
 		this.fields = [];
 		this.on(EVENTS.valueChanged, (event) => {
 			const field = event.target;
@@ -97,29 +114,24 @@ class Container extends BaseField {
 
 	async updatedValue(value) {
 		await this.ready;
-		_value(this, {});
-		const { fields } = this;
+		const fields = this.fields;
 		if (fields) {
 			for (let field of fields) {
 				if (field.name) await field.value(valueHelper(value, field.name));
 				else if (field instanceof Container) await field.value(value);
 			}
+
+			await refreshValue(this);
 		}
 	}
 
 	async childValueChanged(field, chain) {
 		await this.ready;
-			const data = _value(this);
-			const name = await field.name;
-			const value = field.condition ? await field.value() : null;
-			const hasValue = value != null && typeof value !== "undefined";
-			if (name) {
-				if (hasValue) data[name] = value;
-				else delete data[name];
-			} else if (hasValue) ObjectUtils.merge(data, value);
-		
-		this.validate();
-		this.publishValue(chain);
+
+		await refreshValue(this);
+
+		await this.validate();
+		await this.publishValue(chain);
 	}
 }
 
