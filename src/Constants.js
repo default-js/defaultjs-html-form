@@ -3,8 +3,12 @@ export const TRIGGER_TIMEOUT = 10;
 export const EVENTHANDLE_TIMEOUT = 10;
 export const EVENTHANDLE_INPUT_TIMEOUT = 50 * EVENTHANDLE_TIMEOUT;
 
+export const NODENAME_FORM = `${HTML_TAG_PREFIX}form`;
+export const NODENAME_SUBMIT_ACTION = `${HTML_TAG_PREFIX}submit-action`;
+
+
 export const NODENAMES = {
-	Form: HTML_TAG_PREFIX + "form",
+	Form: NODENAME_FORM,
 	Control: HTML_TAG_PREFIX + "control",
 	BackButton: HTML_TAG_PREFIX + "control-back",
 	NextButton: HTML_TAG_PREFIX + "control-next",
@@ -24,12 +28,18 @@ export const NODENAMES = {
 	Message: HTML_TAG_PREFIX + "message",
 	ProgressBar: HTML_TAG_PREFIX + "progress-bar",
 	Step: HTML_TAG_PREFIX + "step",
+	SubmitAction: NODENAME_SUBMIT_ACTION,
 };
+
+export const FORMSTATE_INIT = "init";
+export const FORMSTATE_INPUT = "input";
+export const FORMSTATE_SUMMARY = "summary";
+export const FORMSTATE_FINISHED = "finished";
 export const FORMSTATES = {
-	init: "init",
-	input: "input",
-	summary: "summary",
-	finished: "finished",
+	init: FORMSTATE_INIT,
+	input: FORMSTATE_INPUT,
+	summary: FORMSTATE_SUMMARY,
+	finished: FORMSTATE_FINISHED,
 };
 
 export const REQUIREDSTATES = {
@@ -39,8 +49,11 @@ export const REQUIREDSTATES = {
 
 export const EVENT_PREFIX = HTML_TAG_PREFIX + "form-";
 
+export const EVENT_INITIALIZE = `${EVENT_PREFIX}initialize`;
+export const EVENT_INITIALIZE_SUBMIT_ACTION = `${EVENT_INITIALIZE}submit-action`;
+
 export const EVENTS = {
-	initialize: EVENT_PREFIX + "initialize",
+	initialize: EVENT_INITIALIZE,
 	/* fired by change value from an field implementation
 	 * and consumed by the reference implementation of
 	 * BaseField to make validation and fire valueChanged
@@ -84,8 +97,13 @@ export const EVENTS = {
 	listRowAdd: EVENT_PREFIX + "list-row-add",
 	listRowDelete: EVENT_PREFIX + "list-row-delete",
 	
-	editableStateChanged: EVENT_PREFIX + "editable-state-changed"
+	editableStateChanged: EVENT_PREFIX + "editable-state-changed",
+
+	// Other Events
+	initializeSubmitAction: EVENT_INITIALIZE_SUBMIT_ACTION
 };
+
+
 
 export const SPECIALVARS = {
 	CURRENTVALUE: "$value",

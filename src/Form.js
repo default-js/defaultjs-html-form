@@ -1,13 +1,17 @@
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { privateProperty } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-import { FORMSTATES, NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT } from "./Constants";
+import { privateProperty, privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
+import { FORMSTATES, NODENAMES, EVENTS, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT } from "./Constants";
 import defineElement from "./utils/DefineElement";
 import "./Message";
 import "./Page";
 import "./Control";
 import "./ProgressBar";
+import BaseSubmitAction from "./submitActions/BaseSubmitAction";
+import DefaultFormSubmitAction from "./submitActions/DefaultFormSubmitAction";
+
+const _submitActions = privatePropertyAccessor("submitAction");
 const PRIVATE_STATE = "state";
 
 const formState = function (self, state) {
@@ -21,7 +25,7 @@ const collectData = async (self) => {
 	const activePage = self.activePage;
 	const pages = self.pages;
 
-	for (let page of pages) {		
+	for (let page of pages) {
 		if (page.condition) {
 			const name = page.name;
 			const value = await page.value();
@@ -56,20 +60,16 @@ class Form extends Component {
 		super();
 		formState(this, null);
 		let valueChangeTimeout = null;
-		this.on(
-			EVENTS.valueChanged,
-			(event) => {
-				event.stopPropagation();
-				const detail = event.detail;
-				if(valueChangeTimeout)
-					clearTimeout(valueChangeTimeout);
+		this.on(EVENTS.valueChanged, (event) => {
+			event.stopPropagation();
+			const detail = event.detail;
+			if (valueChangeTimeout) clearTimeout(valueChangeTimeout);
 
-				valueChangeTimeout = setTimeout(() => {
-					valueChangeTimeout = null;
-					this.trigger(EVENTS.executeValidate, detail);
-				}, 1);
-			}
-		);
+			valueChangeTimeout = setTimeout(() => {
+				valueChangeTimeout = null;
+				this.trigger(EVENTS.executeValidate, detail);
+			}, 1);
+		});
 	}
 
 	async init() {
@@ -136,7 +136,7 @@ class Form extends Component {
 			if (current) current.active = false;
 			this.activePageIndex = this.pages.indexOf(page);
 			page.active = true;
-			if (this.state != FORMSTATES.input)	this.state = FORMSTATES.input;
+			if (this.state != FORMSTATES.input) this.state = FORMSTATES.input;
 
 			this.scrollIntoView();
 			this.trigger(EVENTS.siteChanged);
@@ -188,25 +188,38 @@ class Form extends Component {
 		this.state = FORMSTATES.summary;
 	}
 
+	get submitActions() {
+		let actions = _submitActions(this);
+		if (!actions) {
+			actions = [];
+			let endpoint = form.attr(ATTRIBUTE_ENDPOINT);
+			if (endpoint) {	
+				const method = form.attr(ATTRIBUTE_METHOD) || "post";				
+				this.append(new DefaultFormSubmitAction(endpoint, method));
+			}
+
+
+			const childs = this.children;
+			for (let child of childs) {
+				if (child instanceof BaseSubmitAction) actions.push(child);
+			}
+			_submitActions(this, actions);
+		}
+
+		return actions;
+	}
+
 	async submit() {
 		this.state = this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? FORMSTATES.input : FORMSTATES.finished;
 		const data = await this.value();
 
-		let endpoint = this.attr(ATTRIBUTE_ENDPOINT);
-		if (endpoint) {
-			endpoint = await ExpressionResolver.resolveText(endpoint, data, endpoint);
-			const url = new URL(endpoint, location);
-
-			return await fetch(url.toString(), {
-				method: this.attr(ATTRIBUTE_METHOD) || "post",
-				credentials: "include",
-				mode: "cors",
-				headers: {
-					"content-type": "application/json",
-				},
-				body: JSON.stringify(data),
-			});
-		}
+		const actions = this.submitActions;
+		for(let action of actions){
+			const accept = await action.accept(data);
+			if(accept)
+				await action.execute(data);
+		}		
+		
 
 		this.trigger(EVENTS.submit, data);
 	}
