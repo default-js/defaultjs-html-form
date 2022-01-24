@@ -2,7 +2,19 @@ import Component from "@default-js/defaultjs-html-components/src/Component";
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { privateProperty, privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-import { FORMSTATES, NODENAMES, EVENTS, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT } from "./Constants";
+import {
+	FORMSTATES,
+	NODENAMES,
+	EVENTS,
+	EVENT_SUBMIT,
+	EVENT_SUBMIT_RESULTS,
+	ATTRIBUTE_NAME,
+	ATTRIBUTE_USE_SUMMARY_PAGE,
+	ATTRIBUTE_ENDPOINT,
+	ATTRIBUTE_METHOD,
+	ATTRIBUTE_STATE,
+	ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT
+} from "./Constants";
 import defineElement from "./utils/DefineElement";
 import "./Message";
 import "./Page";
@@ -10,11 +22,12 @@ import "./Control";
 import "./ProgressBar";
 import BaseSubmitAction from "./submitActions/BaseSubmitAction";
 import DefaultFormSubmitAction from "./submitActions/DefaultFormSubmitAction";
+import SubmitActionResult, { STATE_FAIL as ACTION_SUBMIT_STATE_FAIL, STATE_SUCCESS as ACTION_SUBMIT_STATE_SUCCESS } from "./submitActions/SubmitActionResult";
 
 const _submitActions = privatePropertyAccessor("submitAction");
 const PRIVATE_STATE = "state";
 
-const formState = function (self, state) {
+const formState = function(self, state) {
 	if (arguments.length == 2) privateProperty(self, PRIVATE_STATE, state);
 	else return privateProperty(self, PRIVATE_STATE);
 };
@@ -45,6 +58,25 @@ const readonly = (form, readonly) => {
 		page.readonly = readonly;
 		page.active = readonly;
 	}
+};
+
+const executeActions = async (actions, data) => {
+	const results = [];
+	for (let action of actions) {
+		const accept = await action.accept(data);
+		if (accept) {
+			try{
+				const result = await action.execute(data) || new SubmitActionResult(action, ACTION_SUBMIT_STATE_SUCCESS);
+				results.push(result);
+				if (result.state == ACTION_SUBMIT_STATE_FAIL)
+					return results;
+			}catch(e){
+				results.push(new SubmitActionResult(action, ACTION_SUBMIT_STATE_FAIL, e));
+				return results;
+			}
+		}
+	}
+	return results;
 };
 
 class Form extends Component {
@@ -192,9 +224,9 @@ class Form extends Component {
 		let actions = _submitActions(this);
 		if (!actions) {
 			actions = [];
-			let endpoint = form.attr(ATTRIBUTE_ENDPOINT);
-			if (endpoint) {	
-				const method = form.attr(ATTRIBUTE_METHOD) || "post";				
+			let endpoint = this.attr(ATTRIBUTE_ENDPOINT);
+			if (endpoint) {
+				const method = this.attr(ATTRIBUTE_METHOD) || "post";
 				this.append(new DefaultFormSubmitAction(endpoint, method));
 			}
 
@@ -214,15 +246,13 @@ class Form extends Component {
 		const data = await this.value();
 
 		const actions = this.submitActions;
-		for(let action of actions){
-			const accept = await action.accept(data);
-			if(accept)
-				await action.execute(data);
-		}		
-		
+		if (actions) {
+			const results = await executeActions(actions, data);
+			this.trigger(EVENT_SUBMIT_RESULTS, results);
+		}
 
-		this.trigger(EVENTS.submit, data);
+		this.trigger(EVENT_SUBMIT, data);
 	}
-}
+};
 defineElement(Form);
 export default Form;

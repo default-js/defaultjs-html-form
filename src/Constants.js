@@ -51,6 +51,8 @@ export const EVENT_PREFIX = HTML_TAG_PREFIX + "form-";
 
 export const EVENT_INITIALIZE = `${EVENT_PREFIX}initialize`;
 export const EVENT_INITIALIZE_SUBMIT_ACTION = `${EVENT_INITIALIZE}submit-action`;
+export const EVENT_SUBMIT = `${EVENT_PREFIX}submit`;
+export const EVENT_SUBMIT_RESULTS = `${EVENT_PREFIX}submit-results`;
 
 export const EVENTS = {
 	initialize: EVENT_INITIALIZE,
@@ -77,7 +79,9 @@ export const EVENTS = {
 	/* */
 	allPublishValue: EVENT_PREFIX + "all-publish-value",
 	/* */
-	submit: EVENT_PREFIX + "submit",
+	submit: EVENT_SUBMIT,
+	/* */
+	submitResults: EVENT_SUBMIT_RESULTS,
 	/* */
 	progressbarChanged : EVENT_PREFIX + "progress-bar-changed",
 
