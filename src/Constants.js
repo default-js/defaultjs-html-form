@@ -50,40 +50,57 @@ export const REQUIREDSTATES = {
 export const EVENT_PREFIX = HTML_TAG_PREFIX + "form-";
 
 export const EVENT_INITIALIZE = `${EVENT_PREFIX}initialize`;
+export const EVENT_FIELD_INITIALIZED = `${EVENT_PREFIX}field-initialized`;
 export const EVENT_INITIALIZE_SUBMIT_ACTION = `${EVENT_INITIALIZE}submit-action`;
 export const EVENT_SUBMIT = `${EVENT_PREFIX}submit`;
 export const EVENT_SUBMIT_RESULTS = `${EVENT_PREFIX}submit-results`;
+export const EVENT_EXECUTE_VALIDATE = `${EVENT_PREFIX}execute-validate`;
+export const EVENT_CONDITION_STATE_CHANGED = `${EVENT_PREFIX}condition-state-changed`;
+export const EVENT_ALL_PUBLISH_VALUE = `${EVENT_PREFIX}all-publish-value`;
+export const EVENT_VALUE_CHANGED = `${EVENT_PREFIX}field-value-changed`;
+export const EVENT_SITE_CHANGED = `${EVENT_PREFIX}site-changed`;
+export const EVENT_FORM_STATE_CHANGED = `${EVENT_PREFIX}state-changed`;
+export const EVENT_FIELD_INPUT = `${EVENT_PREFIX}field-input`;
+export const EVENT_LIST_ROW_ADD = `${EVENT_PREFIX}list-row-add`;
+export const EVENT_LIST_ROW_DELETE = `${EVENT_PREFIX}list-row-delete`;
+export const EVENT_PROGRESSBAR_CHANGED = `${EVENT_PREFIX}progress-bar-changed`;
+
+export const EVENT_ACTIVE_STATE_CHANGED = `${EVENT_PREFIX}active-state-changed`;
+export const EVENT_VALID_STATE_CHANGED = `${EVENT_PREFIX}valid-state-changed`;
+export const EVENT_EDITABLE_STATE_CHANGED = `${EVENT_PREFIX}editable-state-changed`;
 
 export const EVENTS = {
 	initialize: EVENT_INITIALIZE,
+	fieldInitialized : EVENT_FIELD_INITIALIZED,
 	/* fired by change value from an field implementation
 	 * and consumed by the reference implementation of
 	 * BaseField to make validation and fire valueChanged
 	 * event
 	 */
-	input: EVENT_PREFIX + "field-input",
+	input: EVENT_FIELD_INPUT,//deprecated
+	fieldInput : EVENT_FIELD_INPUT,
 	/* internal event for publish that a value of field has changed (event after validation) */
-	valueChanged: EVENT_PREFIX + "field-value-changed",
+	valueChanged: EVENT_VALUE_CHANGED,
 	/* internal event to start validation at elements -> only fired at form*/
-	executeValidate: EVENT_PREFIX + "execute-validate",
+	executeValidate: EVENT_EXECUTE_VALIDATE,
 	/* */
-	activeStateChanged: EVENT_PREFIX + "active-state-changed",
+	activeStateChanged: EVENT_ACTIVE_STATE_CHANGED,
 	/* */
-	conditionStateChanged: EVENT_PREFIX + "condition-state-changed",
+	conditionStateChanged: EVENT_CONDITION_STATE_CHANGED,
 	/* */
-	validStateChanged: EVENT_PREFIX + "valid-state-changed",
+	validStateChanged: EVENT_VALID_STATE_CHANGED,
 	/* */
-	siteChanged: EVENT_PREFIX + "site-changed",
+	siteChanged: EVENT_SITE_CHANGED,
 	/* */
-	formStateChanged: EVENT_PREFIX + "state-changed",
+	formStateChanged: EVENT_FORM_STATE_CHANGED,
 	/* */
-	allPublishValue: EVENT_PREFIX + "all-publish-value",
+	allPublishValue: EVENT_ALL_PUBLISH_VALUE,
 	/* */
 	submit: EVENT_SUBMIT,
 	/* */
 	submitResults: EVENT_SUBMIT_RESULTS,
 	/* */
-	progressbarChanged : EVENT_PREFIX + "progress-bar-changed",
+	progressbarChanged : EVENT_PROGRESSBAR_CHANGED,
 
 	//old need to be refactored
 
@@ -98,10 +115,10 @@ export const EVENTS = {
 	changeValidation: EVENT_PREFIX + "change-validation",
 
 	//LIST EVENTS
-	listRowAdd: EVENT_PREFIX + "list-row-add",
-	listRowDelete: EVENT_PREFIX + "list-row-delete",
+	listRowAdd: EVENT_LIST_ROW_ADD,
+	listRowDelete: EVENT_LIST_ROW_DELETE,
 	
-	editableStateChanged: EVENT_PREFIX + "editable-state-changed",
+	editableStateChanged: EVENT_EDITABLE_STATE_CHANGED,
 
 	// Other Events
 	initializeSubmitAction: EVENT_INITIALIZE_SUBMIT_ACTION

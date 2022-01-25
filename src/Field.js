@@ -1,4 +1,7 @@
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
+import { 
+	NODENAMES, 
+	EVENT_FIELD_INPUT
+} from "./Constants";
 import BaseField, {_value} from "./BaseField";
 import { findWrapper } from "./wrapper";
 import defineElement from "./utils/DefineElement";
@@ -16,7 +19,7 @@ class Field extends BaseField {
 
 	constructor(value = null) {
 		super(value);
-		this.on(EVENTS.input, (event) => {
+		this.on(EVENT_FIELD_INPUT, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 

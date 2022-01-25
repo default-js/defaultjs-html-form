@@ -1,13 +1,18 @@
-import { NODENAMES, EVENTS, ATTRIBUTE_MIN, ATTRIBUTE_MAX } from "./Constants";
-import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
-import { toTimeoutHandle } from "./utils/EventHelper";
+import { 
+	NODENAMES, 
+	EVENT_VALUE_CHANGED,
+	EVENT_LIST_ROW_ADD,
+	EVENT_LIST_ROW_DELETE,
+	ATTRIBUTE_MIN, 
+	ATTRIBUTE_MAX 
+} from "./Constants";
 import { treeFilter } from "./utils/NodeHelper";
 import defineElement from "./utils/DefineElement";
 import BaseField, { _value } from "./BaseField";
 import Row from "./list/Row";
 import AddRow from "./list/AddRow";
-import DeleteRow from "./list/DeleteRow";
-import Rows from "./list/Rows";
+import "./list/DeleteRow";
+import "./list/Rows";
 
 const ATTRIBUTES = [ATTRIBUTE_MIN, ATTRIBUTE_MAX];
 
@@ -44,7 +49,7 @@ class List extends BaseField {
 	constructor(value = null) {
 		super(value);
 
-		this.on(EVENTS.valueChanged, (event) => {
+		this.on(EVENT_VALUE_CHANGED, (event) => {
 			const row = event.target;
 			if (row instanceof Row) {
 				event.preventDefault();
@@ -55,7 +60,7 @@ class List extends BaseField {
 			}
 		});
 
-		this.on(EVENTS.listRowAdd, (event) => {
+		this.on(EVENT_LIST_ROW_ADD, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 
@@ -66,7 +71,7 @@ class List extends BaseField {
 			}
 		});
 
-		this.on(EVENTS.listRowDelete, (event) => {
+		this.on(EVENT_LIST_ROW_DELETE, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 

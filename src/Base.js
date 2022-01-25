@@ -1,9 +1,19 @@
-import { NODENAMES, TRIGGER_TIMEOUT, EVENTS, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_INVALID, ATTRIBUTE_EDITABLE_CONDITION, ATTRIBUTE_EDITABLE } from "./Constants";
+import { 
+	NODENAMES, 
+	ATTRIBUTE_ACTIVE, 
+	ATTRIBUTE_READONLY, 
+	ATTRIBUTE_CONDITION, 
+	ATTRIBUTE_CONDITION_VALID, 
+	ATTRIBUTE_CONDITION_INVALID, 
+	ATTRIBUTE_VALID, 
+	ATTRIBUTE_INVALID, 
+	ATTRIBUTE_EDITABLE_CONDITION, 
+	ATTRIBUTE_EDITABLE } from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
-import { privateProperty } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
+import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { updateActiveState, updateEditableState } from "./utils/StateHelper";
 
-const PRIVATE_FORM = "form";
+const _form = privatePropertyAccessor("form");
 
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_EDITABLE_CONDITION];
 
@@ -13,7 +23,7 @@ class Base extends Component {
 	}
 
 	constructor() {
-		super();
+		super();		
 	}
 
 	async init() {
@@ -21,10 +31,10 @@ class Base extends Component {
 	}
 
 	get form() {
-		let form = privateProperty(this, PRIVATE_FORM);
+		let form = _form(this);
 		if (!form) {
 			form = this.parent(NODENAMES.Form);
-			privateProperty(this, PRIVATE_FORM, form);
+			_form(this, form);
 		}
 		return form;
 	}

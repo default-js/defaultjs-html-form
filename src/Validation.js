@@ -1,4 +1,6 @@
-import { NODENAMES, EVENTS } from "./Constants";
+import { 
+	NODENAMES
+} from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import defineElement from "./utils/DefineElement";
 

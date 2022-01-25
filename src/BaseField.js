@@ -1,16 +1,20 @@
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_REQUIRED_ON_ACTIVE_ONLY, ATTRIBUTE_NOVALUE } from "./Constants";
+import { 
+	EVENT_FIELD_INITIALIZED,
+	EVENT_CONDITION_STATE_CHANGED,
+	EVENT_EXECUTE_VALIDATE,
+	EVENT_ALL_PUBLISH_VALUE,
+	EVENT_VALUE_CHANGED,
+	ATTRIBUTE_NAME, 
+	ATTRIBUTE_REQUIRED, 
+	ATTRIBUTE_NOVALUE } from "./Constants";
 import Base from "./Base";
 import Validator from "./Validator";
-import { privateProperty } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
+import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 
-const PRIVATE_PARENT = "parent";
-const PRIVATE_VALUE = "value";
-const PRIVATE_VALIDATOR = "validator";
 
-export const _value = function (self, value) {
-	if (arguments.length == 2) privateProperty(self, PRIVATE_VALUE, value);
-	else return privateProperty(self, PRIVATE_VALUE);
-};
+const _parent = privatePropertyAccessor("private");
+export const _value = privatePropertyAccessor("value");
+const _validator = privatePropertyAccessor("validator");
 
 const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE];
 
@@ -37,21 +41,21 @@ class BaseField extends Base {
 		super();
 		_value(this, value);
 
-		this.on(EVENTS.conditionStateChanged, (event) => {
+		this.on(EVENT_CONDITION_STATE_CHANGED, (event) => {
 			if (event.target == this) {
 				this.conditionUpdated();
 			}
 		});
 	}
 
-	async init() {
+	async init() {		
 		await super.init();
-		const ready = this.ready;
+		const ready = this.ready;		
 		if (!ready.resolved) {
-			privateProperty(this, PRIVATE_PARENT, findParentField(this));
-			privateProperty(this, PRIVATE_VALIDATOR, new Validator(this));			
+			_parent(this, findParentField(this));
+			_validator(this, new Validator(this));			
 
-			this.form.on(EVENTS.executeValidate, async (event) => {
+			this.form.on(EVENT_EXECUTE_VALIDATE, async (event) => {
 				const chain = event.detail;
 				if (chain.indexOf(this) < 0) {
 					const current = this.valid;
@@ -62,8 +66,12 @@ class BaseField extends Base {
 				}
 			});
 
-			this.form.on(EVENTS.allPublishValue, () => {
+			this.form.on(EVENT_ALL_PUBLISH_VALUE, () => {
 				this.publishValue();
+			});
+
+			ready.then(() => {
+				this.trigger(EVENT_FIELD_INITIALIZED);
 			});
 		}
 
@@ -71,11 +79,11 @@ class BaseField extends Base {
 	}
 
 	get validator() {
-		return privateProperty(this, PRIVATE_VALIDATOR);
+		return _validator(this);
 	}
 
 	get parentField() {
-		return privateProperty(this, PRIVATE_PARENT);
+		return _parent(this);
 	}
 
 	conditionUpdated() {
@@ -127,7 +135,7 @@ class BaseField extends Base {
 		await this.ready;
 		chain.push(this);
 		if (this.parentField) await this.parentField.childValueChanged(this, chain);
-		else this.trigger(EVENTS.valueChanged, chain);
+		else this.trigger(EVENT_VALUE_CHANGED, chain);
 	}
 
 	async acceptValue(value) {

@@ -1,4 +1,10 @@
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, FORMSTATES, progress, ATTRIBUTE_PROGRESS } from "./Constants";
+import { 
+	NODENAMES, 
+	EVENT_SITE_CHANGED,
+	EVENT_FORM_STATE_CHANGED,
+	EVENT_PROGRESSBAR_CHANGED,
+	FORMSTATES, 
+	ATTRIBUTE_PROGRESS } from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import defineElement from "./utils/DefineElement";
 import "./Step";
@@ -52,7 +58,7 @@ class ProgressBar extends Component {
 		if (!ready.resolved) {
 			this.form = this.parent(NODENAMES.Form);
 			this.steps = this.find(NODENAMES.Step);
-			this.form.on([EVENTS.initialize, EVENTS.siteChanged, EVENTS.formStateChanged], () => {
+			this.form.on([EVENT_SITE_CHANGED,EVENT_FORM_STATE_CHANGED], () => {
 				const state = this.form.state;
 				const activePage = this.form.activePage;
 				if (!activePage) return;
@@ -78,7 +84,7 @@ class ProgressBar extends Component {
 
 				this.progress = state == FORMSTATES.summary || state == FORMSTATES.finished ? 100 : progress;
 
-				this.trigger(EVENTS.progressbarChanged);
+				this.trigger(EVENT_PROGRESSBAR_CHANGED);
 			});
 		}
 	}

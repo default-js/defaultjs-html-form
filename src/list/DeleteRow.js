@@ -1,4 +1,7 @@
-import { NODENAMES, EVENTS } from "../Constants";
+import { 
+	NODENAMES,
+	EVENT_LIST_ROW_DELETE
+} from "../Constants";
 import FormButton from "../FormButton";
 import defineElement from "../utils/DefineElement";
 
@@ -23,7 +26,7 @@ class DeleteRow extends FormButton {
 	}
 
 	execute() {
-		this.trigger(100, EVENTS.listRowDelete);
+		this.trigger(100, EVENT_LIST_ROW_DELETE);
 	}
 }
 

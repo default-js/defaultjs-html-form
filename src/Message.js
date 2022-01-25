@@ -1,8 +1,10 @@
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import Base from "./Base";
 import Component from "@default-js/defaultjs-html-components/src/Component";
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT } from "./Constants";
-import { toEvents, toTimeoutHandle } from "./utils/EventHelper";
+import { 
+	NODENAMES, 
+	EVENT_EXECUTE_VALIDATE 
+} from "./Constants";
 import { evaluationData } from "./utils/DataHelper";
 import defineElement from "./utils/DefineElement";
 
@@ -40,7 +42,7 @@ class Message extends Component {
 		if (!ready.resolved) {			
 			this.reference = findParentBase(this);
 			this.form = this.parent(NODENAMES.Form);
-			this.form.on(EVENTS.executeValidate, () => {
+			this.form.on(EVENT_EXECUTE_VALIDATE, () => {
 				this.update();
 			});
 		}

@@ -1,4 +1,7 @@
-import { NODENAMES, EVENTS, ATTRIBUTE_STEP } from "./Constants";
+import { 
+	NODENAMES,  
+	ATTRIBUTE_STEP 
+} from "./Constants";
 import Container from "./Container";
 import defineElement from "./utils/DefineElement";
 

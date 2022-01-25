@@ -1,7 +1,9 @@
-import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { NODENAMES, EVENTS } from "./Constants";
+import { 
+	NODENAMES,
+	EVENT_FIELD_INITIALIZED,
+	EVENT_VALUE_CHANGED,
+} from "./Constants";
 import { findFields } from "./utils/NodeHelper";
-import { toTimeoutHandle } from "./utils/EventHelper";
 import BaseField, { _value } from "./BaseField";
 import defineElement from "./utils/DefineElement";
 
@@ -58,7 +60,7 @@ class Container extends BaseField {
 	constructor(value = null) {
 		super(value);
 		this.fields = [];
-		this.on(EVENTS.valueChanged, (event) => {
+		this.on(EVENT_VALUE_CHANGED, (event) => {
 			const field = event.target;
 			if (field != this) {
 				event.preventDefault();
@@ -75,13 +77,12 @@ class Container extends BaseField {
 		await super.init();
 		this.fields = findFields(this);
 		if (!ready.resolved) {
-			this.on(EVENTS.initialize, (event) => {
-				if (event.target != this) {
-					const field = event.target;
+			this.on(EVENT_FIELD_INITIALIZED, (event) => {
+				const field = event.target;
+				if (field != this) {				
 					if (field instanceof BaseField) {
-						if (this.fields.indexOf(field) < 0) {
+						if (this.fields.indexOf(field) < 0)
 							this.fields.push(field);
-						}
 
 						event.preventDefault();
 						event.stopPropagation();

@@ -1,4 +1,7 @@
-import { EVENTS, EVENTHANDLE_INPUT_TIMEOUT } from "../Constants";
+import { 
+	EVENT_FIELD_INPUT,
+	EVENTHANDLE_INPUT_TIMEOUT 
+} from "../Constants";
 import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
 
@@ -19,7 +22,7 @@ export default class Text extends Wrapper {
 			"input, changed",
 			toTimeoutHandle(
 				() => {
-					field.trigger(EVENTS.input, this.value);
+					field.trigger(EVENT_FIELD_INPUT, this.value);
 				},
 				false,
 				true,
@@ -27,7 +30,7 @@ export default class Text extends Wrapper {
 			)
 		);
 
-		field.trigger(EVENTS.input, this.value);
+		field.trigger(EVENT_FIELD_INPUT, this.value);
 	}
 
 	set readonly(readonly) {

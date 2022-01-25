@@ -1,4 +1,9 @@
-import { NODENAMES, EVENTS, TRIGGER_TIMEOUT, ATTRIBUTE_NAME, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY } from "./Constants";
+import { 
+	NODENAMES, 
+	ATTRIBUTE_NAME, 
+	ATTRIBUTE_ACTIVE, 
+	ATTRIBUTE_READONLY 
+} from "./Constants";
 import { updateActiveState } from "./utils/StateHelper";
 import defineElement from "./utils/DefineElement";
 

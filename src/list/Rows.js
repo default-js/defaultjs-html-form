@@ -1,4 +1,6 @@
-import { NODENAMES, EVENTS } from "../Constants";
+import { 
+	NODENAMES
+} from "../Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
 
 const ATTRIBUTES = [];

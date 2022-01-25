@@ -1,4 +1,6 @@
-import { EVENTS } from "../Constants";
+import { 
+	EVENT_FIELD_INPUT
+} from "../Constants";
 import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
@@ -78,7 +80,7 @@ export default class File extends Wrapper {
 			toTimeoutHandle(
 				async () => {
 					this.updatedValue(await readFiles(input.files, format, multiple));
-					field.trigger(EVENTS.input, this.value);
+					field.trigger(EVENT_FIELD_INPUT, this.value);
 				},
 				false,
 				true
@@ -88,7 +90,7 @@ export default class File extends Wrapper {
 		if (input.files && input.files.length != 0)
 			this.updatedValue(await readFiles(input.files, format, multiple));
 
-		field.trigger(EVENTS.input, this.value);
+		field.trigger(EVENT_FIELD_INPUT, this.value);
 	};
 
 	set readonly(readonly) {

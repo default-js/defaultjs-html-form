@@ -1,4 +1,7 @@
-import { EVENTS, EVENTHANDLE_INPUT_TIMEOUT } from "../Constants";
+import { 
+	EVENT_FIELD_INPUT,
+	EVENTHANDLE_INPUT_TIMEOUT 
+} from "../Constants";
 import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
@@ -83,14 +86,15 @@ export default class Text extends Wrapper {
 			"input",
 			toTimeoutHandle(
 				() => {
-					field.trigger(EVENTS.input, this.normalizeValue(this.value));
+					field.trigger(EVENT_FIELD_INPUT, this.normalizeValue(this.value));
 				},
 				false,
 				true,
+				EVENTHANDLE_INPUT_TIMEOUT
 			),
 		);
 
-		field.trigger(EVENTS.input, this.normalizeValue(this.value));
+		field.trigger(EVENT_FIELD_INPUT, this.normalizeValue(this.value));
 	}
 
 	acceptValue(value) {

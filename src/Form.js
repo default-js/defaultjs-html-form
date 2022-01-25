@@ -5,7 +5,10 @@ import { privateProperty, privatePropertyAccessor } from "@default-js/defaultjs-
 import {
 	FORMSTATES,
 	NODENAMES,
-	EVENTS,
+	EVENT_VALUE_CHANGED,
+	EVENT_EXECUTE_VALIDATE,
+	EVENT_FORM_STATE_CHANGED,
+	EVENT_SITE_CHANGED,
 	EVENT_SUBMIT,
 	EVENT_SUBMIT_RESULTS,
 	ATTRIBUTE_NAME,
@@ -25,12 +28,7 @@ import DefaultFormSubmitAction from "./submitActions/DefaultFormSubmitAction";
 import SubmitActionResult, { STATE_FAIL as ACTION_SUBMIT_STATE_FAIL, STATE_SUCCESS as ACTION_SUBMIT_STATE_SUCCESS } from "./submitActions/SubmitActionResult";
 
 const _submitActions = privatePropertyAccessor("submitAction");
-const PRIVATE_STATE = "state";
-
-const formState = function(self, state) {
-	if (arguments.length == 2) privateProperty(self, PRIVATE_STATE, state);
-	else return privateProperty(self, PRIVATE_STATE);
-};
+const _state =  privatePropertyAccessor("state");
 
 const collectData = async (self) => {
 	await self.ready;
@@ -90,16 +88,16 @@ class Form extends Component {
 
 	constructor() {
 		super();
-		formState(this, null);
+		_state(this, null);
 		let valueChangeTimeout = null;
-		this.on(EVENTS.valueChanged, (event) => {
+		this.on(EVENT_VALUE_CHANGED, (event) => {
 			event.stopPropagation();
 			const detail = event.detail;
 			if (valueChangeTimeout) clearTimeout(valueChangeTimeout);
 
 			valueChangeTimeout = setTimeout(() => {
 				valueChangeTimeout = null;
-				this.trigger(EVENTS.executeValidate, detail);
+				this.trigger(EVENT_EXECUTE_VALIDATE, detail);
 			}, 1);
 		});
 	}
@@ -121,7 +119,7 @@ class Form extends Component {
 	}
 
 	get state() {
-		return formState(this);
+		return _state(this);
 	}
 
 	set state(state) {
@@ -131,9 +129,9 @@ class Form extends Component {
 			readonly(this, false);
 			if (this.activePage) this.activePage.active = true;
 		}
-		formState(this, state);
+		_state(this, state);
 
-		if (actual != state) this.trigger(EVENTS.formStateChanged);
+		if (actual != state) this.trigger(EVENT_FORM_STATE_CHANGED);
 		this.attr(ATTRIBUTE_STATE, state);
 	}
 
@@ -149,7 +147,7 @@ class Form extends Component {
 		await this.ready;
 		if (this.state == FORMSTATES.input) {
 			for (let page of this.pages) {
-				await page.value(null); // reset all values
+				await page.value(null); // reset all values					
 				if (page.name) await page.value(data[page.name]);
 				else await page.value(data);
 			}
@@ -171,7 +169,7 @@ class Form extends Component {
 			if (this.state != FORMSTATES.input) this.state = FORMSTATES.input;
 
 			this.scrollIntoView();
-			this.trigger(EVENTS.siteChanged);
+			this.trigger(EVENT_SITE_CHANGED);
 		}
 	}
 

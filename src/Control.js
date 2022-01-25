@@ -1,4 +1,9 @@
-import { FORMSTATES, NODENAMES, EVENTS } from "./Constants";
+import { 
+	FORMSTATES, 
+	NODENAMES, 
+	EVENT_FORM_STATE_CHANGED,
+	EVENT_SITE_CHANGED
+} from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import "./controls";
 import Page from "./Page";
@@ -32,11 +37,7 @@ class Control extends Component {
 			this.summary = this.find(NODENAMES.SummaryButton).first() || BUTTONDUMMY;
 			this.submit = this.find(NODENAMES.SubmitButton).first() || BUTTONDUMMY;
 
-			this.form.on([EVENTS.validStateChanged, EVENTS.conditionStateChanged], (event) => {
-				if (event.target instanceof Page) this.update();
-			});
-
-			this.form.on([EVENTS.formStateChanged, EVENTS.siteChanged], (event) => {
+			this.form.on([EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED], (event) => {
 				this.update();
 			});
 		}

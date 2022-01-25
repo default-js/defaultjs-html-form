@@ -1,4 +1,6 @@
-import { NODENAMES, EVENTS } from "../Constants";
+import { 
+	NODENAMES
+} from "../Constants";
 import Container from "../Container";
 import DeleteRow from "./DeleteRow";
 
