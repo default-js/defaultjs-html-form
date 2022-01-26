@@ -50,6 +50,7 @@ export const REQUIREDSTATES = {
 export const EVENT_PREFIX = HTML_TAG_PREFIX + "form-";
 
 export const EVENT_INITIALIZE = `${EVENT_PREFIX}initialize`;
+export const EVENT_INITIALIZED = `${EVENT_PREFIX}initialized`;
 export const EVENT_FIELD_INITIALIZED = `${EVENT_PREFIX}field-initialized`;
 export const EVENT_INITIALIZE_SUBMIT_ACTION = `${EVENT_INITIALIZE}submit-action`;
 export const EVENT_SUBMIT = `${EVENT_PREFIX}submit`;
@@ -71,6 +72,7 @@ export const EVENT_EDITABLE_STATE_CHANGED = `${EVENT_PREFIX}editable-state-chang
 
 export const EVENTS = {
 	initialize: EVENT_INITIALIZE,
+	initialized: EVENT_INITIALIZED,
 	fieldInitialized : EVENT_FIELD_INITIALIZED,
 	/* fired by change value from an field implementation
 	 * and consumed by the reference implementation of

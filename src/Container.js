@@ -6,30 +6,12 @@ import {
 import { findFields } from "./utils/NodeHelper";
 import BaseField, { _value } from "./BaseField";
 import defineElement from "./utils/DefineElement";
+import { valueHelper } from "./utils/DataHelper";
 
 const ATTRIBUTES = [];
 
-const NAME_SPLITTER = /\./g;
 
-const valueHelper = function (data, name, value) {
-	if (data == null || typeof data === "undefined") return null;
 
-	const update = arguments.length > 2;
-
-	const names = name.split(NAME_SPLITTER);
-	while (names.length > 1) {
-		const key = names.shift();
-		let temp = data[key];
-		const has = typeof temp !== "undefiend" && temp != null;
-		if (!has && !update) return null;
-		else if (!has && update) temp = data[key] = {};
-
-		data = temp;
-	}
-
-	if (update) data[names[0]] = value;
-	else return data[names[0]] ? data[names[0]] : null;
-};
 
 const refreshValue = async (self) => {
 	const data = {};
@@ -39,7 +21,7 @@ const refreshValue = async (self) => {
 		if (field.condition && field.hasValue) {
 			const name = field.name;
 			const value = await field.value();
-			if (name) data[name] = value;
+			if (name) valueHelper(data, name, value);
 			else Object.assign(data, value);
 		}
 	}
@@ -81,12 +63,14 @@ class Container extends BaseField {
 				const field = event.target;
 				if (field != this) {				
 					if (field instanceof BaseField) {
-						if (this.fields.indexOf(field) < 0)
+						if (this.fields.indexOf(field) < 0){
 							this.fields.push(field);
-
-						event.preventDefault();
-						event.stopPropagation();
+							refreshValue(this)
+						}						
 					}
+					
+					event.preventDefault();
+					event.stopPropagation();
 				}
 			});
 

@@ -1,14 +1,9 @@
 import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
-import { 
-	ATTRIBUTE_CONDITION, 
-	ATTRIBUTE_EDITABLE_CONDITION, 
-	FORMSTATES 
-} from "./Constants";
+import { ATTRIBUTE_CONDITION, ATTRIBUTE_EDITABLE_CONDITION, FORMSTATES } from "./Constants";
 import "./Validation";
-import { updateConditionState, updateValidState } from "./utils/StateHelper"
+import { updateConditionState, updateValidState } from "./utils/StateHelper";
 import { findValidations } from "./utils/NodeHelper";
 import { evaluationData } from "./utils/DataHelper";
-
 
 const updateReadonly = async ({ data, valid, base, condition }) => {
 	const { form } = base;
@@ -23,7 +18,7 @@ const updateReadonly = async ({ data, valid, base, condition }) => {
 		}
 	}
 	return valid;
-}
+};
 
 class Validator {
 	constructor(base) {
@@ -33,7 +28,6 @@ class Validator {
 		this.validations = findValidations(base) || [];
 		this.condition = base.attr(ATTRIBUTE_CONDITION);
 		this.editableCondition = base.attr(ATTRIBUTE_EDITABLE_CONDITION);
-
 	}
 
 	addCustomCheck(check) {
@@ -46,12 +40,11 @@ class Validator {
 
 	async validate() {
 		const { base, validations, customChecks, condition, editableCondition } = this;
-		const { hasValue, required, requiredOnlyOnActive } = base;
+		const { hasValue, required } = base;
 		const hasChecks = customChecks.length > 0 || validations.length > 0;
 		const data = await evaluationData(base);
 		const initial = this.inital;
 		this.inital = false;
-
 
 		const conditionValid = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
 		updateConditionState(base, conditionValid, this.inital);
@@ -69,18 +62,16 @@ class Validator {
 					const test = await ExpressionResolver.resolve(validation.condition, data, true);
 					validation.active = !test;
 					if (!test) valid = false;
-				} else
-					validation.active = false;
+				} else validation.active = false;
 			}
 
-			const editable = updateReadonly({ data, valid, base, condition: editableCondition });
-			if(!editable)
-				valid = true;
-			updateValidState(base, valid, this.inital);
-			
-		}
-		return valid;
+			const editable = await updateReadonly({ data, valid, base, condition: editableCondition });
+			if (!editable) valid = true;
 
+			updateValidState(base, valid, this.inital);
+		}
+
+		return valid;
 	}
 }
 

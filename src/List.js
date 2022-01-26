@@ -1,5 +1,6 @@
 import { 
 	NODENAMES, 
+	EVENT_FIELD_INITIALIZED,
 	EVENT_VALUE_CHANGED,
 	EVENT_LIST_ROW_ADD,
 	EVENT_LIST_ROW_DELETE,
@@ -48,6 +49,11 @@ class List extends BaseField {
 
 	constructor(value = null) {
 		super(value);
+
+		this.on(EVENT_FIELD_INITIALIZED, (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+		});
 
 		this.on(EVENT_VALUE_CHANGED, (event) => {
 			const row = event.target;

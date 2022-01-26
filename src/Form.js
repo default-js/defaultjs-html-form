@@ -1,10 +1,10 @@
 import Component from "@default-js/defaultjs-html-components/src/Component";
-import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { privateProperty, privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
+import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import {
 	FORMSTATES,
 	NODENAMES,
+	EVENT_INITIALIZED,
 	EVENT_VALUE_CHANGED,
 	EVENT_EXECUTE_VALIDATE,
 	EVENT_FORM_STATE_CHANGED,
@@ -26,6 +26,7 @@ import "./ProgressBar";
 import BaseSubmitAction from "./submitActions/BaseSubmitAction";
 import DefaultFormSubmitAction from "./submitActions/DefaultFormSubmitAction";
 import SubmitActionResult, { STATE_FAIL as ACTION_SUBMIT_STATE_FAIL, STATE_SUCCESS as ACTION_SUBMIT_STATE_SUCCESS } from "./submitActions/SubmitActionResult";
+import { valueHelper } from "./utils/DataHelper";
 
 const _submitActions = privatePropertyAccessor("submitAction");
 const _state =  privatePropertyAccessor("state");
@@ -41,7 +42,7 @@ const collectData = async (self) => {
 			const name = page.name;
 			const value = await page.value();
 			const hasValue = value != null && typeof value !== "undefined";
-			if (name && hasValue) data[name] = value;
+			if (name && hasValue)  valueHelper(data, name, value);
 			else if (hasValue) ObjectUtils.merge(data, value);
 		}
 	}
@@ -89,10 +90,12 @@ class Form extends Component {
 	constructor() {
 		super();
 		_state(this, null);
+
 		let valueChangeTimeout = null;
 		this.on(EVENT_VALUE_CHANGED, (event) => {
 			event.stopPropagation();
 			const detail = event.detail;
+			
 			if (valueChangeTimeout) clearTimeout(valueChangeTimeout);
 
 			valueChangeTimeout = setTimeout(() => {
@@ -112,6 +115,7 @@ class Form extends Component {
 
 			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
 			this.pages = this.find(NODENAMES.Page);
+			this.trigger(EVENT_INITIALIZED);
 		}
 
 		this.activePageIndex = -1;
@@ -142,13 +146,14 @@ class Form extends Component {
 	}
 
 	async value(data) {
-		if (arguments.length == 0) return collectData(this); //return formData(this);
+		if (arguments.length == 0) return collectData(this);
 
 		await this.ready;
 		if (this.state == FORMSTATES.input) {
 			for (let page of this.pages) {
-				await page.value(null); // reset all values					
-				if (page.name) await page.value(data[page.name]);
+				const name = page.name;
+				//await page.value(null); // reset all values					
+				if (name) await page.value( valueHelper(data, name) );
 				else await page.value(data);
 			}
 		}

@@ -12,7 +12,7 @@ import Validator from "./Validator";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 
 
-const _parent = privatePropertyAccessor("private");
+const _parent = privatePropertyAccessor("parent");
 export const _value = privatePropertyAccessor("value");
 const _validator = privatePropertyAccessor("validator");
 
@@ -54,13 +54,14 @@ class BaseField extends Base {
 		if (!ready.resolved) {
 			_parent(this, findParentField(this));
 			_validator(this, new Validator(this));			
-
+			
 			this.form.on(EVENT_EXECUTE_VALIDATE, async (event) => {
 				const chain = event.detail;
 				if (chain.indexOf(this) < 0) {
 					const current = this.valid;
 					const valid = await this.validate();
-					if (current != valid) {
+					const condition = this.condition;
+					if (current != valid && condition) {
 						this.publishValue();
 					}
 				}
@@ -75,7 +76,10 @@ class BaseField extends Base {
 			});
 		}
 
-		this.validate();
+		ready.then(async () => {
+			await this.validate();			
+			await this.publishValue();
+		});
 	}
 
 	get validator() {

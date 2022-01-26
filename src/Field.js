@@ -1,8 +1,5 @@
-import { 
-	NODENAMES, 
-	EVENT_FIELD_INPUT
-} from "./Constants";
-import BaseField, {_value} from "./BaseField";
+import { NODENAMES, EVENT_FIELD_INPUT } from "./Constants";
+import BaseField from "./BaseField";
 import { findWrapper } from "./wrapper";
 import defineElement from "./utils/DefineElement";
 
@@ -22,13 +19,14 @@ class Field extends BaseField {
 		this.on(EVENT_FIELD_INPUT, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
-
 			const value = event.detail ? event.detail : null;
-			if(_value(this) != value)
-				this.value(value);
+			(async () => {
+				const current = await this.value();				
+				if (current != value) this.value(value);
+			})();
 		});
 	}
-	
+
 	async init() {
 		await super.init();
 		const ready = this.ready;
@@ -39,8 +37,6 @@ class Field extends BaseField {
 					return this.wrapper.valid;
 				});
 		}
-		
-		this.publishValue();
 	}
 
 	readonlyUpdated() {
@@ -57,7 +53,7 @@ class Field extends BaseField {
 		return value;
 	}
 
-	async updatedValue(value) {		
+	async updatedValue(value) {
 		await this.ready;
 		if (this.wrapper) await this.wrapper.updatedValue(value);
 	}

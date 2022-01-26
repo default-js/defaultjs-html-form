@@ -45,8 +45,10 @@ class Message extends Component {
 			this.form.on(EVENT_EXECUTE_VALIDATE, () => {
 				this.update();
 			});
-		}
-		this.update();
+			ready.then(() => {
+				this.update();
+			});
+		}		
 	}
 
 	get active() {
