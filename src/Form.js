@@ -34,7 +34,6 @@ const _state =  privatePropertyAccessor("state");
 const collectData = async (self) => {
 	await self.ready;
 	const data = {};
-	const activePage = self.activePage;
 	const pages = self.pages;
 
 	for (let page of pages) {
@@ -91,17 +90,10 @@ class Form extends Component {
 		super();
 		_state(this, null);
 
-		let valueChangeTimeout = null;
 		this.on(EVENT_VALUE_CHANGED, (event) => {
 			event.stopPropagation();
 			const detail = event.detail;
-			
-			if (valueChangeTimeout) clearTimeout(valueChangeTimeout);
-
-			valueChangeTimeout = setTimeout(() => {
-				valueChangeTimeout = null;
-				this.trigger(EVENT_EXECUTE_VALIDATE, detail);
-			}, 1);
+			this.trigger(EVENT_EXECUTE_VALIDATE, detail);
 		});
 	}
 

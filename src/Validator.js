@@ -17,7 +17,7 @@ const updateReadonly = async ({ data, valid, base, condition }) => {
 			return test;
 		}
 	}
-	return valid;
+	return true;
 };
 
 class Validator {
@@ -41,13 +41,12 @@ class Validator {
 	async validate() {
 		const { base, validations, customChecks, condition, editableCondition } = this;
 		const { hasValue, required } = base;
-		const hasChecks = customChecks.length > 0 || validations.length > 0;
 		const data = await evaluationData(base);
 		const initial = this.inital;
 		this.inital = false;
 
 		const conditionValid = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
-		updateConditionState(base, conditionValid, this.inital);
+		updateConditionState(base, conditionValid, initial);
 
 		let valid = required ? hasValue : true;
 		if (conditionValid) {
@@ -68,7 +67,7 @@ class Validator {
 			const editable = await updateReadonly({ data, valid, base, condition: editableCondition });
 			if (!editable) valid = true;
 
-			updateValidState(base, valid, this.inital);
+			updateValidState(base, valid, initial);
 		}
 
 		return valid;
