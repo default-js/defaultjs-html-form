@@ -1,12 +1,12 @@
-import Form from "@src/Form";
-import Page from "@src/Page";
-import ProgressBar from "@src/ProgressBar";
-import Field from "@src/Field";
-import Container from "@src/Container";
-import List from "@src/List";
-import Message from "@src/Message";
-import Step from "@src/Step";
-import Control from "@src/Control";
+import Form from "../src/Form";
+import Page from "../src/Page";
+import ProgressBar from "../src/ProgressBar";
+import Field from "../src/Field";
+import Container from "../src/Container";
+import List from "../src/List";
+import Message from "../src/Message";
+import Step from "../src/Step";
+import Control from "../src/Control";
 
 describe("Dom Tests", () => {
 	it("document.createElement form", () => {
