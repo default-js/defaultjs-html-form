@@ -6,9 +6,8 @@ import { valueHelper } from "./utils/DataHelper";
 
 const ATTRIBUTES = [];
 
-const refreshValue = async (self) => {
+const refreshValue = async (self, fields) => {
 	const data = {};
-	const fields = self.fields;
 
 	for (let field of fields) {
 		if (field.condition && field.hasValue) {
@@ -33,33 +32,23 @@ class Container extends BaseField {
 	}
 
 	#initialized = false;
+	#fields = [];
 
 	constructor(value = null) {
 		super(value);
-		this.fields = [];
-		this.on(EVENT_VALUE_CHANGED, (event) => {
-			const field = event.target;
-			if (field != this) {
-				event.preventDefault();
-				event.stopPropagation();
-
-				const chain = event.detail;
-				this.childValueChanged(field, chain);
-			}
-		});
 	}
 
 	async init() {
 		await super.init();
 		if (!this.#initialized) {
-			this.fields = findFields(this);
+			this.#fields = findFields(this);
 			this.on(EVENT_FIELD_INITIALIZED, (event) => {
 				const field = event.target;
 				if (field != this) {
 					if (field instanceof BaseField) {
-						if (this.fields.indexOf(field) < 0) {
-							this.fields.push(field);
-							refreshValue(this);
+						if (this.#fields.indexOf(field) < 0) {
+							this.#fields.push(field);
+							refreshValue(this, this.#fields);
 						}
 					}
 
@@ -68,7 +57,7 @@ class Container extends BaseField {
 				}
 			});
 
-			this.validator.addCustomCheck(async ({ data, base }) => {
+			this.addValidation(async ({ data, base }) => {
 				const { fields } = base;
 				if (fields) {
 					const length = fields.length;
@@ -94,23 +83,22 @@ class Container extends BaseField {
 
 	async updatedValue(value) {
 		await this.ready;
-		const fields = this.fields;
+		const fields = this.#fields;
 		if (fields) {
 			for (let field of fields) {
 				if (field.name) await field.value(valueHelper(value, field.name));
 				else if (field instanceof Container) await field.value(value);
 			}
 
-			await refreshValue(this);
+			await refreshValue(this, this.#fields);
 		}
 	}
 
 	async childValueChanged(field, value) {
 		await this.ready;
+		await refreshValue(this, this.#fields);
+		await super.childValueChanged(field, value);
 
-		await refreshValue(this);
-
-		await this.validate();
 		await this.publishValue();
 	}
 }

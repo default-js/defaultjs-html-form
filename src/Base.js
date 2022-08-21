@@ -1,12 +1,14 @@
 import { NODENAMES, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_EDITABLE_CONDITION, ATTRIBUTE_EDITABLE, EVENT_MESSAGE_INITIALIZED } from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import Validator from "./Validator";
+import Condition from "./Condition";
 import { evaluationData } from "./utils/DataHelper";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { updateActiveState, updateEditableState } from "./utils/StateHelper";
 
 const _form = privatePropertyAccessor("form");
 const _messages = privatePropertyAccessor("messages");
+const _condition = privatePropertyAccessor("condition");
 const _validator = privatePropertyAccessor("validator");
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_EDITABLE_CONDITION];
 
@@ -30,20 +32,24 @@ class Base extends Component {
 		await super.init();
 		if (!this.#initialized) {
 			this.#initialized = true;
-
+			
+			_condition(this, new Condition(this, this.attr(ATTRIBUTE_CONDITION)));
 			_validator(this, new Validator(this));
 		}
 	}
 
-	get validator() {
-		return _validator(this);
+	addValidation(validation) {
+		_validator(this).addCustomCheck(validation);
 	}
 
 	async validate(data) {
-		if (!this.validator) return false;
-
 		const context = Object.assign({}, data, await evaluationData(this));
-		const valid = await this.validator.validate(context);
+		const currentCondition = this.condition;
+		const condition = await _condition(this).validate(context, currentCondition);
+		if(!condition)
+			return false;
+
+		const valid = await _validator(this).validate(context);
 		return valid;
 	}
 

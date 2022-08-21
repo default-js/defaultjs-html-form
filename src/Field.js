@@ -21,11 +21,7 @@ class Field extends BaseField {
 		this.on(EVENT_FIELD_INPUT, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
-			const value = event.detail ? event.detail : null;
-			(async () => {
-				const current = await this.value();				
-				if (current != value) this.value(value);
-			})();
+			this.value(event.detail);
 		});
 	}
 
@@ -35,9 +31,7 @@ class Field extends BaseField {
 			this.#initialized = true;
 			this.wrapper = findWrapper(this);
 			if (this.wrapper)
-				this.validator.addCustomCheck(async () => {
-					return this.wrapper.valid;
-				});
+				this.addValidation(async () => this.wrapper.valid);
 		}
 	}
 

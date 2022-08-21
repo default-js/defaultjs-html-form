@@ -44,11 +44,8 @@ class Validator {
 		const initial = this.inital;
 		this.inital = false;
 
-		const conditionValid = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
-		updateConditionState(base, conditionValid, initial);
-
 		let valid = required ? hasValue : true;
-		if (conditionValid) {
+		if (condition) {
 			if (valid)
 				for (let check of customChecks) {
 					const test = await check({ data, base });
