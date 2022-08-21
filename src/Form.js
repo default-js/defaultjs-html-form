@@ -1,23 +1,7 @@
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-import {
-	FORMSTATES,
-	NODENAMES,
-	EVENT_INITIALIZED,
-	EVENT_VALUE_CHANGED,
-	EVENT_EXECUTE_VALIDATE,
-	EVENT_FORM_STATE_CHANGED,
-	EVENT_SITE_CHANGED,
-	EVENT_SUBMIT,
-	EVENT_SUBMIT_RESULTS,
-	ATTRIBUTE_NAME,
-	ATTRIBUTE_USE_SUMMARY_PAGE,
-	ATTRIBUTE_ENDPOINT,
-	ATTRIBUTE_METHOD,
-	ATTRIBUTE_STATE,
-	ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT
-} from "./Constants";
+import { FORMSTATES, NODENAMES, EVENT_INITIALIZED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED, EVENT_SUBMIT, EVENT_SUBMIT_RESULTS, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT } from "./Constants";
 import defineElement from "./utils/DefineElement";
 import "./Message";
 import "./Page";
@@ -29,7 +13,7 @@ import SubmitActionResult, { STATE_FAIL as ACTION_SUBMIT_STATE_FAIL, STATE_SUCCE
 import { valueHelper } from "./utils/DataHelper";
 
 const _submitActions = privatePropertyAccessor("submitAction");
-const _state =  privatePropertyAccessor("state");
+const _state = privatePropertyAccessor("state");
 
 const collectData = async (self) => {
 	await self.ready;
@@ -41,7 +25,7 @@ const collectData = async (self) => {
 			const name = page.name;
 			const value = await page.value();
 			const hasValue = value != null && typeof value !== "undefined";
-			if (name && hasValue)  valueHelper(data, name, value);
+			if (name && hasValue) valueHelper(data, name, value);
 			else if (hasValue) ObjectUtils.merge(data, value);
 		}
 	}
@@ -63,12 +47,11 @@ const executeActions = async (actions, data) => {
 	for (let action of actions) {
 		const accept = await action.accept(data);
 		if (accept) {
-			try{
-				const result = await action.execute(data) || new SubmitActionResult(action, ACTION_SUBMIT_STATE_SUCCESS);
+			try {
+				const result = (await action.execute(data)) || new SubmitActionResult(action, ACTION_SUBMIT_STATE_SUCCESS);
 				results.push(result);
-				if (result.state == ACTION_SUBMIT_STATE_FAIL)
-					return results;
-			}catch(e){
+				if (result.state == ACTION_SUBMIT_STATE_FAIL) return results;
+			} catch (e) {
 				results.push(new SubmitActionResult(action, ACTION_SUBMIT_STATE_FAIL, e));
 				return results;
 			}
@@ -86,32 +69,31 @@ class Form extends Component {
 		return NODENAMES.Form;
 	}
 
+	#initialized = false;
+
 	constructor() {
 		super();
 		_state(this, null);
-
-		this.on(EVENT_VALUE_CHANGED, (event) => {
-			event.stopPropagation();
-			const detail = event.detail;
-			this.trigger(EVENT_EXECUTE_VALIDATE, detail);
-		});
 	}
 
 	async init() {
 		await super.init();
-		this.state = FORMSTATES.init;
-		const ready = this.ready;
-		if (!ready.resolved) {
-			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
+		if (!this.#initialized) {			
+			this.#initialized = true;
 			this.activePageIndex = -1;
 
-			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
-			this.pages = this.find(NODENAMES.Page);
-			this.trigger(EVENT_INITIALIZED);
-		}
+			this.state = FORMSTATES.init;
+			
+			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);			
+			this.pages = this.find(NODENAMES.Page);			
 
-		this.activePageIndex = -1;
-		if (this.pages.length > 0) this.toNextPage();
+			this.activePageIndex = -1;
+			if (this.pages.length > 0) this.toNextPage();
+
+			this.ready.then(() => {
+				this.trigger(EVENT_INITIALIZED);
+			});
+		}
 	}
 
 	get state() {
@@ -144,8 +126,8 @@ class Form extends Component {
 		if (this.state == FORMSTATES.input) {
 			for (let page of this.pages) {
 				const name = page.name;
-				//await page.value(null); // reset all values					
-				if (name) await page.value( valueHelper(data, name) );
+				//await page.value(null); // reset all values
+				if (name) await page.value(valueHelper(data, name));
 				else await page.value(data);
 			}
 		}
@@ -225,7 +207,6 @@ class Form extends Component {
 				this.append(new DefaultFormSubmitAction(endpoint, method));
 			}
 
-
 			const childs = this.children;
 			for (let child of childs) {
 				if (child instanceof BaseSubmitAction) actions.push(child);
@@ -248,6 +229,20 @@ class Form extends Component {
 
 		this.trigger(EVENT_SUBMIT, data);
 	}
-};
+
+	async childValueChanged(field, value){
+		await this.ready;
+		const currentState = this.state;
+		this.state = FORMSTATES.validating;
+		let valid = false;
+		const data = await collectData(this);
+		const pages = this.pages;
+		for (let page of pages) 
+			if(await page.validate(data))
+				valid = false;
+		
+		this.state = currentState;
+	}
+}
 defineElement(Form);
 export default Form;

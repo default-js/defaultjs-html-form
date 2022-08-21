@@ -38,10 +38,9 @@ class Validator {
 		return this.base.form;
 	}
 
-	async validate() {
+	async validate(data) {
 		const { base, validations, customChecks, condition, editableCondition } = this;
-		const { hasValue, required } = base;
-		const data = await evaluationData(base);
+		const { hasValue, required } = base;		
 		const initial = this.inital;
 		this.inital = false;
 

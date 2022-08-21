@@ -55,26 +55,13 @@ class List extends BaseField {
 			event.stopPropagation();
 		});
 
-		this.on(EVENT_VALUE_CHANGED, (event) => {
-			const row = event.target;
-			if (row instanceof Row) {
-				event.preventDefault();
-				event.stopPropagation();
-
-				const chain = event.detail;
-				this.childValueChanged(row, chain);
-			}
-		});
-
 		this.on(EVENT_LIST_ROW_ADD, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 
 			const { readonly} = this;
-			if (!readonly) {
-				const row = createRow(this);
-				this.childValueChanged();
-			}
+			if (!readonly)
+				createRow(this);
 		});
 
 		this.on(EVENT_LIST_ROW_DELETE, (event) => {
@@ -162,7 +149,7 @@ class List extends BaseField {
 		if (value) for (let val of value) await createRow(this, val);
 	}
 
-	async childValueChanged(row, chain) {
+	async childValueChanged(field, value) {
 		await this.ready;
 		
 		const values = [];
@@ -179,7 +166,7 @@ class List extends BaseField {
 			_value(this, null);
 
 		await this.validate();
-		await this.publishValue(chain);
+		await this.publishValue();
 	}
 }
 

@@ -32,11 +32,13 @@ export const NODENAMES = {
 };
 
 export const FORMSTATE_INIT = "init";
+export const FORMSTATE_VALIDATING = "validating";
 export const FORMSTATE_INPUT = "input";
 export const FORMSTATE_SUMMARY = "summary";
 export const FORMSTATE_FINISHED = "finished";
 export const FORMSTATES = {
 	init: FORMSTATE_INIT,
+	validating: FORMSTATE_VALIDATING,
 	input: FORMSTATE_INPUT,
 	summary: FORMSTATE_SUMMARY,
 	finished: FORMSTATE_FINISHED,
@@ -65,6 +67,7 @@ export const EVENT_FIELD_INPUT = `${EVENT_PREFIX}field-input`;
 export const EVENT_LIST_ROW_ADD = `${EVENT_PREFIX}list-row-add`;
 export const EVENT_LIST_ROW_DELETE = `${EVENT_PREFIX}list-row-delete`;
 export const EVENT_PROGRESSBAR_CHANGED = `${EVENT_PREFIX}progress-bar-changed`;
+export const EVENT_MESSAGE_INITIALIZED = `${EVENT_PREFIX}message-initialized`;
 
 export const EVENT_ACTIVE_STATE_CHANGED = `${EVENT_PREFIX}active-state-changed`;
 export const EVENT_VALID_STATE_CHANGED = `${EVENT_PREFIX}valid-state-changed`;

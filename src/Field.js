@@ -14,6 +14,8 @@ class Field extends BaseField {
 		return NODENAMES.Field;
 	}
 
+	#initialized = false;
+
 	constructor(value = null) {
 		super(value);
 		this.on(EVENT_FIELD_INPUT, (event) => {
@@ -29,8 +31,8 @@ class Field extends BaseField {
 
 	async init() {
 		await super.init();
-		const ready = this.ready;
-		if (!ready.resolved) {
+		if (!this.#initialized) {
+			this.#initialized = true;
 			this.wrapper = findWrapper(this);
 			if (this.wrapper)
 				this.validator.addCustomCheck(async () => {

@@ -14,7 +14,7 @@ export const evaluationData = async (base) => {
 		row = row.parent(NODENAMES.ListRow);
 	}
 	
-	return ObjectUtils.merge( data, await base.form.value());
+	return data;
 };
 
 const NAME_SPLITTER = /\./g;

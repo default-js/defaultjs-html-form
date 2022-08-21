@@ -1,20 +1,13 @@
-import { 
-	NODENAMES, 
-	ATTRIBUTE_ACTIVE, 
-	ATTRIBUTE_READONLY, 
-	ATTRIBUTE_CONDITION, 
-	ATTRIBUTE_CONDITION_VALID, 
-	ATTRIBUTE_CONDITION_INVALID, 
-	ATTRIBUTE_VALID, 
-	ATTRIBUTE_INVALID, 
-	ATTRIBUTE_EDITABLE_CONDITION, 
-	ATTRIBUTE_EDITABLE } from "./Constants";
+import { NODENAMES, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_EDITABLE_CONDITION, ATTRIBUTE_EDITABLE, EVENT_MESSAGE_INITIALIZED } from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
+import Validator from "./Validator";
+import { evaluationData } from "./utils/DataHelper";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { updateActiveState, updateEditableState } from "./utils/StateHelper";
 
 const _form = privatePropertyAccessor("form");
-
+const _messages = privatePropertyAccessor("messages");
+const _validator = privatePropertyAccessor("validator");
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_EDITABLE_CONDITION];
 
 class Base extends Component {
@@ -22,12 +15,36 @@ class Base extends Component {
 		return ATTRIBUTES;
 	}
 
+	#initialized = false;
+
 	constructor() {
-		super();		
+		super();
+		_messages(this, []);
+		this.root.on(EVENT_MESSAGE_INITIALIZED, (event) => {
+			event.stopPropagation();
+			_messages(this).push(event.target);
+		});
 	}
 
 	async init() {
 		await super.init();
+		if (!this.#initialized) {
+			this.#initialized = true;
+
+			_validator(this, new Validator(this));
+		}
+	}
+
+	get validator() {
+		return _validator(this);
+	}
+
+	async validate(data) {
+		if (!this.validator) return false;
+
+		const context = Object.assign({}, data, await evaluationData(this));
+		const valid = await this.validator.validate(context);
+		return valid;
 	}
 
 	get form() {
@@ -51,7 +68,7 @@ class Base extends Component {
 		}
 	}
 
-	activeUpdated() {}
+	async activeUpdated() {}
 
 	get readonly() {
 		return this.hasAttribute(ATTRIBUTE_READONLY);
@@ -62,7 +79,7 @@ class Base extends Component {
 		this.readonlyUpdated();
 	}
 
-	readonlyUpdated() {}
+	async readonlyUpdated() {}
 
 	get editable() {
 		return this.hasAttribute(ATTRIBUTE_EDITABLE);
@@ -73,7 +90,7 @@ class Base extends Component {
 		this.editableUpdated();
 	}
 
-	editableUpdated() {
+	async editableUpdated() {
 		this.readonlyUpdated();
 	}
 
@@ -81,7 +98,7 @@ class Base extends Component {
 		return !this.hasAttribute(ATTRIBUTE_CONDITION_INVALID);
 	}
 
-	conditionUpdated() {}
+	async conditionUpdated() {}
 
 	get valid() {
 		return this.hasAttribute(ATTRIBUTE_VALID);

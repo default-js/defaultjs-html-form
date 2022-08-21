@@ -40,11 +40,13 @@ class Control extends Component {
 			this.summary = this.find(NODENAMES.SummaryButton).first() || BUTTONDUMMY;
 			this.submit = this.find(NODENAMES.SubmitButton).first() || BUTTONDUMMY;
 
-			this.form.on([EVENT_INITIALIZED, EVENT_VALUE_CHANGED, EVENT_FORM_STATE_CHANGED, EVENT_CONDITION_STATE_CHANGED, EVENT_SITE_CHANGED], (event) => {
+			this.form.on([EVENT_INITIALIZED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED], (event) => {
 				this.update();
 			});
 		}
 	}
+
+	
 
 	update() {
 		const { back, next, summary, submit, form } = this;

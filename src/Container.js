@@ -1,17 +1,10 @@
-import { 
-	NODENAMES,
-	EVENT_FIELD_INITIALIZED,
-	EVENT_VALUE_CHANGED,
-} from "./Constants";
+import { NODENAMES, EVENT_FIELD_INITIALIZED, EVENT_VALUE_CHANGED } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
 import BaseField, { _value } from "./BaseField";
 import defineElement from "./utils/DefineElement";
 import { valueHelper } from "./utils/DataHelper";
 
 const ATTRIBUTES = [];
-
-
-
 
 const refreshValue = async (self) => {
 	const data = {};
@@ -39,6 +32,8 @@ class Container extends BaseField {
 		return NODENAMES.Container;
 	}
 
+	#initialized = false;
+
 	constructor(value = null) {
 		super(value);
 		this.fields = [];
@@ -55,20 +50,19 @@ class Container extends BaseField {
 	}
 
 	async init() {
-		const ready = this.ready;
 		await super.init();
-		this.fields = findFields(this);
-		if (!ready.resolved) {
+		if (!this.#initialized) {
+			this.fields = findFields(this);
 			this.on(EVENT_FIELD_INITIALIZED, (event) => {
 				const field = event.target;
-				if (field != this) {				
+				if (field != this) {
 					if (field instanceof BaseField) {
-						if (this.fields.indexOf(field) < 0){
+						if (this.fields.indexOf(field) < 0) {
 							this.fields.push(field);
-							refreshValue(this)
-						}						
+							refreshValue(this);
+						}
 					}
-					
+
 					event.preventDefault();
 					event.stopPropagation();
 				}
@@ -86,6 +80,7 @@ class Container extends BaseField {
 
 				return true;
 			});
+			this.#initialized = true;
 		}
 	}
 
@@ -110,13 +105,13 @@ class Container extends BaseField {
 		}
 	}
 
-	async childValueChanged(field, chain) {
+	async childValueChanged(field, value) {
 		await this.ready;
 
 		await refreshValue(this);
 
 		await this.validate();
-		await this.publishValue(chain);
+		await this.publishValue();
 	}
 }
 
