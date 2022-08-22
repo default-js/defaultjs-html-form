@@ -1,15 +1,14 @@
 import {
     EVENT_MESSAGE_INITIALIZED, 
     EVENT_MESSAGE_REMOVED
-} from "../Constants"
+} from "../Constants";
+
 
 class MessageHandle {
 
-    #base;
     #messages = new Set();
 
     constructor(base){
-        this.#base = base;
         base.on(EVENT_MESSAGE_INITIALIZED, (event) =>{
             event.stopPropagation();
             const target = event.target;
@@ -24,7 +23,8 @@ class MessageHandle {
     }
 
     async validate(data) {
-
+        for(let message of this.#messages)
+            message.update(data);
     }
 
 };

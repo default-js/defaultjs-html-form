@@ -1,0 +1,5 @@
+- BaseField.value 
+Implements valid check and option "unchecked" for validation
+
+- BaseField.validate
+How to handle values if field invalid or condition not met

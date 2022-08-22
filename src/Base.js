@@ -7,20 +7,18 @@ import { NODENAMES,
 	ATTRIBUTE_CONDITION_INVALID, 
 	ATTRIBUTE_VALID, 
 	ATTRIBUTE_EDITABLE_CONDITION, 
-	ATTRIBUTE_EDITABLE, 
-	EVENT_MESSAGE_INITIALIZED 
+	ATTRIBUTE_EDITABLE
 } from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
-import Validator from "./Validator";
-import Condition from "./Condition";
+import ConditionHandle from "./handels/ConditionHandle";
+import EditableHandle from "./handels/EditableHandle";
+import ValidationHandle from "./handels/ValidationHandle";
 import MessageHandle from "./handels/MessageHandle";
 import { evaluationData } from "./utils/DataHelper";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-import { updateActiveState, updateEditableState } from "./utils/StateHelper";
+import { updateActiveState, updateConditionState, updateEditableState, updateValidState } from "./utils/StateHelper";
 
 const _form = privatePropertyAccessor("form");
-const _messages = privatePropertyAccessor("messages");
-const _condition = privatePropertyAccessor("condition");
 const _validator = privatePropertyAccessor("validator");
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_EDITABLE_CONDITION];
 
@@ -30,45 +28,43 @@ class Base extends Component {
 	}
 
 	#initialized = false;
+	
+	#conditionHandle;
+	#editableHandle;
+	#validationHandle;
 	#messageHandle;
 
 	constructor() {
 		super();
-		_messages(this, []);
-		this.root.on(EVENT_MESSAGE_INITIALIZED, (event) => {
-			event.stopPropagation();
-			_messages(this).push(event.target);
-		});
 		this.#messageHandle = new MessageHandle(this);
+		this.#conditionHandle = new ConditionHandle(this);
+		this.#editableHandle = new EditableHandle(this);
+		this.#validationHandle = new ValidationHandle(this);
 	}
 
 	async init() {
 		await super.init();
 		if (!this.#initialized) {
 			this.#initialized = true;
-			
-			_condition(this, new Condition(this, this.attr(ATTRIBUTE_CONDITION)));
-			_validator(this, new Validator(this));
 		}
 	}
 
 
 	addValidation(validation) {
-		_validator(this).addCustomCheck(validation);
+		this.#validationHandle.addCustomValidation(validation);
 	}
 
 	async validate(data) {
 		this.attr(ATTRIBUTE_EVALUATE, "");
 		const context = Object.assign({}, data, await evaluationData(this));
-		const currentCondition = this.condition;
-		const condition = await _condition(this).validate(context, currentCondition);
-		if(!condition)
-			return false;
-
-		const valid = await _validator(this).validate(context);
+		await this.#conditionHandle.validate(context);
+		await this.#editableHandle.validate(context);
+		await this.#validationHandle.validate(context);
 		this.attr(ATTRIBUTE_EVALUATE, null);
 
-		return valid;
+		this.#messageHandle.validate(data);
+
+		return this.valid;
 	}
 
 	get form() {
@@ -118,15 +114,27 @@ class Base extends Component {
 		this.readonlyUpdated();
 	}
 
+	set condition(condition){
+		updateConditionState(this, condition);
+		this.conditionUpdated();
+	}
+
 	get condition() {
 		return !this.hasAttribute(ATTRIBUTE_CONDITION_INVALID);
 	}
 
 	async conditionUpdated() {}
 
+	set valid(valid){
+		updateValidState(this, valid);
+		this.validUpdated();
+	}
+
 	get valid() {
 		return this.hasAttribute(ATTRIBUTE_VALID);
 	}
+
+	async validUpdated(){}
 }
 
 export default Base;

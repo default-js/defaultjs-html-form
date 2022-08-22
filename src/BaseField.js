@@ -1,13 +1,6 @@
-import { 
-	EVENT_FIELD_INITIALIZED,
-	EVENT_FIELD_REMOVED,
-	EVENT_CONDITION_STATE_CHANGED,
-	ATTRIBUTE_NAME, 
-	ATTRIBUTE_REQUIRED, 
-	ATTRIBUTE_NOVALUE } from "./Constants";
+import { EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED, EVENT_CONDITION_STATE_CHANGED, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE } from "./Constants";
 import Base from "./Base";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-
 
 const _parent = privatePropertyAccessor("parent");
 export const _value = privatePropertyAccessor("value");
@@ -40,23 +33,22 @@ class BaseField extends Base {
 		_value(this, value);
 	}
 
-	async init() {		
+	async init() {
 		await super.init();
-		if (!this.#initialized ) {
-			this.#initialized = true;			
+		if (!this.#initialized) {
+			this.#initialized = true;
 			this.ready.then(() => this.trigger(EVENT_FIELD_INITIALIZED));
 		}
 	}
 
-	
-	async destroy(){
+	async destroy() {
 		this.trigger(EVENT_FIELD_REMOVED);
 		await super.destroy();
 	}
 
 	get parentField() {
 		let parent = _parent(this);
-		if(!parent){
+		if (!parent) {
 			parent = findParentField(this);
 			_parent(this, parent);
 		}
@@ -81,9 +73,8 @@ class BaseField extends Base {
 		return value != null && typeof value !== "undefined";
 	}
 
-	async value(value) {
+	async value(value, { unchecked = false } = {}) {
 		if (arguments.length == 0) return _value(this);
-
 		await this.ready;
 		const currentValue = _value(this);
 
@@ -97,16 +88,21 @@ class BaseField extends Base {
 		}
 	}
 
-	async updateValue(value){};
+	async updateValue(value) {}
 
-	async validate(data) {		
+	async validate(data) {
 		updateHasValue(this.hasValue, this);
-		return super.validate(data);
+		await super.validate(data);
+
+		const condition = this.condition;
+
+		const valid = this.valid;
+
+		return valid;
 	}
 
-	async publishValue() {		
+	async publishValue(value) {
 		await this.ready;
-		const value = await this.value();
 		if (this.parentField) await this.parentField.childValueChanged(this, value);
 		else this.form.childValueChanged(this, value);
 	}
@@ -118,7 +114,7 @@ class BaseField extends Base {
 	async normalizeValue(value) {
 		return value;
 	}
-	
+
 	async childValueChanged(field, value) {}
-};
+}
 export default BaseField;

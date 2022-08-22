@@ -1,10 +1,10 @@
-import ExpressionResolver from "@default-js/defaultjs-expression-language/src/ExpressionResolver";
-import Component from "@default-js/defaultjs-html-components/src/Component";
+import {ExpressionResolver} from "@default-js/defaultjs-expression-language";
+import {Component, define} from "@default-js/defaultjs-html-components";
 import { 
 	NODENAMES,
-	EVENT_MESSAGE_INITIALIZED
+	EVENT_MESSAGE_INITIALIZED,
+	EVENT_MESSAGE_REMOVED
 } from "./Constants";
-import defineElement from "./utils/DefineElement";
 
 export const NODENAME = NODENAMES.Message;
 export const ATTRIBUTE_ACTIVE = "active";
@@ -31,6 +31,11 @@ class Message extends Component {
 		this.trigger(EVENT_MESSAGE_INITIALIZED);
 	}
 
+	async destroy(){
+		this.trigger(EVENT_MESSAGE_REMOVED);
+		await super.destroy();
+	}
+
 	get active() {
 		return this.hasAttribute(ATTRIBUTE_ACTIVE);
 	}
@@ -47,5 +52,5 @@ class Message extends Component {
 		this.active = await ExpressionResolver.resolve(this.condition, data, false);
 	}
 }
-defineElement(Message);
+define(Message);
 export default Message;

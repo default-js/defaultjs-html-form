@@ -53,8 +53,7 @@ export const EVENT_PREFIX = HTML_TAG_PREFIX + "form-";
 
 export const EVENT_INITIALIZE = `${EVENT_PREFIX}initialize`;
 export const EVENT_INITIALIZED = `${EVENT_PREFIX}initialized`;
-export const EVENT_FIELD_INITIALIZED = `${EVENT_PREFIX}field-initialized`;
-export const EVENT_FIELD_REMOVED = `${EVENT_PREFIX}field-removed`;
+
 export const EVENT_INITIALIZE_SUBMIT_ACTION = `${EVENT_INITIALIZE}submit-action`;
 export const EVENT_SUBMIT = `${EVENT_PREFIX}submit`;
 export const EVENT_SUBMIT_RESULTS = `${EVENT_PREFIX}submit-results`;
@@ -68,6 +67,13 @@ export const EVENT_FIELD_INPUT = `${EVENT_PREFIX}field-input`;
 export const EVENT_LIST_ROW_ADD = `${EVENT_PREFIX}list-row-add`;
 export const EVENT_LIST_ROW_DELETE = `${EVENT_PREFIX}list-row-delete`;
 export const EVENT_PROGRESSBAR_CHANGED = `${EVENT_PREFIX}progress-bar-changed`;
+
+export const EVENT_FIELD_INITIALIZED = `${EVENT_PREFIX}field-initialized`;
+export const EVENT_FIELD_REMOVED = `${EVENT_PREFIX}field-removed`;
+
+export const EVENT_VALIDATION_INITIALIZED = `${EVENT_PREFIX}validation-initialized`;
+export const EVENT_VALIDATION_REMOVED = `${EVENT_PREFIX}validation-removed`;
+
 export const EVENT_MESSAGE_INITIALIZED = `${EVENT_PREFIX}message-initialized`;
 export const EVENT_MESSAGE_REMOVED = `${EVENT_PREFIX}message-removed`;
 

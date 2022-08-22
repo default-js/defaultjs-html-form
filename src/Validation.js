@@ -1,11 +1,12 @@
 import { 
-	NODENAMES
+	NODENAMES,
+	EVENT_VALIDATION_INITIALIZED,
+	EVENT_VALIDATION_REMOVED,
+	ATTRIBUTE_ACTIVE,
+	ATTRIBUTE_CONDITION
 } from "./Constants";
-import Component from "@default-js/defaultjs-html-components/src/Component";
-import defineElement from "./utils/DefineElement";
+import {Component, define} from "@default-js/defaultjs-html-components";
 
-export const ATTRIBUTE_ACTIVE = "active";
-export const ATTRIBUTE_CONDITION = "condition";
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_CONDITION];
 
 
@@ -25,6 +26,12 @@ class Validation extends Component {
 	async init() {
 		await super.init();
 		this.active = false;
+		this.ready.then(() => this.trigger(EVENT_VALIDATION_INITIALIZED));
+	}
+
+	async destroy() {
+		this.trigger(EVENT_VALIDATION_REMOVED);
+		await super.destroy();
 	}
 
 	get active() {
@@ -38,5 +45,5 @@ class Validation extends Component {
 		return this.attr(ATTRIBUTE_CONDITION);
 	}
 }
-defineElement(Validation);
+define(Validation);
 export default Validation;
