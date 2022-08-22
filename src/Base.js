@@ -1,7 +1,19 @@
-import { NODENAMES, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_EDITABLE_CONDITION, ATTRIBUTE_EDITABLE, EVENT_MESSAGE_INITIALIZED } from "./Constants";
+import { NODENAMES, 
+	ATTRIBUTE_ACTIVE, 
+	ATTRIBUTE_READONLY, 
+	ATTRIBUTE_EVALUATE,
+	ATTRIBUTE_CONDITION, 
+	ATTRIBUTE_CONDITION_VALID, 
+	ATTRIBUTE_CONDITION_INVALID, 
+	ATTRIBUTE_VALID, 
+	ATTRIBUTE_EDITABLE_CONDITION, 
+	ATTRIBUTE_EDITABLE, 
+	EVENT_MESSAGE_INITIALIZED 
+} from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import Validator from "./Validator";
 import Condition from "./Condition";
+import MessageHandle from "./handels/MessageHandle";
 import { evaluationData } from "./utils/DataHelper";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { updateActiveState, updateEditableState } from "./utils/StateHelper";
@@ -18,6 +30,7 @@ class Base extends Component {
 	}
 
 	#initialized = false;
+	#messageHandle;
 
 	constructor() {
 		super();
@@ -26,6 +39,7 @@ class Base extends Component {
 			event.stopPropagation();
 			_messages(this).push(event.target);
 		});
+		this.#messageHandle = new MessageHandle(this);
 	}
 
 	async init() {
@@ -38,11 +52,13 @@ class Base extends Component {
 		}
 	}
 
+
 	addValidation(validation) {
 		_validator(this).addCustomCheck(validation);
 	}
 
 	async validate(data) {
+		this.attr(ATTRIBUTE_EVALUATE, "");
 		const context = Object.assign({}, data, await evaluationData(this));
 		const currentCondition = this.condition;
 		const condition = await _condition(this).validate(context, currentCondition);
@@ -50,6 +66,8 @@ class Base extends Component {
 			return false;
 
 		const valid = await _validator(this).validate(context);
+		this.attr(ATTRIBUTE_EVALUATE, null);
+
 		return valid;
 	}
 

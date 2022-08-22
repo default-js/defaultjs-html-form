@@ -9,7 +9,7 @@ const updateReadonly = async ({ data, valid, base, condition }) => {
 	const { form } = base;
 	if (form.state == FORMSTATES.input) {
 		/*if (!valid)
-			base.readonly = false;
+			#base.readonly = false;
 		else */
 		if (condition) {
 			const test = await ExpressionResolver.resolve(condition, data, false);
@@ -21,36 +21,49 @@ const updateReadonly = async ({ data, valid, base, condition }) => {
 };
 
 class Validator {
+	#base;
+	#customChecks = [];
+	#validations;
+	#editableCondition;
+
 	constructor(base) {
-		this.inital = true;
-		this.base = base;
-		this.customChecks = [];
-		this.validations = findValidations(base) || [];
-		this.condition = base.attr(ATTRIBUTE_CONDITION);
-		this.editableCondition = base.attr(ATTRIBUTE_EDITABLE_CONDITION);
+		this.#base = base;
+
+		this.#validations = findValidations(base) || [];
+		this.#editableCondition = base.attr(ATTRIBUTE_EDITABLE_CONDITION);
 	}
 
 	addCustomCheck(check) {
-		this.customChecks.push(check);
+		this.#customChecks.push(check);
 	}
 
 	get form() {
-		return this.base.form;
+		return this.#base.form;
 	}
 
-	async validate(data) {
-		const { base, validations, customChecks, condition, editableCondition } = this;
-		const { hasValue, required } = base;		
-		const initial = this.inital;
-		this.inital = false;
+	async #validateCustom(data) {
+		const base = this.#base;
+		const customChecks = this.#customChecks;
+		let valid = true;
+		for (let check of customChecks) {
+			if (!(await check({ data, base }))) 
+				valid = false;
+		}
+		return valid;
+	}
+
+	async validate(data) {		
+		const base = this.#base;
+		const validations = this.#validations;
+		const editableCondition = this.#editableCondition;
+		const { hasValue, required, condition } = this.#base;
+
+		console.log("updateValidState:", {base, data});
 
 		let valid = required ? hasValue : true;
+
 		if (condition) {
-			if (valid)
-				for (let check of customChecks) {
-					const test = await check({ data, base });
-					if (!test) valid = false;
-				}
+			if (valid) valid = await this.#validateCustom(data);
 
 			for (let validation of validations) {
 				if (valid && hasValue) {
@@ -62,9 +75,9 @@ class Validator {
 
 			const editable = await updateReadonly({ data, valid, base, condition: editableCondition });
 			if (!editable) valid = true;
-
-			updateValidState(base, valid, initial);
 		}
+
+		updateValidState(base, valid);
 
 		return valid;
 	}

@@ -1,4 +1,4 @@
-import { NODENAMES, EVENT_FIELD_INITIALIZED, EVENT_VALUE_CHANGED } from "./Constants";
+import { NODENAMES, EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED } from "./Constants";
 import { findFields } from "./utils/NodeHelper";
 import BaseField, { _value } from "./BaseField";
 import defineElement from "./utils/DefineElement";
@@ -32,7 +32,7 @@ class Container extends BaseField {
 	}
 
 	#initialized = false;
-	#fields = [];
+	#fields = new Set();
 
 	constructor(value = null) {
 		super(value);
@@ -41,15 +41,25 @@ class Container extends BaseField {
 	async init() {
 		await super.init();
 		if (!this.#initialized) {
-			this.#fields = findFields(this);
+			findFields(this).forEach(field => this.#fields.add(field));			
 			this.on(EVENT_FIELD_INITIALIZED, (event) => {
 				const field = event.target;
 				if (field != this) {
 					if (field instanceof BaseField) {
-						if (this.#fields.indexOf(field) < 0) {
-							this.#fields.push(field);
-							refreshValue(this, this.#fields);
-						}
+						this.#fields.add(field);
+						refreshValue(this, this.fields);
+					}
+					event.preventDefault();
+					event.stopPropagation();
+				}
+			});
+
+			this.on(EVENT_FIELD_REMOVED, (event) => {
+				const field = event.target;
+				if (field != this) {
+					if (field instanceof BaseField) {
+						this.#fields.delete(field)
+						refreshValue(this, this.#fields);
 					}
 
 					event.preventDefault();
@@ -57,20 +67,22 @@ class Container extends BaseField {
 				}
 			});
 
-			this.addValidation(async ({ data, base }) => {
-				const { fields } = base;
-				if (fields) {
-					const length = fields.length;
-					for (let i = 0; i < length; i++) {
-						const field = fields[i];
-						if (field.condition && !field.valid) return false;
-					}
-				}
+			this.addValidation(async ({ data }) => {
+				const fields = this.#fields;
+				const valid = true;
+				for (let field of fields)
+					if (!field.validate(data)) valid = false;
 
-				return true;
+				return valid;
 			});
+
+			await refreshValue(this, this.fields);
 			this.#initialized = true;
 		}
+	}
+
+	get fields() {
+		return Array.from(this.#fields);
 	}
 
 	readonlyUpdated() {
@@ -83,7 +95,7 @@ class Container extends BaseField {
 
 	async updatedValue(value) {
 		await this.ready;
-		const fields = this.#fields;
+		const fields = this.fields;
 		if (fields) {
 			for (let field of fields) {
 				if (field.name) await field.value(valueHelper(value, field.name));

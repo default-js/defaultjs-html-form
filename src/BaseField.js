@@ -1,9 +1,7 @@
 import { 
 	EVENT_FIELD_INITIALIZED,
+	EVENT_FIELD_REMOVED,
 	EVENT_CONDITION_STATE_CHANGED,
-	EVENT_EXECUTE_VALIDATE,
-	EVENT_ALL_PUBLISH_VALUE,
-	EVENT_VALUE_CHANGED,
 	ATTRIBUTE_NAME, 
 	ATTRIBUTE_REQUIRED, 
 	ATTRIBUTE_NOVALUE } from "./Constants";
@@ -40,12 +38,6 @@ class BaseField extends Base {
 	constructor(value = null) {
 		super();
 		_value(this, value);
-
-		this.on(EVENT_CONDITION_STATE_CHANGED, (event) => {
-			if (event.target == this) {
-				this.conditionUpdated();
-			}
-		});
 	}
 
 	async init() {		
@@ -54,6 +46,12 @@ class BaseField extends Base {
 			this.#initialized = true;			
 			this.ready.then(() => this.trigger(EVENT_FIELD_INITIALIZED));
 		}
+	}
+
+	
+	async destroy(){
+		this.trigger(EVENT_FIELD_REMOVED);
+		await super.destroy();
 	}
 
 	get parentField() {

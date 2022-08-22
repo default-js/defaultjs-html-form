@@ -11,8 +11,7 @@ import {
 	ATTRIBUTE_EDITABLE, ATTRIBUTE_READONLY 
 } from "../Constants";
 
-export const updateValidState = (target, valid, initial = false) => {
-	const oldState = target.valid;
+export const updateValidState = (target, valid) => {
 	if (typeof valid === "undefined" || valid == null) {
 		target.attr(ATTRIBUTE_INVALID, null);
 		target.attr(ATTRIBUTE_VALID, null);
@@ -24,24 +23,22 @@ export const updateValidState = (target, valid, initial = false) => {
 		target.attr(ATTRIBUTE_VALID, null);
 	}
 
-	if (oldState != valid || initial){ 
-		target.trigger(EVENT_VALID_STATE_CHANGED);
-	}
+	target.trigger(EVENT_VALID_STATE_CHANGED);
 };
 
-export const updateConditionState = (target, valid, initial = false) => {
-	
-	const oldState = target.condition;
-	if (valid) {
+export const updateConditionState = (target, valid) => {
+	if (typeof valid === "undefined" || valid == null) {
+		target.attr(ATTRIBUTE_CONDITION_INVALID, null);
+		target.attr(ATTRIBUTE_CONDITION_VALID, null);
+	} else if (valid) {
 		target.attr(ATTRIBUTE_CONDITION_INVALID, null);
 		target.attr(ATTRIBUTE_CONDITION_VALID, "");
 	} else {
 		target.attr(ATTRIBUTE_CONDITION_VALID, null);
 		target.attr(ATTRIBUTE_CONDITION_INVALID, "");
 	}
-	if (oldState != valid || initial) {		
-		target.trigger(EVENT_CONDITION_STATE_CHANGED);
-	}
+
+	target.trigger(EVENT_CONDITION_STATE_CHANGED);
 };
 
 export const updateActiveState = (target, active, initial = false) => {
