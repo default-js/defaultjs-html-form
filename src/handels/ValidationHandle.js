@@ -1,9 +1,5 @@
-import { 
-    EVENT_VALIDATION_INITIALIZED, 
-    EVENT_VALIDATION_REMOVED 
-} from "../Constants";
+import { EVENT_VALIDATION_INITIALIZED, EVENT_VALIDATION_REMOVED } from "../Constants";
 import { ExpressionResolver } from "@default-js/defaultjs-expression-language";
-
 
 const validateCustomValidations = async (validations, data, base) => {
 	let valid = true;
@@ -39,15 +35,16 @@ class ValidationHandle {
 		const base = this.#base;
 		const customs = this.#customs;
 		const validations = this.#validations;
-        const current = this.#base.valid;        
+		const currentValid = this.#base.valid;
 		const { hasValue, required, condition, editable } = this.#base;
 
-        let valid = true;
-		if (!editable) {
+		//console.log(`ValidationHandle.validate:`, { hasValue, required, condition, editable, currentValid }, data, base.nodeName);
+		let valid = true;
+		if (editable) {
 			valid = required ? hasValue : true;
 
 			if (condition) {
-				if (valid) valid = await validateCustomValidations(customs, data, base);
+				valid = await validateCustomValidations(customs, data, base);
 
 				for (let validation of validations) {
 					if (valid && hasValue) {
@@ -59,8 +56,7 @@ class ValidationHandle {
 			}
 		}
 
-        if(valid != current)
-            this.#base.valid = valid;
+		if (valid != currentValid) this.#base.valid = valid;
 
 		return valid;
 	}

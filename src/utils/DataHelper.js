@@ -1,29 +1,62 @@
-import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
-import { SPECIALVARS, NODENAMES } from "../Constants"
+import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { SPECIALVARS, NODENAMES } from "../Constants";
+import { _value } from "../BaseField";
+
+export const updateData = async (data, name, value) => {
+	if (!noValue(value)) {
+		if (name) valueHelper(data, name, value);
+		else Object.assign(data, value);
+	}
+	return data;
+};
+
+export const fieldValueMapToObject = async (map) => {
+	let data = {};
+	for (let [{ name }, value] of map) data = await updateData(data, name, value);
+
+	return data;
+};
+
+
+export const rebuildDataByFields = async (fields) => {
+	let data = {};
+	for (let field of fields) {
+		const value = await field.value();
+		if (!noValue(value)) {
+			const name = field.name;
+			data = await updateData(data, name, value);
+		}
+	}
+	return data;
+};
 
 export const evaluationData = async (base) => {
 	await base.ready;
 	const data = {};
-	data[SPECIALVARS.CURRENTVALUE] = await base.value();
+	data[SPECIALVARS.CURRENTVALUE] = _value(base);
 
 	let row = base.parent(NODENAMES.ListRow);
 	let temp = data;
 	while (row) {
-		temp[SPECIALVARS.CURRENTLISTROW] = await row.value();
+		temp[SPECIALVARS.CURRENTLISTROW] = await _value(row);
 		temp = temp[SPECIALVARS.CURRENTLISTROW];
 		row = row.parent(NODENAMES.ListRow);
 	}
-	
+
 	return data;
 };
 
 const NAME_SPLITTER = /\./g;
 export const valueHelper = function (data, name, value) {
-	if (data == null || typeof data === "undefined") return null;
-
 	const update = arguments.length > 2;
+	if (!update && noValue(data)) return null;
 
 	const names = name.split(NAME_SPLITTER);
+	if (value == null || typeof value === "undefined") {
+		delete data[names[0]];
+		return null;
+	}
+
 	while (names.length > 1) {
 		const key = names.shift();
 		let temp = data[key];

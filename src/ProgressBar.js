@@ -5,8 +5,7 @@ import {
 	EVENT_PROGRESSBAR_CHANGED,
 	FORMSTATES, 
 	ATTRIBUTE_PROGRESS } from "./Constants";
-import Component from "@default-js/defaultjs-html-components/src/Component";
-import defineElement from "./utils/DefineElement";
+import {Component ,define } from "@default-js/defaultjs-html-components";
 import "./Step";
 
 const ATTRIBUTES = [ATTRIBUTE_PROGRESS];
@@ -99,5 +98,5 @@ class ProgressBar extends Component {
 	}
 }
 
-defineElement(ProgressBar);
+define(ProgressBar);
 export default ProgressBar;

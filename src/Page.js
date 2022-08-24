@@ -1,9 +1,9 @@
 import { 
-	NODENAMES,  
+	NODENAME_PAGE,  
 	ATTRIBUTE_STEP 
 } from "./Constants";
+import { define } from "@default-js/defaultjs-html-components";
 import Container from "./Container";
-import defineElement from "./utils/DefineElement";
 
 const ATTRIBUTES = [ATTRIBUTE_STEP];
 
@@ -13,7 +13,7 @@ class Page extends Container {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.Page;
+		return NODENAME_PAGE;
 	}
 
 	constructor(value) {
@@ -30,5 +30,5 @@ class Page extends Container {
 	
 	conditionUpdated(){}
 }
-defineElement(Page);
+define(Page);
 export default Page;

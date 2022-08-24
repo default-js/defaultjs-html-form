@@ -5,17 +5,16 @@ export const EVENTHANDLE_INPUT_TIMEOUT = 50 * EVENTHANDLE_TIMEOUT;
 
 export const NODENAME_FORM = `${HTML_TAG_PREFIX}form`;
 export const NODENAME_SUBMIT_ACTION = `${HTML_TAG_PREFIX}submit-action`;
+export const NODENAME_PAGE = `${HTML_TAG_PREFIX}page`;
 
 
 export const NODENAMES = {
-	Form: NODENAME_FORM,
 	Control: HTML_TAG_PREFIX + "control",
 	BackButton: HTML_TAG_PREFIX + "control-back",
 	NextButton: HTML_TAG_PREFIX + "control-next",
 	SummaryButton: HTML_TAG_PREFIX + "control-summary",
 	SubmitButton: HTML_TAG_PREFIX + "control-submit",
 	CancelButton: HTML_TAG_PREFIX + "control-cancel",
-	Page: HTML_TAG_PREFIX + "page",
 	Field: HTML_TAG_PREFIX + "field",
 	WrapperField: HTML_TAG_PREFIX + "wrapper-field",
 	List: HTML_TAG_PREFIX + "list",
@@ -27,8 +26,7 @@ export const NODENAMES = {
 	Validation: HTML_TAG_PREFIX + "validation",
 	Message: HTML_TAG_PREFIX + "message",
 	ProgressBar: HTML_TAG_PREFIX + "progress-bar",
-	Step: HTML_TAG_PREFIX + "step",
-	SubmitAction: NODENAME_SUBMIT_ACTION,
+	Step: HTML_TAG_PREFIX + "step"
 };
 
 export const FORMSTATE_INIT = "init";

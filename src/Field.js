@@ -1,7 +1,7 @@
 import { NODENAMES, EVENT_FIELD_INPUT } from "./Constants";
-import BaseField from "./BaseField";
+import BaseField, {_value} from "./BaseField";
 import { findWrapper } from "./wrapper";
-import defineElement from "./utils/DefineElement";
+import { define } from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = ["file-format"];
 
@@ -21,7 +21,7 @@ class Field extends BaseField {
 		this.on(EVENT_FIELD_INPUT, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
-			this.value(event.detail);
+			this.publishValue(event.detail);
 		});
 	}
 
@@ -56,8 +56,9 @@ class Field extends BaseField {
 			if(current != value)
 				await this.wrapper.updatedValue(value);
 		}
+		await super.updateValue(value);
 	}
 }
 
-defineElement(Field);
+define(Field);
 export default Field;

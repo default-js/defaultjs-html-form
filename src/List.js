@@ -8,7 +8,7 @@ import {
 	ATTRIBUTE_MAX 
 } from "./Constants";
 import { treeFilter } from "./utils/NodeHelper";
-import defineElement from "./utils/DefineElement";
+import { define } from "@default-js/defaultjs-html-components";
 import BaseField, { _value } from "./BaseField";
 import Row from "./list/Row";
 import AddRow from "./list/AddRow";
@@ -170,5 +170,5 @@ class List extends BaseField {
 	}
 }
 
-defineElement(List);
+define(List);
 export default List;

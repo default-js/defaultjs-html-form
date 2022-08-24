@@ -3,7 +3,7 @@ import {
 	EVENT_LIST_ROW_ADD
 } from "../Constants";
 import FormButton from "../FormButton";
-import defineElement from "../utils/DefineElement";
+import { define } from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = [];
 class AddRow extends FormButton {
@@ -29,5 +29,5 @@ class AddRow extends FormButton {
 	}
 }
 
-defineElement(AddRow);
+define(AddRow);
 export default AddRow;

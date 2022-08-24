@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" type="text/css" href="/form.css" />
+	</head>
+	<body>
+			<d-form class="form-horizontal" endpoint="/api/test/${loginname}" method="post" use-summary-page>
+				<d-progress-bar>
+					<div class="progress"></div>
+					<d-step name="page">page</d-step>
+					<d-step name="summary">Summary</d-step>
+					<d-step name="finished">Submitted</d-step>
+				</d-progress-bar>
+
+				<d-page step="page">
+						<d-field name="test.field" required>
+							<div><label class="control-label" for="loginname">test</label></div>								
+							<div><input type="text"/></div>
+							<div><d-validation condition="${$value == 'fail'}">invalid</d-validation></div>
+							<div><d-message condition="${$value}">has value</d-message></div>
+						</d-field>
+					</d-page>
+				<d-control>
+					<d-control-back class="btn btn-primary">back</d-control-back>
+					<d-control-next class="btn btn-primary">next</d-control-next>
+					<d-control-summary class="btn btn-primary">sumary</d-control-summary>
+					<d-control-submit class="btn btn-primary">submit</d-control-submit>
+				</d-control>
+			</d-form>
+		</div>
+		<div>
+			<button id="load" onclick="loadData()">load data</button>
+		</div>
+
+		<script type="application/javascript" src="/browser-defaultjs-html-form.js" async></script>
+		<script type="application/javascript" src="main.js" async></script>
+	</body>
+</html>

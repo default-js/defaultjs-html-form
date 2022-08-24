@@ -1,27 +1,13 @@
 import { NODENAMES, EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED } from "./Constants";
+import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { findFields } from "./utils/NodeHelper";
 import BaseField, { _value } from "./BaseField";
-import defineElement from "./utils/DefineElement";
-import { valueHelper } from "./utils/DataHelper";
+import { define } from "@default-js/defaultjs-html-components";
+import { valueHelper, updateData, rebuildDataByFields } from "./utils/DataHelper";
+
+
 
 const ATTRIBUTES = [];
-
-const refreshValue = async (self, fields) => {
-	const data = {};
-
-	for (let field of fields) {
-		if (field.condition && field.hasValue) {
-			const name = field.name;
-			const value = await field.value();
-			if (name) valueHelper(data, name, value);
-			else Object.assign(data, value);
-		}
-	}
-
-	if (Object.getOwnPropertyNames(data).length > 0) _value(self, data);
-	else _value(self, null);
-};
-
 class Container extends BaseField {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(BaseField.observedAttributes);
@@ -41,13 +27,12 @@ class Container extends BaseField {
 	async init() {
 		await super.init();
 		if (!this.#initialized) {
-			findFields(this).forEach(field => this.#fields.add(field));			
+			findFields(this).forEach((field) => this.#fields.add(field));
 			this.on(EVENT_FIELD_INITIALIZED, (event) => {
 				const field = event.target;
 				if (field != this) {
 					if (field instanceof BaseField) {
 						this.#fields.add(field);
-						refreshValue(this, this.fields);
 					}
 					event.preventDefault();
 					event.stopPropagation();
@@ -58,8 +43,8 @@ class Container extends BaseField {
 				const field = event.target;
 				if (field != this) {
 					if (field instanceof BaseField) {
-						this.#fields.delete(field)
-						refreshValue(this, this.#fields);
+						this.#fields.delete(field);
+						this.childValueChanged(field, null);
 					}
 
 					event.preventDefault();
@@ -68,15 +53,14 @@ class Container extends BaseField {
 			});
 
 			this.addValidation(async ({ data }) => {
-				const fields = this.#fields;
+				console.log(`${this.nodeName} -> validate all fields:`, { data });
+				const fields = this.fields;
 				const valid = true;
-				for (let field of fields)
-					if (!field.validate(data)) valid = false;
+				for (let field of fields) if (!field.validate(data)) valid = false;
 
 				return valid;
 			});
 
-			await refreshValue(this, this.fields);
 			this.#initialized = true;
 		}
 	}
@@ -101,19 +85,22 @@ class Container extends BaseField {
 				if (field.name) await field.value(valueHelper(value, field.name));
 				else if (field instanceof Container) await field.value(value);
 			}
-
-			await refreshValue(this, this.#fields);
 		}
 	}
 
 	async childValueChanged(field, value) {
+		//console.log(`${this.nodeName}.childValueChanged:`, {field, value});
 		await this.ready;
-		await refreshValue(this, this.#fields);
-		await super.childValueChanged(field, value);
+		let data = _value(this) || {};
+		if (noValue(value)) data = await rebuildDataByFields(this.fields);
+		else data = await updateData(data, field.name, value);
 
-		await this.publishValue();
+		if (Object.getOwnPropertyNames(data).length == 0) data = null;
+
+		await super.childValueChanged(field, data);
+		await this.publishValue(data);
 	}
 }
 
-defineElement(Container);
+define(Container);
 export default Container;

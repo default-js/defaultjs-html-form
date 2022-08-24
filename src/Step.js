@@ -5,11 +5,11 @@ import {
 	ATTRIBUTE_READONLY 
 } from "./Constants";
 import { updateActiveState } from "./utils/StateHelper";
-import defineElement from "./utils/DefineElement";
+import {Component, define} from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY];
 
-class Step extends HTMLElement {
+class Step extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
@@ -46,5 +46,5 @@ class Step extends HTMLElement {
 	}
 }
 
-defineElement(Step);
+define(Step);
 export default Step;

@@ -1,37 +1,18 @@
-import Component from "@default-js/defaultjs-html-components/src/Component";
-import ObjectUtils from "@default-js/defaultjs-common-utils/src/ObjectUtils";
+import { NODENAME_FORM, NODENAME_PAGE, EVENT_INITIALIZED, EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED, EVENT_SUBMIT, EVENT_SUBMIT_RESULTS, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT, FORMSTATE_INPUT, FORMSTATE_SUMMARY, FORMSTATE_VALIDATING, FORMSTATE_INIT, FORMSTATE_FINISHED } from "./Constants";
+import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { Component, define } from "@default-js/defaultjs-html-components";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-import { FORMSTATES, NODENAMES, EVENT_INITIALIZED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED, EVENT_SUBMIT, EVENT_SUBMIT_RESULTS, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT } from "./Constants";
-import defineElement from "./utils/DefineElement";
+
 import "./Message";
-import "./Page";
+import Page from "./Page";
 import "./Control";
 import "./ProgressBar";
 import BaseSubmitAction from "./submitActions/BaseSubmitAction";
 import DefaultFormSubmitAction from "./submitActions/DefaultFormSubmitAction";
 import SubmitActionResult, { STATE_FAIL as ACTION_SUBMIT_STATE_FAIL, STATE_SUCCESS as ACTION_SUBMIT_STATE_SUCCESS } from "./submitActions/SubmitActionResult";
-import { valueHelper } from "./utils/DataHelper";
+import { valueHelper, fieldValueMapToObject } from "./utils/DataHelper";
 
 const _submitActions = privatePropertyAccessor("submitAction");
-const _state = privatePropertyAccessor("state");
-
-const collectData = async (self) => {
-	await self.ready;
-	const data = {};
-	const pages = self.pages;
-
-	for (let page of pages) {
-		if (page.condition) {
-			const name = page.name;
-			const value = await page.value();
-			const hasValue = value != null && typeof value !== "undefined";
-			if (name && hasValue) valueHelper(data, name, value);
-			else if (hasValue) ObjectUtils.merge(data, value);
-		}
-	}
-
-	return data;
-};
 
 const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT];
 
@@ -66,26 +47,50 @@ class Form extends Component {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.Form;
+		return NODENAME_FORM;
 	}
 
 	#initialized = false;
+	#state = FORMSTATE_INIT;
+	#pages = new Set();
+	#value = new Map();
+	#validation = null;
+	#hasNextValidation = false;
 
 	constructor() {
 		super();
-		_state(this, null);
+		this.on(EVENT_FIELD_INITIALIZED, (event) => {
+			const field = event.target;
+			if (field != this) {
+				if (field instanceof Page) {
+					this.#pages.add(field);
+				}
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		});
+
+		this.on(EVENT_FIELD_REMOVED, (event) => {
+			const field = event.target;
+			if (field != this) {
+				if (field instanceof Page) this.#pages.delete(field);
+
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		});
 	}
 
 	async init() {
 		await super.init();
-		if (!this.#initialized) {			
+		if (!this.#initialized) {
 			this.#initialized = true;
 			this.activePageIndex = -1;
 
-			this.state = FORMSTATES.init;
-			
-			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);			
-			this.pages = this.find(NODENAMES.Page);			
+			this.state = FORMSTATE_INIT;
+
+			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
+			this.find(NODENAME_PAGE).forEach((page) => this.#pages.add(page));
 
 			this.activePageIndex = -1;
 			if (this.pages.length > 0) this.toNextPage();
@@ -96,18 +101,24 @@ class Form extends Component {
 		}
 	}
 
+	get pages() {
+		return Array.from(this.#pages);
+	}
+
 	get state() {
-		return _state(this);
+		return this.#state;
 	}
 
 	set state(state) {
-		const actual = this.state;
-		if (actual == FORMSTATES.input && state != FORMSTATES.input) readonly(this, true);
-		else if (actual != FORMSTATES.input && state == FORMSTATES.input) {
-			readonly(this, false);
-			if (this.activePage) this.activePage.active = true;
+		const actual = this.#state;
+		if (state != FORMSTATE_VALIDATING) {
+			if (actual == FORMSTATE_INPUT && state != FORMSTATE_INPUT) readonly(this, true);
+			else if (actual != FORMSTATE_INPUT && state == FORMSTATE_INPUT) {
+				readonly(this, false);
+				if (this.activePage) this.activePage.active = true;
+			}
 		}
-		_state(this, state);
+		this.#state = state;
 
 		if (actual != state) this.trigger(EVENT_FORM_STATE_CHANGED);
 		this.attr(ATTRIBUTE_STATE, state);
@@ -120,10 +131,12 @@ class Form extends Component {
 	}
 
 	async value(data) {
-		if (arguments.length == 0) return collectData(this);
-
 		await this.ready;
-		if (this.state == FORMSTATES.input) {
+		if(this.#validation) await this.#validation;
+		if (arguments.length == 0)return await fieldValueMapToObject(this.#value);
+
+		
+		if (this.state == FORMSTATE_INIT) {
 			for (let page of this.pages) {
 				const name = page.name;
 				//await page.value(null); // reset all values
@@ -141,11 +154,11 @@ class Form extends Component {
 
 	set activePage(page) {
 		const current = this.activePage;
-		if (page != current || this.state != FORMSTATES.input) {
+		if (page != current || this.state != FORMSTATE_INIT) {
 			if (current) current.active = false;
 			this.activePageIndex = this.pages.indexOf(page);
 			page.active = true;
-			if (this.state != FORMSTATES.input) this.state = FORMSTATES.input;
+			if (this.state != FORMSTATE_INIT) this.state = FORMSTATE_INIT;
 
 			this.scrollIntoView();
 			this.trigger(EVENT_SITE_CHANGED);
@@ -173,8 +186,8 @@ class Form extends Component {
 	}
 
 	async toPrevPage() {
-		if (this.state != FORMSTATES.input) {
-			this.state = FORMSTATES.input;
+		if (this.state != FORMSTATE_INIT) {
+			this.state = FORMSTATE_INIT;
 		} else {
 			const prev = await this.prevPage;
 			if (prev) this.activePage = prev;
@@ -185,7 +198,7 @@ class Form extends Component {
 		const next = await this.nextPage;
 		if (next) {
 			this.activePage = next;
-			if (this.state == FORMSTATES.init) this._state = FORMSTATES.input;
+			this.state = FORMSTATE_INPUT;
 		} else if (this.useSummaryPage) {
 			this.summary();
 		} else {
@@ -194,7 +207,7 @@ class Form extends Component {
 	}
 
 	async summary() {
-		this.state = FORMSTATES.summary;
+		this.state = FORMSTATE_SUMMARY;
 	}
 
 	get submitActions() {
@@ -218,7 +231,7 @@ class Form extends Component {
 	}
 
 	async submit() {
-		this.state = this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? FORMSTATES.input : FORMSTATES.finished;
+		this.state = this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? FORMSTATE_INIT : FORMSTATE_FINISHED;
 		const data = await this.value();
 
 		const actions = this.submitActions;
@@ -230,19 +243,43 @@ class Form extends Component {
 		this.trigger(EVENT_SUBMIT, data);
 	}
 
-	async childValueChanged(field, value){
-		await this.ready;
-		const currentState = this.state;
-		this.state = FORMSTATES.validating;
-		let valid = false;
-		const data = await collectData(this);
-		const pages = this.pages;
-		for (let page of pages) 
-			if(await page.validate(data))
-				valid = false;
-		
-		this.state = currentState;
+	#validate() {
+		if (this.state == FORMSTATE_INPUT) {
+			this.state = FORMSTATE_VALIDATING;
+			this.#validation = new Promise((resolved) => {
+				setTimeout(async () => {					
+					const data = await fieldValueMapToObject(this.#value);
+	
+					let valid = false;
+					const pages = this.pages;
+					for (let page of pages) if (await page.validate(data)) valid = false;
+	
+					if(!this.#hasNextValidation)
+						this.state = FORMSTATE_INPUT;
+	
+					this.validation = null;
+					resolved();
+				}, 10);
+			});			
+		} else if(this.state == FORMSTATE_VALIDATING){
+			this.#validation.then(() => {
+				this.#hasNextValidation = false;
+				this.#validate();
+			})
+		}
+	}
+
+	async childValueChanged(field, value) {
+		const map = this.#value;
+		console.log("form.childValueChanged", { field, value });
+		if (field) {
+			if (noValue(value)) map.delete(field);
+			else map.set(field, value);
+		}
+
+		await this.ready;		
+		this.#validate();
 	}
 }
-defineElement(Form);
+define(Form);
 export default Form;

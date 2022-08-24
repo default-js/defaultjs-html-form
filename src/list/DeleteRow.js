@@ -3,7 +3,7 @@ import {
 	EVENT_LIST_ROW_DELETE
 } from "../Constants";
 import FormButton from "../FormButton";
-import defineElement from "../utils/DefineElement";
+import { define } from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = [];
 
@@ -30,5 +30,5 @@ class DeleteRow extends FormButton {
 	}
 }
 
-defineElement(DeleteRow);
+define(DeleteRow);
 export default DeleteRow;

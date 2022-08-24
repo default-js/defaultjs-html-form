@@ -37,7 +37,7 @@ class BaseField extends Base {
 		await super.init();
 		if (!this.#initialized) {
 			this.#initialized = true;
-			this.ready.then(() => this.trigger(EVENT_FIELD_INITIALIZED));
+			this.ready.then(() => this.trigger(EVENT_FIELD_INITIALIZED))
 		}
 	}
 
@@ -69,42 +69,59 @@ class BaseField extends Base {
 	}
 
 	get hasValue() {
-		const value = _value(this);
-		return value != null && typeof value !== "undefined";
+		return !this.hasAttribute(ATTRIBUTE_NOVALUE);
 	}
 
-	async value(value, { unchecked = false } = {}) {
-		if (arguments.length == 0) return _value(this);
-		await this.ready;
+	async value(value) {
+		const {condition, valid, ready} = this;
+		console.log(`${this.nodeName}(${this.name}).value: `, arguments, {condition, valid});
+
+		if (arguments.length == 0)
+			return  !condition || !valid ? null : _value(this);		
+		
+		await ready;
 		const currentValue = _value(this);
 
 		if (await this.acceptValue(value)) {
 			value = await this.normalizeValue(value);
 			if (currentValue != value) {
-				_value(this, value);
-				await this.updateValue(value);
+				await this.updateValue(value);				
 				await this.publishValue(value);
 			}
 		}
 	}
 
-	async updateValue(value) {}
-
-	async validate(data) {
-		updateHasValue(this.hasValue, this);
+	async validate(data){
+		const currentCondition = this.condition;
+		const currentValid = this.valid;
 		await super.validate(data);
-
 		const condition = this.condition;
-
 		const valid = this.valid;
-
-		return valid;
+		const hasChange = currentCondition != condition || currentValid != valid;
+		if(hasChange)
+			this.publishValue();
 	}
+
+	async updateValue(value) {}
 
 	async publishValue(value) {
 		await this.ready;
-		if (this.parentField) await this.parentField.childValueChanged(this, value);
-		else this.form.childValueChanged(this, value);
+		let updated = false;
+		const currentValue = _value(this);
+		value = arguments.length == 1 ? value : currentValue;
+		if(arguments.length == 1 && currentValue != value){
+			updated = true;
+			_value(this, value);
+		}
+
+		updateHasValue(value != null && typeof value !== "undefined", this);
+
+		const publising= this.condition && (this.valid || updated);
+		const publishValue = publising ? value : null
+		console.log(`${this.nodeName}.publishValue:`, {updated, publising, publishValue})
+
+		if (this.parentField) await this.parentField.childValueChanged(this, publishValue);
+		else this.form.childValueChanged(this, publishValue);
 	}
 
 	async acceptValue(value) {

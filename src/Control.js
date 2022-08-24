@@ -10,7 +10,7 @@ import {
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import "./controls";
 import Page from "./Page";
-import defineElement from "./utils/DefineElement";
+import { define } from "@default-js/defaultjs-html-components";
 
 const BUTTONDUMMY = {
 	active: true,
@@ -85,5 +85,5 @@ class Control extends Component {
 		}
 	}
 }
-defineElement(Control);
+define(Control);
 export default Control;

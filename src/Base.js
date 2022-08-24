@@ -18,8 +18,10 @@ import { evaluationData } from "./utils/DataHelper";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { updateActiveState, updateConditionState, updateEditableState, updateValidState } from "./utils/StateHelper";
 
+
+
+
 const _form = privatePropertyAccessor("form");
-const _validator = privatePropertyAccessor("validator");
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_EDITABLE_CONDITION];
 
 class Base extends Component {
@@ -54,7 +56,8 @@ class Base extends Component {
 		this.#validationHandle.addCustomValidation(validation);
 	}
 
-	async validate(data) {
+	async validate(data) {		
+		console.log(`${this.nodeName}(${this.name}).validate:`, data)
 		this.attr(ATTRIBUTE_EVALUATE, "");
 		const context = Object.assign({}, data, await evaluationData(this));
 		await this.#conditionHandle.validate(context);
@@ -62,7 +65,7 @@ class Base extends Component {
 		await this.#validationHandle.validate(context);
 		this.attr(ATTRIBUTE_EVALUATE, null);
 
-		this.#messageHandle.validate(data);
+		await this.#messageHandle.validate(context);
 
 		return this.valid;
 	}
