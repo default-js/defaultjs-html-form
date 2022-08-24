@@ -1,0 +1,2 @@
+- validation on page doesn't work
+- summary page is not working "this.form.toNextPage is not a function"
