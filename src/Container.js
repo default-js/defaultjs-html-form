@@ -54,7 +54,7 @@ class Container extends BaseField {
 				}
 			});
 
-			this.addValidation(async ({ data }) =>	await validateFields(data, this.fields));
+			this.addValidation(async ({ data }) => await validateFields(data, this.fields));
 
 			this.#initialized = true;
 		}
