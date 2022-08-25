@@ -11,6 +11,7 @@ import BaseSubmitAction from "./submitActions/BaseSubmitAction";
 import DefaultFormSubmitAction from "./submitActions/DefaultFormSubmitAction";
 import SubmitActionResult, { STATE_FAIL as ACTION_SUBMIT_STATE_FAIL, STATE_SUCCESS as ACTION_SUBMIT_STATE_SUCCESS } from "./submitActions/SubmitActionResult";
 import { valueHelper, fieldValueMapToObject } from "./utils/DataHelper";
+import { validateFields } from "./utils/ValidationHelper";
 
 const _submitActions = privatePropertyAccessor("submitAction");
 
@@ -73,8 +74,10 @@ class Form extends Component {
 		this.on(EVENT_FIELD_REMOVED, (event) => {
 			const field = event.target;
 			if (field != this) {
-				if (field instanceof Page) this.#pages.delete(field);
-
+				if (field instanceof Page){this.#pages.delete(field);
+					this.childValueChanged(field, null);
+				}
+				
 				event.preventDefault();
 				event.stopPropagation();
 			}
@@ -250,9 +253,7 @@ class Form extends Component {
 				setTimeout(async () => {					
 					const data = await fieldValueMapToObject(this.#value);
 	
-					let valid = false;
-					const pages = this.pages;
-					for (let page of pages) if (await page.validate(data)) valid = false;
+					const valid = validateFields(data, this.pages);
 	
 					if(!this.#hasNextValidation)
 						this.state = FORMSTATE_INPUT;

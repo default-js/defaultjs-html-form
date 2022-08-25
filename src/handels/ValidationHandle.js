@@ -38,13 +38,14 @@ class ValidationHandle {
 		const currentValid = this.#base.valid;
 		const { hasValue, required, condition, editable } = this.#base;
 
-		//console.log(`ValidationHandle.validate:`, { hasValue, required, condition, editable, currentValid }, data, base.nodeName);
+		console.log(`${base.nodeName}(${base.name}) validate:`, { hasValue, required, condition, editable, currentValid }, data, base.nodeName);
 		let valid = true;
 		if (editable) {
 			valid = required ? hasValue : true;
 
 			if (condition) {
-				valid = await validateCustomValidations(customs, data, base);
+				if(! (await validateCustomValidations(customs, data, base)))
+					valid = false;
 
 				for (let validation of validations) {
 					if (valid && hasValue) {
@@ -56,8 +57,9 @@ class ValidationHandle {
 			}
 		}
 
-		if (valid != currentValid) this.#base.valid = valid;
+		base.valid = valid;
 
+		console.log(`${base.nodeName}(${base.name}) validate result:`, {valid});
 		return valid;
 	}
 }
