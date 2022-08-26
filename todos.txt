@@ -1,2 +1,3 @@
-- validation on page doesn't work
-- summary page is not working "this.form.toNextPage is not a function"
+- control -> back doesn't work
+- progressbar -> can't step back
+- list -> delete row
