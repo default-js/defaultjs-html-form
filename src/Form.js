@@ -1,12 +1,33 @@
-import { NODENAME_FORM, NODENAME_PAGE, EVENT_INITIALIZED, EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED, EVENT_SUBMIT, EVENT_SUBMIT_RESULTS, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT, FORMSTATE_INPUT, FORMSTATE_SUMMARY, FORMSTATE_VALIDATING, FORMSTATE_INIT, FORMSTATE_FINISHED } from "./Constants";
-import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { 
+	NODENAME_FORM, 
+	NODENAME_PAGE, 
+	EVENT_INITIALIZED, 
+	EVENT_PAGE_INITIALIZED, 
+	EVENT_PAGE_REMOVED, 
+	EVENT_FORM_STATE_CHANGED, 
+	EVENT_SITE_CHANGED, 
+	EVENT_SUBMIT, 
+	EVENT_SUBMIT_RESULTS, 
+	ATTRIBUTE_NAME, 
+	ATTRIBUTE_USE_SUMMARY_PAGE, 
+	ATTRIBUTE_ENDPOINT, 
+	ATTRIBUTE_METHOD, 
+	ATTRIBUTE_STATE, 
+	ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT, 
+	FORMSTATE_INPUT, 
+	FORMSTATE_SUMMARY, 
+	FORMSTATE_VALIDATING, 
+	FORMSTATE_INIT, 
+	FORMSTATE_FINISHED 
+} from "./Constants";
 import { Component, define } from "@default-js/defaultjs-html-components";
-import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-
+import "./Message";
 import "./Message";
 import Page from "./Page";
 import "./Control";
 import "./ProgressBar";
+import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import BaseSubmitAction from "./submitActions/BaseSubmitAction";
 import DefaultFormSubmitAction from "./submitActions/DefaultFormSubmitAction";
 import SubmitActionResult, { STATE_FAIL as ACTION_SUBMIT_STATE_FAIL, STATE_SUCCESS as ACTION_SUBMIT_STATE_SUCCESS } from "./submitActions/SubmitActionResult";
@@ -60,22 +81,24 @@ class Form extends Component {
 
 	constructor() {
 		super();
-		this.on(EVENT_FIELD_INITIALIZED, (event) => {
-			const field = event.target;
-			if (field != this) {
-				if (field instanceof Page) {
-					this.#pages.add(field);
+		const root = this.root;
+		root.on(EVENT_PAGE_INITIALIZED, (event) => {
+			const page = event.target;
+			if (page != this) {
+				if (page instanceof Page) {
+					this.#pages.add(page);
 				}
 				event.preventDefault();
 				event.stopPropagation();
 			}
 		});
 
-		this.on(EVENT_FIELD_REMOVED, (event) => {
-			const field = event.target;
-			if (field != this) {
-				if (field instanceof Page){this.#pages.delete(field);
-					this.childValueChanged(field, null);
+		root.on(EVENT_PAGE_REMOVED, (event) => {
+			const page = event.target;
+			if (page != this) {
+				if (page instanceof Page){
+					this.#pages.delete(field);
+					this.childValueChanged(page, null);
 				}
 				
 				event.preventDefault();

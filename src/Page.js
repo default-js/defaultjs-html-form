@@ -1,6 +1,8 @@
 import { 
 	NODENAME_PAGE,  
-	ATTRIBUTE_STEP 
+	ATTRIBUTE_STEP, 
+	EVENT_PAGE_INITIALIZED,
+	EVENT_PAGE_REMOVED
 } from "./Constants";
 import { define } from "@default-js/defaultjs-html-components";
 import Container from "./Container";
@@ -16,12 +18,22 @@ class Page extends Container {
 		return NODENAME_PAGE;
 	}
 
+	#initialized = false;
 	constructor(value) {
-		super(value);
+		super(value);		
 	}
 
 	async init() {
 		await super.init();
+		if(!this.#initialized){
+			this.#initialized = true;
+			this.ready.then(() => this.trigger(EVENT_PAGE_INITIALIZED));
+		}
+	}
+
+	async destroy(){
+		this.trigger(EVENT_PAGE_REMOVED);
+		await super.destroy();
 	}
 
 	get step(){

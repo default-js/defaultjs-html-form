@@ -1,5 +1,5 @@
 import { 
-	NODENAMES
+	NODENAME_LIST_ROW
 } from "../Constants";
 import Container from "../Container";
 import DeleteRow from "./DeleteRow";
@@ -11,7 +11,7 @@ class ListRow extends Container {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.ListRow;
+		return NODENAME_LIST_ROW;
 	}
 	
 	constructor() {

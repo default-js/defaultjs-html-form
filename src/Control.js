@@ -1,16 +1,22 @@
 import { 
-	FORMSTATES, 
-	NODENAMES, 
+	FORMSTATE_INIT,
+	FORMSTATE_INPUT,
+	FORMSTATE_VALIDATING,
+	FORMSTATE_SUMMARY,
+	FORMSTATE_FINISHED, 
+	NODENAME_CONTROL,
+	NODENAME_CONTROL_BACK,
+	NODENAME_CONTROL_NEXT,
+	NODENAME_CONTROL_CANCEL,
+	NODENAME_CONTROL_SUBMIT, 
+	NODENAME_FORM,
 	EVENT_INITIALIZED,
-	EVENT_VALUE_CHANGED,
-	EVENT_CONDITION_STATE_CHANGED,
 	EVENT_FORM_STATE_CHANGED,
-	EVENT_SITE_CHANGED
+	EVENT_SITE_CHANGED,
+	NODENAME_CONTROL_SUMMARY
 } from "./Constants";
-import Component from "@default-js/defaultjs-html-components/src/Component";
+import { Component, define } from "@default-js/defaultjs-html-components";
 import "./controls";
-import Page from "./Page";
-import { define } from "@default-js/defaultjs-html-components";
 
 const BUTTONDUMMY = {
 	active: true,
@@ -24,8 +30,14 @@ class Control extends Component {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.Control;
+		return NODENAME_CONTROL;
 	}
+
+	#form;
+	#back;
+	#next;
+	#summary;
+	#submit;
 
 	constructor() {
 		super();
@@ -34,13 +46,13 @@ class Control extends Component {
 	async init() {
 		await super.init();
 		if (!this.ready.resolved) {
-			this.form = this.parent(NODENAMES.Form);
-			this.back = this.find(NODENAMES.BackButton).first() || BUTTONDUMMY;
-			this.next = this.find(NODENAMES.NextButton).first() || BUTTONDUMMY;
-			this.summary = this.find(NODENAMES.SummaryButton).first() || BUTTONDUMMY;
-			this.submit = this.find(NODENAMES.SubmitButton).first() || BUTTONDUMMY;
+			this.#form = this.parent(NODENAME_FORM);
+			this.#back = this.find(NODENAME_CONTROL_BACK).first() || BUTTONDUMMY;
+			this.#next = this.find(NODENAME_CONTROL_NEXT).first() || BUTTONDUMMY;
+			this.#summary = this.find(NODENAME_CONTROL_SUMMARY).first() || BUTTONDUMMY;
+			this.#submit = this.find(NODENAME_CONTROL_SUBMIT).first() || BUTTONDUMMY;
 
-			this.form.on([EVENT_INITIALIZED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED], (event) => {
+			this.#form.on([EVENT_INITIALIZED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED], (event) => {
 				this.update();
 			});
 		}
@@ -49,8 +61,12 @@ class Control extends Component {
 	
 
 	update() {
-		const { back, next, summary, submit, form } = this;
-		const { activePageIndex, activePage, nextPage, pages, useSummaryPage, state } = form;
+		const form = this.#form;
+		const state = form.state;
+		const back = this.#back;
+		const next = this.#next;
+		const summary = this.#summary;
+		const submit = this.#submit
 
 		// basic control setup
 		back.active = true;
@@ -62,20 +78,25 @@ class Control extends Component {
 		submit.active = false;
 		submit.disabled = true;
 
-		if (state == FORMSTATES.finished) {
+		if(state == FORMSTATE_VALIDATING)
+			return;
+
+		const { activePageIndex, activePage, nextPage, pages, useSummaryPage } = form;	
+
+		if (state == FORMSTATE_FINISHED) {
 			back.disabled = true;
 			submit.active = true;
-		} else if (state == FORMSTATES.summary) {
+		} else if (state == FORMSTATE_SUMMARY) {
 			back.disabled = false;
 			submit.active = true;
 			submit.disabled = !form.valid;
-		} else if (state == FORMSTATES.input) {
+		} else if (state == FORMSTATE_INPUT) {
 			back.disabled = activePageIndex <= 0;
 
 			if (nextPage || (!activePage.valid && activePageIndex + 1 < pages.length)) {
 				next.active = true;
 				next.disabled = !activePage.valid;
-			} else if (useSummaryPage && state == FORMSTATES.input) {
+			} else if (useSummaryPage && state == FORMSTATE_INPUT) {
 				summary.active = true;
 				summary.disabled = !activePage.valid;
 			} else {

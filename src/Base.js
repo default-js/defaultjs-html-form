@@ -1,4 +1,4 @@
-import { NODENAMES, 
+import { NODENAME_FORM, 
 	ATTRIBUTE_ACTIVE, 
 	ATTRIBUTE_READONLY, 
 	ATTRIBUTE_EVALUATE,
@@ -73,7 +73,7 @@ class Base extends Component {
 	get form() {
 		let form = _form(this);
 		if (!form) {
-			form = this.parent(NODENAMES.Form);
+			form = this.parent(NODENAME_FORM);
 			_form(this, form);
 		}
 		return form;

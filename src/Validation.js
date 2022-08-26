@@ -1,5 +1,5 @@
 import { 
-	NODENAMES,
+	NODENAME_VALIDATION,
 	EVENT_VALIDATION_INITIALIZED,
 	EVENT_VALIDATION_REMOVED,
 	ATTRIBUTE_ACTIVE,
@@ -16,7 +16,7 @@ class Validation extends Component {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.Validation;
+		return NODENAME_VALIDATION;
 	}
 
 	constructor() {

@@ -1,5 +1,5 @@
 import { 
-	NODENAMES, 
+	NODENAME_STEP, 
 	ATTRIBUTE_NAME, 
 	ATTRIBUTE_ACTIVE, 
 	ATTRIBUTE_READONLY 
@@ -15,7 +15,7 @@ class Step extends Component {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.Step;
+		return NODENAME_STEP;
 	}
 
 	constructor() {

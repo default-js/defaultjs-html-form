@@ -1,16 +1,14 @@
-import { 
-	NODENAMES
-} from "../Constants";
-import Component from "@default-js/defaultjs-html-components/src/Component";
+import { NODENAME_LIST_ROWS } from "../Constants";
+import { Component, define } from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = [];
 class ListRows extends Component {
 	static get observedAttributes() {
-		return ATTRIBUTES.concat(ATTRIBUTES);
+		return ATTRIBUTES;
 	}
 
 	static get NODENAME() {
-		return NODENAMES.ListRows;
+		return NODENAME_LIST_ROWS;
 	}
 
 	constructor() {
@@ -18,5 +16,5 @@ class ListRows extends Component {
 	}
 }
 
-customElements.define(ListRows.NODENAME, ListRows);
+define(ListRows);
 export default ListRows;

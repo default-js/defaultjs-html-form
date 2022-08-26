@@ -43,6 +43,7 @@ class BaseField extends Base {
 
 	async destroy() {
 		this.trigger(EVENT_FIELD_REMOVED);
+		this.publish(null);
 		await super.destroy();
 	}
 
@@ -94,12 +95,13 @@ class BaseField extends Base {
 	async validate(data){
 		const currentCondition = this.condition;
 		const currentValid = this.valid;
-		await super.validate(data);
+		const valid = await super.validate(data);
 		const condition = this.condition;
-		const valid = this.valid;
 		const hasChange = currentCondition != condition || currentValid != valid;
 		if(hasChange)
 			this.publishValue();
+
+		return valid;
 	}
 
 	async updateValue(value) {}

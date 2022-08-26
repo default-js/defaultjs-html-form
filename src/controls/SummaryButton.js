@@ -1,4 +1,6 @@
-import { NODENAMES } from "../Constants";
+import { 
+	NODENAME_CONTROL_SUMMARY
+} from "../Constants";
 import FormButton from "../FormButton";
 import { define } from "@default-js/defaultjs-html-components";
 
@@ -9,7 +11,7 @@ class SummaryButton extends FormButton {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.SummaryButton;
+		return NODENAME_CONTROL_SUMMARY;
 	}
 
 	constructor() {

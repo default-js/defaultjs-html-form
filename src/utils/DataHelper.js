@@ -1,5 +1,8 @@
+import { 
+	SPECIALVARS, 
+	NODENAME_LIST_ROW 
+} from "../Constants";
 import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
-import { SPECIALVARS, NODENAMES } from "../Constants";
 import { _value } from "../BaseField";
 
 export const updateData = async (data, name, value) => {
@@ -35,12 +38,12 @@ export const evaluationData = async (base) => {
 	const data = {};
 	data[SPECIALVARS.CURRENTVALUE] = _value(base);
 
-	let row = base.parent(NODENAMES.ListRow);
+	let row = base.parent(NODENAME_LIST_ROW);
 	let temp = data;
 	while (row) {
 		temp[SPECIALVARS.CURRENTLISTROW] = await _value(row);
 		temp = temp[SPECIALVARS.CURRENTLISTROW];
-		row = row.parent(NODENAMES.ListRow);
+		row = row.parent(NODENAME_LIST_ROW);
 	}
 
 	return data;

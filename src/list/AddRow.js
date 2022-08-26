@@ -1,5 +1,5 @@
 import { 
-	NODENAMES, 
+	NODENAME_LIST_ADD_ROW, 
 	EVENT_LIST_ROW_ADD
 } from "../Constants";
 import FormButton from "../FormButton";
@@ -12,7 +12,7 @@ class AddRow extends FormButton {
 	}
 
 	static get NODENAME(){
-		return NODENAMES.ButtonAddRow;
+		return NODENAME_LIST_ADD_ROW;
 	}
 
 	constructor() {

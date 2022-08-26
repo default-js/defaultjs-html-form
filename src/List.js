@@ -1,7 +1,10 @@
 import { 
-	NODENAMES, 
+	NODENAME_LIST, 
+	NODENAME_LIST_ROWS,
+	NODENAME_LIST_ROW,
+	NODENAME_LIST_ADD_ROW,
+	NODENAME_LIST_DELETE_ROW,
 	EVENT_FIELD_INITIALIZED,
-	EVENT_VALUE_CHANGED,
 	EVENT_LIST_ROW_ADD,
 	EVENT_LIST_ROW_DELETE,
 	ATTRIBUTE_MIN, 
@@ -14,6 +17,7 @@ import Row from "./list/Row";
 import AddRow from "./list/AddRow";
 import "./list/DeleteRow";
 import "./list/Rows";
+import { validateFields } from "./utils/ValidationHelper";
 
 const ATTRIBUTES = [ATTRIBUTE_MIN, ATTRIBUTE_MAX];
 
@@ -28,8 +32,7 @@ const findAddButton = (list) => {
 	})[0];
 };
 
-const createRow = async (list, value) => {
-	const { container, template } = list;
+const createRow = async (container, template, value) => {
 	const row = document.importNode(template.content, true).children[0];
 	container.append(row);
 
@@ -39,79 +42,71 @@ const createRow = async (list, value) => {
 };
 
 class List extends BaseField {
-	static get observedAttributes() {
-		return ATTRIBUTES.concat(BaseField.observedAttributes);
-	}
+	static get observedAttributes() {return ATTRIBUTES.concat(BaseField.observedAttributes);}
 
-	static get NODENAME() {
-		return NODENAMES.List;
-	}
+	static get NODENAME() {return NODENAME_LIST;}
+
+	#template;
+	#container;
+	#addRowButton;
+	#initialized = false;
 
 	constructor(value = null) {
 		super(value);
 
-		this.on(EVENT_FIELD_INITIALIZED, (event) => {
+		const root = this.root;
+		root.on(EVENT_FIELD_INITIALIZED, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 		});
 
-		this.on(EVENT_LIST_ROW_ADD, (event) => {
+		root.on(EVENT_LIST_ROW_ADD, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 
 			const { readonly} = this;
 			if (!readonly)
-				createRow(this);
+				createRow(this.#container, this.#template, null);
 		});
 
-		this.on(EVENT_LIST_ROW_DELETE, (event) => {
+		root.on(EVENT_LIST_ROW_DELETE, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 
 			const { rows, readonly} = this;
 			if (!readonly) {
-				const row = event.target.parent(NODENAMES.ListRow);
+				const row = event.target.parent(NODENAME_LIST_ROW);
 				const index = rows.indexOf(row);
 				if (index >= 0) {
-					row.remove();				
-					this.childValueChanged();
+					row.remove();			
 				}
 			}
-		});
+		});		
 	}
 
 	async init() {
-		await super.init();		
-		const ready = this.ready;
-		if (!ready.resolved) {
-			this.template = this.find("template").first();
-			this.container = this.find(NODENAMES.ListRows).first();
-			const validator  = this.validator;
-			const addButton = findAddButton(this);
-
-			validator.addCustomCheck(async ({}) => {
+		await super.init();
+		if (!this.#initialized) {
+			this.#template = this.find("template").first();
+			this.#container = this.find(NODENAME_LIST_ROWS).first();
+			this.#addRowButton = findAddButton(this);
+			this.addValidation(async () => {
 				const { rows, min, max, readonly } = this;
 				const length = rows.length;
 				if (!readonly) {					
-					if (length == max) addButton.disabled = true;
-					else if (length < max) addButton.disabled = false;
+					if (length == max) this.#addRowButton.disabled = true;
+					else if (length < max) this.#addRowButton.disabled = false;
 				}
 				return min <= length && length <= max;
 			});
-
-			validator.addCustomCheck(async () => {
-				const { rows } = this;
-				if (rows)
-					for (let row of rows) {
-						if (!row.valid) return false;
-					}
-
-				return true;
+	
+			this.addValidation(async (data) => {
+				return await validateFields(data, this.rows)
 			});
-		}
+			
 
-		this.validate();
-		this.publishValue();
+			this.#initialized = true;
+		}
 	}
 
 	readonlyUpdated() {
@@ -122,7 +117,7 @@ class List extends BaseField {
 	}
 
 	get rows() {
-		return Array.from(this.container.children);
+		return Array.from(this.#container.children);
 	}
 
 	get min() {
@@ -145,28 +140,26 @@ class List extends BaseField {
 	}
 
 	async updatedValue(value) {
-		this.container.children.remove();
-		if (value) for (let val of value) await createRow(this, val);
+		const container = this.#container;
+		const template = this.#template;
+		this.#container.children.remove();
+		if (value) for (let val of value) await createRow(container, template, val);
 	}
 
 	async childValueChanged(field, value) {
 		await this.ready;
 		
-		const values = [];
-
+		let values = [];
 		for (let row of this.rows){
 			const value = await row.value();
 			if(value)
 				values.push(value)
 		}
 
-		if(values.length > 0)
-			_value(this, values);
-		else
-			_value(this, null);
+		if(values.length == 0)
+			values = null;
 
-		await this.validate();
-		await this.publishValue();
+		await this.publishValue(values);
 	}
 }
 

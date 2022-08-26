@@ -1,5 +1,5 @@
 import { 
-	NODENAMES,
+	NODENAME_LIST_DELETE_ROW,
 	EVENT_LIST_ROW_DELETE
 } from "../Constants";
 import FormButton from "../FormButton";
@@ -13,7 +13,7 @@ class DeleteRow extends FormButton {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.ButtonDeleteRow;
+		return NODENAME_LIST_DELETE_ROW;
 	}
 
 	constructor() {

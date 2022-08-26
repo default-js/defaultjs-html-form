@@ -1,4 +1,7 @@
-import { NODENAMES, EVENT_FIELD_INPUT } from "./Constants";
+import { 
+	NODENAME_FIELD, 
+	EVENT_FIELD_INPUT 
+} from "./Constants";
 import BaseField, {_value} from "./BaseField";
 import { findWrapper } from "./wrapper";
 import { define } from "@default-js/defaultjs-html-components";
@@ -11,7 +14,7 @@ class Field extends BaseField {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.Field;
+		return NODENAME_FIELD;
 	}
 
 	#initialized = false;

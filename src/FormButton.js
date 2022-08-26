@@ -1,5 +1,5 @@
-import { NODENAMES, ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED } from "./Constants";
-import Component from "@default-js/defaultjs-html-components/src/Component";
+import { NODENAME_FORM, ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED } from "./Constants";
+import { Component } from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED];
 
@@ -8,14 +8,12 @@ class FormButton extends Component {
 		return ATTRIBUTES;
 	}
 
-	static init(button) {
-	
-	}
+	#initialized = false;
+	#form;
 
 	constructor() {
 		super();
-		this.active = false;
-		this.disabled = false;
+
 		this.on("click", (event) => {
 			event.preventDefault();
 			event.stopPropagation();
@@ -26,7 +24,18 @@ class FormButton extends Component {
 
 	async init() {
 		await super.init();
-		this.form = this.parent(NODENAMES.Form);
+		if (this.#initialized) {
+			this.active = false;
+			this.disabled = false;
+			this.#initialized = true;
+		}
+	}
+
+	get form() {
+		if (!this.#form)
+			this.#form = this.parent(NODENAME_FORM);
+
+		return this.#form;
 	}
 
 	get active() {
@@ -34,7 +43,7 @@ class FormButton extends Component {
 	}
 
 	set active(active) {
-		active ? this.attr(ATTRIBUTE_ACTIVE, "") : this.attr(ATTRIBUTE_ACTIVE, null);
+		this.attr(ATTRIBUTE_ACTIVE, active ? "" : null);
 	}
 
 	get disabled() {
@@ -42,7 +51,7 @@ class FormButton extends Component {
 	}
 
 	set disabled(disabled) {
-		disabled ? this.attr(ATTRIBUTE_DISABLED, "") : this.attr(ATTRIBUTE_DISABLED, null);
+		this.attr(ATTRIBUTE_DISABLED, disabled ? "" : null);
 	}
 
 	execute() {

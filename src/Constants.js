@@ -6,28 +6,28 @@ export const EVENTHANDLE_INPUT_TIMEOUT = 50 * EVENTHANDLE_TIMEOUT;
 export const NODENAME_FORM = `${HTML_TAG_PREFIX}form`;
 export const NODENAME_SUBMIT_ACTION = `${HTML_TAG_PREFIX}submit-action`;
 export const NODENAME_PAGE = `${HTML_TAG_PREFIX}page`;
+export const NODENAME_FIELD = `${HTML_TAG_PREFIX}field`;
+export const NODENAME_CONTAINER = `${HTML_TAG_PREFIX}container`;
 
+export const NODENAME_LIST = `${HTML_TAG_PREFIX}list`;
+export const NODENAME_LIST_ROWS= `${HTML_TAG_PREFIX}rows`;
+export const NODENAME_LIST_ROW= `${HTML_TAG_PREFIX}row`;
+export const NODENAME_LIST_ADD_ROW= `${HTML_TAG_PREFIX}add-row`;
+export const NODENAME_LIST_DELETE_ROW= `${HTML_TAG_PREFIX}delete-row`;
 
-export const NODENAMES = {
-	Control: HTML_TAG_PREFIX + "control",
-	BackButton: HTML_TAG_PREFIX + "control-back",
-	NextButton: HTML_TAG_PREFIX + "control-next",
-	SummaryButton: HTML_TAG_PREFIX + "control-summary",
-	SubmitButton: HTML_TAG_PREFIX + "control-submit",
-	CancelButton: HTML_TAG_PREFIX + "control-cancel",
-	Field: HTML_TAG_PREFIX + "field",
-	WrapperField: HTML_TAG_PREFIX + "wrapper-field",
-	List: HTML_TAG_PREFIX + "list",
-	ListRows: HTML_TAG_PREFIX + "rows",
-	ListRow: HTML_TAG_PREFIX + "row",
-	ButtonAddRow: HTML_TAG_PREFIX + "add-row",
-	ButtonDeleteRow: HTML_TAG_PREFIX + "delete-row",
-	Container: HTML_TAG_PREFIX + "container",
-	Validation: HTML_TAG_PREFIX + "validation",
-	Message: HTML_TAG_PREFIX + "message",
-	ProgressBar: HTML_TAG_PREFIX + "progress-bar",
-	Step: HTML_TAG_PREFIX + "step"
-};
+export const NODENAME_PROGESSBAR = `${HTML_TAG_PREFIX}progress-bar`;
+export const NODENAME_STEP = `${HTML_TAG_PREFIX}step`;
+
+export const NODENAME_VALIDATION = `${HTML_TAG_PREFIX}validation`;
+export const NODENAME_MESSAGE = `${HTML_TAG_PREFIX}message`;
+
+export const NODENAME_CONTROL = `${HTML_TAG_PREFIX}control`;
+export const NODENAME_CONTROL_BACK = `${HTML_TAG_PREFIX}control-back`;
+export const NODENAME_CONTROL_NEXT = `${HTML_TAG_PREFIX}control-next`;
+export const NODENAME_CONTROL_CANCEL = `${HTML_TAG_PREFIX}control-cancel`;
+export const NODENAME_CONTROL_SUMMARY = `${HTML_TAG_PREFIX}control-summary`;
+export const NODENAME_CONTROL_SUBMIT = `${HTML_TAG_PREFIX}control-submit`;
+
 
 export const FORMSTATE_INIT = "init";
 export const FORMSTATE_VALIDATING = "validating";
@@ -68,6 +68,9 @@ export const EVENT_PROGRESSBAR_CHANGED = `${EVENT_PREFIX}progress-bar-changed`;
 
 export const EVENT_FIELD_INITIALIZED = `${EVENT_PREFIX}field-initialized`;
 export const EVENT_FIELD_REMOVED = `${EVENT_PREFIX}field-removed`;
+
+export const EVENT_PAGE_INITIALIZED = `${EVENT_PREFIX}page-initialized`;
+export const EVENT_PAGE_REMOVED = `${EVENT_PREFIX}page-removed`;
 
 export const EVENT_VALIDATION_INITIALIZED = `${EVENT_PREFIX}validation-initialized`;
 export const EVENT_VALIDATION_REMOVED = `${EVENT_PREFIX}validation-removed`;

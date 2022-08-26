@@ -1,12 +1,14 @@
-import { NODENAMES, EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED } from "./Constants";
+import { 
+	NODENAME_CONTAINER, 
+	EVENT_FIELD_INITIALIZED, 
+	EVENT_FIELD_REMOVED 
+} from "./Constants";
 import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { findFields } from "./utils/NodeHelper";
 import BaseField, { _value } from "./BaseField";
 import { define } from "@default-js/defaultjs-html-components";
-import { valueHelper, updateData, rebuildDataByFields, fieldValueMapToObject } from "./utils/DataHelper";
+import { valueHelper, fieldValueMapToObject } from "./utils/DataHelper";
 import { validateFields } from "./utils/ValidationHelper";
-
-
 
 const ATTRIBUTES = [];
 class Container extends BaseField {
@@ -15,7 +17,7 @@ class Container extends BaseField {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.Container;
+		return NODENAME_CONTAINER;
 	}
 
 	#initialized = false;
@@ -24,35 +26,35 @@ class Container extends BaseField {
 
 	constructor(value = null) {
 		super(value);
+		const root = this.root;
+		root.on(EVENT_FIELD_INITIALIZED, (event) => {
+			const field = event.target;
+			if (field != this) {
+				if (field instanceof BaseField) {
+					this.#fields.add(field);
+				}
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		});
+
+		root.on(EVENT_FIELD_REMOVED, (event) => {
+			const field = event.target;
+			if (field != this) {
+				if (field instanceof BaseField)
+					this.#fields.delete(field);
+
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		});
 	}
 
 	async init() {
 		await super.init();
 		if (!this.#initialized) {
 			findFields(this).forEach((field) => this.#fields.add(field));
-			this.on(EVENT_FIELD_INITIALIZED, (event) => {
-				const field = event.target;
-				if (field != this) {
-					if (field instanceof BaseField) {
-						this.#fields.add(field);
-					}
-					event.preventDefault();
-					event.stopPropagation();
-				}
-			});
-
-			this.on(EVENT_FIELD_REMOVED, (event) => {
-				const field = event.target;
-				if (field != this) {
-					if (field instanceof BaseField) {
-						this.#fields.delete(field);
-						this.childValueChanged(field, null);
-					}
-
-					event.preventDefault();
-					event.stopPropagation();
-				}
-			});
+			
 
 			this.addValidation(async ({ data }) => await validateFields(data, this.fields));
 

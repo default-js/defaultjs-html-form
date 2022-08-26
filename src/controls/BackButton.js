@@ -1,4 +1,4 @@
-import { NODENAMES } from "../Constants";
+import { NODENAME_CONTROL_BACK } from "../Constants";
 import FormButton from "../FormButton";
 import { define } from "@default-js/defaultjs-html-components";
 
@@ -9,7 +9,7 @@ class BackButton extends FormButton {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.BackButton;
+		return NODENAME_CONTROL_BACK;
 	}
 
 	constructor() {

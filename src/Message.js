@@ -1,12 +1,11 @@
 import {ExpressionResolver} from "@default-js/defaultjs-expression-language";
 import {Component, define} from "@default-js/defaultjs-html-components";
 import { 
-	NODENAMES,
+	NODENAME_MESSAGE,
 	EVENT_MESSAGE_INITIALIZED,
 	EVENT_MESSAGE_REMOVED
 } from "./Constants";
 
-export const NODENAME = NODENAMES.Message;
 export const ATTRIBUTE_ACTIVE = "active";
 export const ATTRIBUTE_CONDITION = "condition";
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_CONDITION];
@@ -19,7 +18,7 @@ class Message extends Component {
 	}
 
 	static get NODENAME() {
-		return NODENAME;
+		return NODENAME_MESSAGE;
 	}
 
 	constructor() {
