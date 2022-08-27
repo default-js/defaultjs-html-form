@@ -57,7 +57,7 @@ class Base extends Component {
 	}
 
 	async validate(data) {		
-		console.log(`${this.nodeName}(${this.name}).validate:`, data)
+		//console.log(`${this.nodeName}(${this.name}).validate:`, data)
 		this.attr(ATTRIBUTE_EVALUATE, "");
 		const context = Object.assign({}, data, await evaluationData(this));
 		await this.#conditionHandle.validate(context);

@@ -43,7 +43,7 @@ class BaseField extends Base {
 
 	async destroy() {
 		this.trigger(EVENT_FIELD_REMOVED);
-		this.publish(null);
+		this.publishValue(null);
 		await super.destroy();
 	}
 
@@ -75,7 +75,7 @@ class BaseField extends Base {
 
 	async value(value) {
 		const {condition, valid, ready} = this;
-		console.log(`${this.nodeName}(${this.name}).value: `, arguments, {condition, valid});
+		//console.log(`${this.nodeName}(${this.name}).value: `, arguments, {condition, valid});
 
 		if (arguments.length == 0)
 			return  !condition || !valid ? null : _value(this);		
@@ -120,7 +120,7 @@ class BaseField extends Base {
 
 		const publising= this.condition && (this.valid || updated);
 		const publishValue = publising ? value : null
-		console.log(`${this.nodeName}.publishValue:`, {updated, publising, publishValue})
+		//console.log(`${this.nodeName}.publishValue:`, {updated, publising, publishValue})
 
 		if (this.parentField) await this.parentField.childValueChanged(this, publishValue);
 		else this.form.childValueChanged(this, publishValue);

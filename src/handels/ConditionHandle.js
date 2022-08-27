@@ -12,17 +12,23 @@ class ConditionHandle {
 
     get condition(){
         if(!this.#condition)
-            this.#condition = this.#base.attr(ATTRIBUTE_CONDITION) || "";
+            this.#condition = this.#base.attr(ATTRIBUTE_CONDITION) || false;
 
         return this.#condition;
     }
 
     async validate(data){
-        const current = this.#base.condition;                 
-        const condition = this.#condition ? await ExpressionResolver.resolve(this.#condition, data, false) : true;
+        const base = this.#base;        
+        let condition = this.condition;
+        const current = base.condition;
+        
+        //console.log(`condition(${base.name})`, condition, data);        
+        
+        condition = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
         if(condition != current)
-            this.#base.condition = condition
+            base.condition = condition
 
+        //console.log(`condition(${base.name}) result:`, condition);
         return condition;
     }
 };

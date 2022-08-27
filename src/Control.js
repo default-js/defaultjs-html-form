@@ -38,6 +38,7 @@ class Control extends Component {
 	#next;
 	#summary;
 	#submit;
+	#initialized = false;
 
 	constructor() {
 		super();
@@ -45,22 +46,24 @@ class Control extends Component {
 
 	async init() {
 		await super.init();
-		if (!this.ready.resolved) {
+		if (!this.#initialized) {
 			this.#form = this.parent(NODENAME_FORM);
 			this.#back = this.find(NODENAME_CONTROL_BACK).first() || BUTTONDUMMY;
 			this.#next = this.find(NODENAME_CONTROL_NEXT).first() || BUTTONDUMMY;
 			this.#summary = this.find(NODENAME_CONTROL_SUMMARY).first() || BUTTONDUMMY;
 			this.#submit = this.find(NODENAME_CONTROL_SUBMIT).first() || BUTTONDUMMY;
 
-			this.#form.on([EVENT_INITIALIZED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED], (event) => {
+			this.#form.on([EVENT_INITIALIZED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED], () => {
 				this.update();
 			});
+
+			this.#initialized = true;
 		}
 	}
 
 	
 
-	update() {
+	async update() {
 		const form = this.#form;
 		const state = form.state;
 		const back = this.#back;
@@ -82,6 +85,7 @@ class Control extends Component {
 			return;
 
 		const { activePageIndex, activePage, nextPage, pages, useSummaryPage } = form;	
+		const hasNextPage = (await nextPage) != null;
 
 		if (state == FORMSTATE_FINISHED) {
 			back.disabled = true;
@@ -93,7 +97,7 @@ class Control extends Component {
 		} else if (state == FORMSTATE_INPUT) {
 			back.disabled = activePageIndex <= 0;
 
-			if (nextPage || (!activePage.valid && activePageIndex + 1 < pages.length)) {
+			if (hasNextPage || (!activePage.valid && activePageIndex + 1 < pages.length)) {
 				next.active = true;
 				next.disabled = !activePage.valid;
 			} else if (useSummaryPage && state == FORMSTATE_INPUT) {

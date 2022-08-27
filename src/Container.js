@@ -54,10 +54,7 @@ class Container extends BaseField {
 		await super.init();
 		if (!this.#initialized) {
 			findFields(this).forEach((field) => this.#fields.add(field));
-			
-
 			this.addValidation(async ({ data }) => await validateFields(data, this.fields));
-
 			this.#initialized = true;
 		}
 	}
@@ -86,7 +83,7 @@ class Container extends BaseField {
 	}
 
 	async childValueChanged(field, value) {
-		console.log(`${this.nodeName}.childValueChanged:`, {field, value});
+		//console.log(`${this.nodeName}.childValueChanged:`, {field, value});
 		await this.ready;
 		const map = this.#value;
 		if (field) {

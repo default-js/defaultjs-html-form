@@ -38,28 +38,25 @@ class ValidationHandle {
 		const currentValid = this.#base.valid;
 		const { hasValue, required, condition, editable } = this.#base;
 
-		console.log(`${base.nodeName}(${base.name}) validate:`, { hasValue, required, condition, editable, currentValid }, data, base.nodeName);
+		//console.log(`${base.nodeName}(${base.name}) validate:`, { hasValue, required, condition, editable, currentValid }, data, base.nodeName);
 		let valid = true;
-		if (editable) {
+		if (editable && condition) {
 			valid = required ? hasValue : true;
 
-			if (condition) {
-				if(! (await validateCustomValidations(customs, data, base)))
-					valid = false;
+			if (!(await validateCustomValidations(customs, data, base))) valid = false;
 
-				for (let validation of validations) {
-					if (valid && hasValue) {
-						const test = await ExpressionResolver.resolve(validation.condition, data, true);
-						validation.active = !test;
-						if (!test) valid = false;
-					} else validation.active = false;
-				}
+			for (let validation of validations) {
+				if (valid && hasValue) {
+					const test = await ExpressionResolver.resolve(validation.condition, data, true);
+					validation.active = !test;
+					if (!test) valid = false;
+				} else validation.active = false;
 			}
 		}
 
 		base.valid = valid;
 
-		console.log(`${base.nodeName}(${base.name}) validate result:`, {valid});
+		//console.log(`${base.nodeName}(${base.name}) validate result:`, {valid});
 		return valid;
 	}
 }
