@@ -12,7 +12,7 @@ class ListRow extends Container {
 
 	static get NODENAME() {
 		return NODENAME_LIST_ROW;
-	}
+	}	
 	
 	constructor() {
 		super();

@@ -54,6 +54,7 @@ class Field extends BaseField {
 
 	async updatedValue(value) {
 		await this.ready;
+		value = await value;
 		if (this.wrapper){
 			const current = this.wrapper.value;
 			if(current != value)

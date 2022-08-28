@@ -85,8 +85,8 @@ class BaseField extends Base {
 
 		if (await this.acceptValue(value)) {
 			value = await this.normalizeValue(value);
-			if (currentValue != value) {
-				await this.updatedValue(value);				
+			if (currentValue != value) {				
+				value = await this.updatedValue(value) || value;				
 				await this.publishValue(value);
 			}
 		}

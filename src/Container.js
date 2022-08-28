@@ -44,7 +44,6 @@ class Container extends BaseField {
 				if (field instanceof BaseField)
 					this.#fields = null;
 
-
 				event.preventDefault();
 				event.stopPropagation();
 			}
@@ -76,6 +75,7 @@ class Container extends BaseField {
 
 	async updatedValue(value) {
 		await this.ready;
+		this.#value.clear();
 		const fields = this.fields;
 		if (fields) {
 			for (let field of fields) {
@@ -83,11 +83,16 @@ class Container extends BaseField {
 				else if (field instanceof Container) await field.value(value);
 			}
 		}
+
+		let data = await fieldValueMapToObject(this.#value, fields);
+		if (Object.getOwnPropertyNames(data).length == 0) data = null;
+
+		return data;
 	}
 
 	async childValueChanged(field, value) {
 		//console.log(`${this.nodeName}.childValueChanged:`, {field, value});
-		await this.ready;
+		value = await value;
 		const map = this.#value;
 		if (field) {
 			if (noValue(value)) map.delete(field);

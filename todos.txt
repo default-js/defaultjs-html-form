@@ -1,2 +1,2 @@
-- test case webcontent/test -> set form value with more values as field, results at incorrect data
+- set values of a list is not read stable
 - testing

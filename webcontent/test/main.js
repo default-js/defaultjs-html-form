@@ -46,11 +46,11 @@ async function loadData() {
 	
 	await form.value(testData);
 	const data = await form.value();
-	console.log("1. equal:", equalObjects(testData, data) == false);
+	console.log("1. correctly:", equalObjects(testData, data) == false);
 
 	await form.value(data);
 	const data2 = await form.value();
-	console.log("2. equal:", equalObjects(data, data2) == true);
+	console.log("2. correctly:", equalObjects(data, data2) == true);
 
 	console.log(testData);
 	console.log(data);

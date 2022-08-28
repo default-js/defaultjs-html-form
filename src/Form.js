@@ -299,6 +299,7 @@ class Form extends Component {
 	}
 
 	async childValueChanged(field, value) {
+		value = await value;
 		const map = this.#value;
 		//console.log("form.childValueChanged", { field, value });
 		if (field) {
