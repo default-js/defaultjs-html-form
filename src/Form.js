@@ -150,15 +150,17 @@ class Form extends Component {
 	async value(data) {
 		await this.ready;
 		if (this.#validation) await this.#validation;
-		if (arguments.length == 0) return await fieldValueMapToObject(this.#value);
+		if (arguments.length == 0) return await fieldValueMapToObject(this.#value, this.pages);
 
-		if (this.state == FORMSTATE_INIT) {
+		if (this.state == FORMSTATE_INPUT) {
 			for (let page of this.pages) {
 				const name = page.name;
 				//await page.value(null); // reset all values
 				if (name) await page.value(valueHelper(data, name));
 				else await page.value(data);
 			}
+
+			await this.#validate();
 		}
 	}
 
@@ -289,9 +291,9 @@ class Form extends Component {
 				}, 10);
 			}));
 		} else if (this.state == FORMSTATE_VALIDATING) {
-			this.#validation.then(() => {
+			this.#validation.then(async () => {
 				this.#hasNextValidation = false;
-				this.#validate();
+				await this.#validate();
 			});
 		}
 	}
@@ -306,8 +308,8 @@ class Form extends Component {
 
 		await this.ready;
 		const activePage = this.activePage;
-		if (activePage) this.#validate(activePage);
-		else this.#validate();
+		if (activePage) await this.#validate(activePage);
+		else await this.#validate();
 	}
 }
 define(Form);

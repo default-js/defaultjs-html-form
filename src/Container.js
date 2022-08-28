@@ -21,7 +21,7 @@ class Container extends BaseField {
 	}
 
 	#initialized = false;
-	#fields = new Set();
+	#fields = null;
 	#value = new Map();
 
 	constructor(value = null) {
@@ -31,7 +31,7 @@ class Container extends BaseField {
 			const field = event.target;
 			if (field != this) {
 				if (field instanceof BaseField) {
-					this.#fields.add(field);
+					this.#fields = null
 				}
 				event.preventDefault();
 				event.stopPropagation();
@@ -42,7 +42,8 @@ class Container extends BaseField {
 			const field = event.target;
 			if (field != this) {
 				if (field instanceof BaseField)
-					this.#fields.delete(field);
+					this.#fields = null;
+
 
 				event.preventDefault();
 				event.stopPropagation();
@@ -52,14 +53,16 @@ class Container extends BaseField {
 
 	async init() {
 		await super.init();
-		if (!this.#initialized) {
-			findFields(this).forEach((field) => this.#fields.add(field));
+		if (!this.#initialized) {			
 			this.addValidation(async ({ data }) => await validateFields(data, this.fields));
 			this.#initialized = true;
 		}
 	}
 
 	get fields() {
+		if(!this.#fields)
+			this.#fields = findFields(this);
+
 		return Array.from(this.#fields);
 	}
 
@@ -91,7 +94,7 @@ class Container extends BaseField {
 			else map.set(field, value);
 		
 		}
-		let data = await fieldValueMapToObject(map);
+		let data = await fieldValueMapToObject(map, this.fields);
 		if (Object.getOwnPropertyNames(data).length == 0) data = null;
 
 		await super.childValueChanged(field, value);

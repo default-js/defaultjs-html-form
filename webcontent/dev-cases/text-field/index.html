@@ -7,7 +7,7 @@
 		<link rel="stylesheet" type="text/css" href="/form.css" />
 	</head>
 	<body>
-			<d-form class="form-horizontal" endpoint="/api/test/${loginname}" method="post" use-summary-page>
+			<d-form class="form-horizontal" use-summary-page>
 				<d-progress-bar>
 					<div class="progress"></div>
 					<d-step name="page">page</d-step>
@@ -17,7 +17,7 @@
 
 				<d-page step="page">
 						<d-field name="test.field" required>
-							<div><label class="control-label" for="loginname">test</label></div>								
+							<div><label class="control-label">test</label></div>								
 							<div><input type="text"/></div>
 							<div><d-validation condition="${$value == 'fail'}">invalid</d-validation></div>
 							<div><d-message condition="${$value}">has value</d-message></div>

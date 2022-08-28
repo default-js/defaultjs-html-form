@@ -86,7 +86,7 @@ class BaseField extends Base {
 		if (await this.acceptValue(value)) {
 			value = await this.normalizeValue(value);
 			if (currentValue != value) {
-				await this.updateValue(value);				
+				await this.updatedValue(value);				
 				await this.publishValue(value);
 			}
 		}
@@ -104,7 +104,7 @@ class BaseField extends Base {
 		return valid;
 	}
 
-	async updateValue(value) {}
+	async updatedValue(value) {}
 
 	async publishValue(value) {
 		await this.ready;
@@ -123,7 +123,7 @@ class BaseField extends Base {
 		//console.log(`${this.nodeName}.publishValue:`, {updated, publising, publishValue})
 
 		if (this.parentField) await this.parentField.childValueChanged(this, publishValue);
-		else this.form.childValueChanged(this, publishValue);
+		else await this.form.childValueChanged(this, publishValue);
 	}
 
 	async acceptValue(value) {

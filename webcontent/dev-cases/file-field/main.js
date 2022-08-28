@@ -13,8 +13,11 @@ const data = {
 };
 
 
-function loadData() {
+async function loadData() {
 	console.log("loadData");
 	const form = document.querySelector("d-form");
-	form.value(data);
+	await form.value(data);
+	const test = await form.value();
+
+	console.log("equal:", equalObjects(data, test))
 };

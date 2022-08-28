@@ -40,26 +40,23 @@ async function loadData() {
 			}
 		]
 	};
-	const testDataJson = JSON.stringify(testData);
 	const form = document.querySelector("d-form");
+
+	await form.ready;
 	
 	await form.value(testData);
-	const data1 = await form.value();
-	const data1Json = JSON.stringify(data1);
+	const data = await form.value();
+	console.log("1. equal:", equalObjects(testData, data) == false);
 
-	console.log("eq = ", data1Json == testDataJson, "\ntestDataJson: ", testDataJson, "\ndata1Json: ", data1Json, "\ntestData: ", testData, "\ndata1: ", data1);
-
-
+	await form.value(data);
 	const data2 = await form.value();
-	const data2Json = JSON.stringify(data2);
+	console.log("2. equal:", equalObjects(data, data2) == true);
 
-	console.log("eq = ", data1Json == data2Json, "\ndata1Json: ", data1Json, "\ndata2Json: ", data2Json, "\ndata1: ", data1, "\ndata2: ", data2);
+	console.log(testData);
+	console.log(data);
+	console.log(data2);
 
 
 
 
 }
-
-document.ready(() => {
-	loadData();
-});
