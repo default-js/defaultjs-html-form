@@ -20,12 +20,11 @@ class Container extends BaseField {
 		return NODENAME_CONTAINER;
 	}
 
-	#initialized = false;
 	#fields = null;
 	#value = new Map();
 
-	constructor(value = null) {
-		super(value);
+	constructor(options) {
+		super(options);
 		const root = this.root;
 		root.on(EVENT_FIELD_INITIALIZED, (event) => {
 			const field = event.target;
@@ -48,14 +47,8 @@ class Container extends BaseField {
 				event.stopPropagation();
 			}
 		});
-	}
 
-	async init() {
-		await super.init();
-		if (!this.#initialized) {			
-			this.addValidation(async ({ data }) => await validateFields(data, this.fields));
-			this.#initialized = true;
-		}
+		this.addValidation(async ({ data }) => await validateFields(data, this.fields));
 	}
 
 	get fields() {
@@ -78,10 +71,10 @@ class Container extends BaseField {
 		this.#value.clear();
 		const fields = this.fields;
 		if (fields) {
-			for (let field of fields) {
-				if (field.name) await field.value(valueHelper(value, field.name));
-				else if (field instanceof Container) await field.value(value);
-			}
+			await Promise.all(fields.map(field => {
+				const name = field.name;
+				return name ? field.value(valueHelper(value, field.name)) : field.value(value);
+			}));
 		}
 
 		let data = await fieldValueMapToObject(this.#value, fields);

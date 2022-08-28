@@ -18,9 +18,10 @@ class Field extends BaseField {
 	}
 
 	#initialized = false;
+	#wrapper;
 
-	constructor(value = null) {
-		super(value);
+	constructor(options) {
+		super(options);
 		this.on(EVENT_FIELD_INPUT, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
@@ -32,22 +33,22 @@ class Field extends BaseField {
 		await super.init();
 		if (!this.#initialized) {
 			this.#initialized = true;
-			this.wrapper = findWrapper(this);
-			if (this.wrapper)
-				this.addValidation(async () => this.wrapper.valid);
+			this.#wrapper = findWrapper(this);
+			if (this.#wrapper)
+				this.addValidation(async () => this.#wrapper.valid);
 		}
 	}
 
 	readonlyUpdated() {
-		if (this.wrapper) this.wrapper.readonly = this.readonly;
+		if (this.#wrapper) this.#wrapper.readonly = this.readonly;
 	}
 
 	async acceptValue(value) {
-		return this.wrapper ? this.wrapper.acceptValue(value) : false;
+		return this.#wrapper ? this.#wrapper.acceptValue(value) : false;
 	}
 
 	async normalizeValue(value) {
-		if (this.wrapper) return this.wrapper.normalizeValue(value);
+		if (this.#wrapper) return this.#wrapper.normalizeValue(value);
 
 		return value;
 	}
@@ -55,10 +56,11 @@ class Field extends BaseField {
 	async updatedValue(value) {
 		await this.ready;
 		value = await value;
-		if (this.wrapper){
-			const current = this.wrapper.value;
+		const wrapper = this.#wrapper;
+		if (wrapper){
+			const current = wrapper.value;
 			if(current != value)
-				await this.wrapper.updatedValue(value);
+				await wrapper.updatedValue(value);
 		}
 		await super.updatedValue(value);
 	}

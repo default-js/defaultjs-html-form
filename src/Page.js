@@ -17,18 +17,10 @@ class Page extends Container {
 	static get NODENAME() {
 		return NODENAME_PAGE;
 	}
-
-	#initialized = false;
-	constructor(value) {
-		super(value);		
-	}
-
-	async init() {
-		await super.init();
-		if(!this.#initialized){
-			this.#initialized = true;
-			this.ready.then(() => this.trigger(EVENT_PAGE_INITIALIZED));
-		}
+	
+	constructor(options) {
+		super(options);
+		this.ready.then(() => this.trigger(EVENT_PAGE_INITIALIZED));
 	}
 
 	async destroy(){

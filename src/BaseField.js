@@ -1,6 +1,7 @@
 import { EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED, EVENT_CONDITION_STATE_CHANGED, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE } from "./Constants";
 import Base from "./Base";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
+import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 
 const _parent = privatePropertyAccessor("parent");
 export const _value = privatePropertyAccessor("value");
@@ -26,19 +27,12 @@ class BaseField extends Base {
 		return ATTRIBUTES.concat(Base.observedAttributes);
 	}
 
-	#initialized = false;
-
-	constructor(value = null) {
+	constructor({initEvent = EVENT_FIELD_INITIALIZED, value = null} = {}) {
 		super();
 		_value(this, value);
-	}
 
-	async init() {
-		await super.init();
-		if (!this.#initialized) {
-			this.#initialized = true;
-			this.ready.then(() => this.trigger(EVENT_FIELD_INITIALIZED))
-		}
+		if(initEvent)
+			this.ready.then(() => this.trigger(initEvent))
 	}
 
 	async destroy() {
@@ -84,7 +78,7 @@ class BaseField extends Base {
 		const currentValue = _value(this);
 
 		if (await this.acceptValue(value)) {
-			value = await this.normalizeValue(value);
+			value = await this.normalizeValue(value) || value;
 			if (currentValue != value) {				
 				value = await this.updatedValue(value) || value;				
 				await this.publishValue(value);
@@ -104,7 +98,7 @@ class BaseField extends Base {
 		return valid;
 	}
 
-	async updatedValue(value) {}
+	async updatedValue(value) { }
 
 	async publishValue(value) {
 		await this.ready;
@@ -116,7 +110,7 @@ class BaseField extends Base {
 			_value(this, value);
 		}
 
-		updateHasValue(value != null && typeof value !== "undefined", this);
+		updateHasValue(!noValue(value), this);
 
 		const publising= this.condition && (this.valid || updated);
 		const publishValue = publising ? value : null

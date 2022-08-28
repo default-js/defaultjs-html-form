@@ -42,27 +42,6 @@ const executeActions = async (actions, data) => {
 	return results;
 };
 
-const prevPage = async (pages, startIndex, data) => {
-	for (let i = startIndex; i >= 0; i--) {
-		const page = pages[i];
-		await page.validate(await data);
-		if (page.condition) return page;
-	}
-
-	return null;
-};
-
-const nextPage = async (pages, startIndex, data) => {
-	if (pages) {
-		for (let i = startIndex; i < pages.length; i++) {
-			const page = pages[i];
-			await page.validate(await data);
-			if (page.condition) return page;
-		}
-	}
-	return null;
-};
-
 class Form extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
@@ -95,6 +74,8 @@ class Form extends Component {
 			event.preventDefault();
 			event.stopPropagation();
 		});
+
+		this.ready.then(() => this.trigger(EVENT_INITIALIZED));
 	}
 
 	async init() {
@@ -108,11 +89,7 @@ class Form extends Component {
 			this.useSummaryPage = this.hasAttribute(ATTRIBUTE_USE_SUMMARY_PAGE);
 
 			this.activePageIndex = -1;
-			if (this.pages.length > 0) this.toNextPage();
-
-			this.ready.then(() => {
-				this.trigger(EVENT_INITIALIZED);
-			});
+			if (this.pages.length > 0) this.toNextPage();			
 		}
 	}
 
@@ -153,12 +130,10 @@ class Form extends Component {
 		if (arguments.length == 0) return await fieldValueMapToObject(this.#value, this.pages);
 
 		if (this.state == FORMSTATE_INPUT) {
-			for (let page of this.pages) {
+			await Promise.all(this.pages.map(page => {				
 				const name = page.name;
-				//await page.value(null); // reset all values
-				if (name) await page.value(valueHelper(data, name));
-				else await page.value(data);
-			}
+				return name ? page.value(valueHelper(data, name)) : page.value(data);
+			}));
 
 			await this.#validate();
 		}

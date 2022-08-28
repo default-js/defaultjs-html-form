@@ -1,2 +1,2 @@
-- set values of a list is not read stable
+- set values of a list is not write/read stable
 - testing

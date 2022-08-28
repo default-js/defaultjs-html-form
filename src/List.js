@@ -46,8 +46,8 @@ class List extends BaseField {
 	#addRowButton;
 	#initialized = false;
 
-	constructor(value = null) {
-		super(value);
+	constructor(options) {
+		super(options);
 
 		const root = this.root;
 		root.on(EVENT_FIELD_INITIALIZED, (event) => {
@@ -79,29 +79,30 @@ class List extends BaseField {
 				}
 			}
 		});
+
+		this.addValidation(async () => {
+			const { rows, min, max, readonly } = this;
+			const length = rows.length;
+			if (!readonly) {
+				if (length == max) this.#addRowButton.disabled = true;
+				else if (length < max) this.#addRowButton.disabled = false;
+			}
+			return min <= length && length <= max;
+		});
+
+		this.addValidation(async (data) => {
+			return await validateFields(data, this.rows);
+		});
 	}
 
 	async init() {
 		await super.init();
-		if (!this.#initialized) {
+		if (!this.#initialized) {			
+			this.#initialized = true;
+
 			this.#template = this.find("template").first().content;
 			this.#container = this.find(NODENAME_LIST_ROWS).first();
 			this.#addRowButton = findAddButton(this);
-			this.addValidation(async () => {
-				const { rows, min, max, readonly } = this;
-				const length = rows.length;
-				if (!readonly) {
-					if (length == max) this.#addRowButton.disabled = true;
-					else if (length < max) this.#addRowButton.disabled = false;
-				}
-				return min <= length && length <= max;
-			});
-
-			this.addValidation(async (data) => {
-				return await validateFields(data, this.rows);
-			});
-
-			this.#initialized = true;
 		}
 	}
 
@@ -136,7 +137,7 @@ class List extends BaseField {
 
 	async createRow(value) {
 		const row = document.importNode(this.#template, true).children[0];
-		this.#container.append(row);
+		await this.#container.append(row);
 
 		if (value) await row.value(value);
 
@@ -145,8 +146,8 @@ class List extends BaseField {
 
 	async updatedValue(values) {
 		this.#values.clear();
-		this.#container.children.remove();
-		if (values) for (let value of values) await this.createRow(value);
+		this.#container.empty();
+		if (values) await Promise.all(values.map(value => this.createRow(value)));
 
 		return await buildData(this.rows, this.#values);
 	}

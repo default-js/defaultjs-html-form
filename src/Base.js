@@ -28,8 +28,6 @@ class Base extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
-
-	#initialized = false;
 	
 	#conditionHandle;
 	#editableHandle;
@@ -43,14 +41,6 @@ class Base extends Component {
 		this.#editableHandle = new EditableHandle(this);
 		this.#validationHandle = new ValidationHandle(this);
 	}
-
-	async init() {
-		await super.init();
-		if (!this.#initialized) {
-			this.#initialized = true;
-		}
-	}
-
 
 	addValidation(validation) {
 		this.#validationHandle.addCustomValidation(validation);

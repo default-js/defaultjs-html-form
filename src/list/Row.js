@@ -14,8 +14,8 @@ class ListRow extends Container {
 		return NODENAME_LIST_ROW;
 	}	
 	
-	constructor() {
-		super();
+	constructor(options) {
+		super(options);
 	}
 
 	get active() {
