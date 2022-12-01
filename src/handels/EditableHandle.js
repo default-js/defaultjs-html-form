@@ -1,10 +1,10 @@
 import {
 ATTRIBUTE_EDITABLE_CONDITION
 } from "../Constants";
-import { updateEditableState } from "../utils/StateHelper";
 
 class EditableHandle{
 
+    #initialized = false;
     #base;
     #condition;
 
@@ -13,15 +13,17 @@ class EditableHandle{
     }
 
     get condition(){
-        if(!this.#condition)
+        if(!this.#initialized){
             this.#condition = this.#base.attr(ATTRIBUTE_EDITABLE_CONDITION) || "";
+            this.#initialized = true;
+        }
 
         return this.#condition;
     }
 
     async validate(data){
-        const current = this.#base.condition;                 
-        const editable = this.#condition ? await ExpressionResolver.resolve(this.#condition, data, false) : true;
+        const current = this.#base.editable;                 
+        const editable = this.condition ? await ExpressionResolver.resolve(this.condition, data, false) : true;
         if(editable != current)
             this.#base.editable = editable;
 
