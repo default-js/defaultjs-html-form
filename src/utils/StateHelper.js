@@ -47,14 +47,22 @@ export const updateActiveState = (target, active, initial = false) => {
 	if (oldState != active || initial) target.trigger(EVENT_ACTIVE_STATE_CHANGED);
 };
 
+export const updateReadonlyState = (target, readonly, initial = false) => {
+	const oldState = target.readonly;
+	if (readonly) 
+		target.attr(ATTRIBUTE_READONLY, "");
+	else
+		target.attr(ATTRIBUTE_READONLY, null);
+	
+	if (oldState != readonly || initial) target.trigger(EVENT_EDITABLE_STATE_CHANGED);
+};
+
 export const updateEditableState = (target, editable, initial = false) => {
 	const oldState = target.editable;
-	if (editable) {
+	if (editable) 
 		target.attr(ATTRIBUTE_EDITABLE, "");
-		target.attr(ATTRIBUTE_READONLY, null);
-	} else {
+	else
 		target.attr(ATTRIBUTE_EDITABLE, null);
-		target.attr(ATTRIBUTE_READONLY, "");
-	}
+
 	if (oldState != editable || initial) target.trigger(EVENT_EDITABLE_STATE_CHANGED);
 };

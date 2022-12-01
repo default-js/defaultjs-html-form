@@ -2,26 +2,30 @@ import { ATTRIBUTE_EDITABLE_CONDITION } from "../Constants";
 import { ExpressionResolver } from "@default-js/defaultjs-expression-language";
 
 class EditableHandle {
-	#initialized = false;
 	#base;
-	#condition;
+	#condition = null;
 
 	constructor(base) {
 		this.#base = base;
 	}
 
 	get condition() {
-		if (!this.#initialized) {
+		if (this.#condition == null)
 			this.#condition = this.#base.attr(ATTRIBUTE_EDITABLE_CONDITION) || "";
-			this.#initialized = true;
-		}
 
 		return this.#condition;
 	}
 
 	async validate(data) {
+        let editable = true;
 		const current = this.#base.editable;
-		const editable = this.condition ? await ExpressionResolver.resolve(this.condition, data, false) : true;
+        /*const {hasValue, required} = this.#base;
+        
+        if(!hasValue && required)
+            editable = true;
+        else*/ if(this.condition)
+            editable = await ExpressionResolver.resolve(this.condition, data, false);
+
 		if (editable != current) this.#base.editable = editable;
 
 		return editable;

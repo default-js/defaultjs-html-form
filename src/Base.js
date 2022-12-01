@@ -16,7 +16,7 @@ import ValidationHandle from "./handels/ValidationHandle";
 import MessageHandle from "./handels/MessageHandle";
 import { evaluationData } from "./utils/DataHelper";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-import { updateActiveState, updateConditionState, updateEditableState, updateValidState } from "./utils/StateHelper";
+import { updateActiveState, updateConditionState, updateEditableState, updateReadonlyState, updateValidState } from "./utils/StateHelper";
 
 
 
@@ -88,7 +88,10 @@ class Base extends Component {
 	}
 
 	set readonly(readonly) {
-		updateEditableState(this, !readonly, !this.ready.resolved);
+		if(!this.editable)
+			updateReadonlyState(this, true, !this.ready.resolved);
+		else
+			updateReadonlyState(this, readonly, !this.ready.resolved);
 		this.readonlyUpdated();
 	}
 
@@ -100,11 +103,11 @@ class Base extends Component {
 
 	set editable(editable) {
 		updateEditableState(this, editable, !this.ready.resolved);
-		this.editableUpdated();
+		this.editableUpdated();		
+		this.readonly = !editable;
 	}
 
 	async editableUpdated() {
-		this.readonlyUpdated();
 	}
 
 	set condition(condition){
