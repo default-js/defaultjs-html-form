@@ -1,5 +1,5 @@
 import {
-ATTRIBUTE_EDITABLE
+ATTRIBUTE_EDITABLE_CONDITION
 } from "../Constants";
 import { updateEditableState } from "../utils/StateHelper";
 
@@ -14,7 +14,7 @@ class EditableHandle{
 
     get condition(){
         if(!this.#condition)
-            this.#condition = this.#base.attr(ATTRIBUTE_EDITABLE) || "";
+            this.#condition = this.#base.attr(ATTRIBUTE_EDITABLE_CONDITION) || "";
 
         return this.#condition;
     }
