@@ -40,7 +40,7 @@ class ValidationHandle {
 
 		//console.log(`${base.nodeName}(${base.name}) validate:`, { hasValue, required, condition, editable, currentValid }, data, base.nodeName);
 		let valid = true;
-		if (editable && condition) {
+		if (condition) {
 			valid = required ? hasValue : true;
 
 			if (!(await validateCustomValidations(customs, data, base))) valid = false;

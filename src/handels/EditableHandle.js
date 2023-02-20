@@ -1,34 +1,35 @@
-import {
-ATTRIBUTE_EDITABLE
-} from "../Constants";
-import { updateEditableState } from "../utils/StateHelper";
+import { ATTRIBUTE_EDITABLE_CONDITION } from "../Constants";
+import { ExpressionResolver } from "@default-js/defaultjs-expression-language";
 
-class EditableHandle{
+class EditableHandle {
+	#base;
+	#condition = null;
 
-    #base;
-    #condition;
+	constructor(base) {
+		this.#base = base;
+	}
 
-    constructor(base){  
-        this.#base = base;
-    }
+	get condition() {
+		if (this.#condition == null)
+			this.#condition = this.#base.attr(ATTRIBUTE_EDITABLE_CONDITION) || "";
 
-    get condition(){
-        if(!this.#condition)
-            this.#condition = this.#base.attr(ATTRIBUTE_EDITABLE) || "";
+		return this.#condition;
+	}
 
-        return this.#condition;
-    }
+	async validate(data) {
+        let editable = true;
+		const current = this.#base.editable;
+        /*const {hasValue, required} = this.#base;
+        
+        if(!hasValue && required)
+            editable = true;
+        else*/ if(this.condition)
+            editable = await ExpressionResolver.resolve(this.condition, data, false);
 
-    async validate(data){
-        const current = this.#base.condition;                 
-        const editable = this.#condition ? await ExpressionResolver.resolve(this.#condition, data, false) : true;
-        if(editable != current)
-            this.#base.editable = editable;
+		if (editable != current) this.#base.editable = editable;
 
-        return editable;
-    }
-
-};
+		return editable;
+	}
+}
 
 export default EditableHandle;
-
