@@ -26,7 +26,7 @@ class DeleteRow extends FormButton {
 	}
 
 	execute() {
-		this.trigger(100, EVENT_LIST_ROW_DELETE);
+		this.trigger(EVENT_LIST_ROW_DELETE);
 	}
 }
 

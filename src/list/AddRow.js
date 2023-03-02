@@ -5,6 +5,8 @@ import {
 import FormButton from "../FormButton";
 import { define } from "@default-js/defaultjs-html-components";
 
+export const EVENT__INITIALIZED__BUTTON__ADDROW = `${NODENAME_LIST_ADD_ROW}:initialized`;
+
 const ATTRIBUTES = [];
 class AddRow extends FormButton {
 	static get observedAttributes() {
@@ -17,6 +19,7 @@ class AddRow extends FormButton {
 
 	constructor() {
 		super();
+		this.ready.then(() => this.trigger(EVENT__INITIALIZED__BUTTON__ADDROW))
 	}
 
 	async init() {
@@ -25,7 +28,7 @@ class AddRow extends FormButton {
 	}
 
 	execute() {
-		this.trigger(100, EVENT_LIST_ROW_ADD);
+		this.trigger(EVENT_LIST_ROW_ADD);
 	}
 }
 

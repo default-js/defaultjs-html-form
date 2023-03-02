@@ -1,7 +1,10 @@
-function loadData() {
+await import ("/browser-defaultjs-html-form.js");
+
+const loadData = window.loadData = async () => {
 
 	const form = document.querySelector("d-form");
-	form.value({
+	
+	await form.value({
 		"loginname": "user",
 		"password": "test",
 		"password_check": "test",
@@ -13,8 +16,14 @@ function loadData() {
 		"social": [
 			{
 				"socaltype": "facebook",
-				"socialid": "test"
+				"socialid": "test 1"
+			},
+			{
+				"socaltype": "facebook",
+				"socialid": "test 2"
 			}
 		]
 	});
 }
+
+loadData();

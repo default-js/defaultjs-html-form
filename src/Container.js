@@ -29,10 +29,8 @@ class Container extends BaseField {
 		root.on(EVENT_FIELD_INITIALIZED, (event) => {
 			const field = event.target;
 			if (field != this) {
-				if (field instanceof BaseField) {
-					this.#fields = null
-				}
-				event.preventDefault();
+				if (field instanceof BaseField && (!this.#fields || !this.#fields.has(field)))
+					this.#fields = null;
 				event.stopPropagation();
 			}
 		});
@@ -40,10 +38,9 @@ class Container extends BaseField {
 		root.on(EVENT_FIELD_REMOVED, (event) => {
 			const field = event.target;
 			if (field != this) {
-				if (field instanceof BaseField)
-					this.#fields = null;
+				if (field instanceof BaseField && this.#fields && this.#fields.has(field))
+					this.#fields.delete(field);
 
-				event.preventDefault();
 				event.stopPropagation();
 			}
 		});
@@ -53,7 +50,7 @@ class Container extends BaseField {
 
 	get fields() {
 		if(!this.#fields)
-			this.#fields = findFields(this);
+			this.#fields = new Set(findFields(this));
 
 		return Array.from(this.#fields);
 	}

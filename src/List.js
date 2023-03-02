@@ -3,24 +3,13 @@ import { treeFilter } from "./utils/NodeHelper";
 import { define } from "@default-js/defaultjs-html-components";
 import BaseField, { _value } from "./BaseField";
 import Row from "./list/Row";
-import AddRow from "./list/AddRow";
+import AddRow, {EVENT__INITIALIZED__BUTTON__ADDROW} from "./list/AddRow";
 import "./list/DeleteRow";
 import "./list/Rows";
 import { validateFields } from "./utils/ValidationHelper";
 import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 
 const ATTRIBUTES = [ATTRIBUTE_MIN, ATTRIBUTE_MAX];
-
-const findAddButton = (list) => {
-	return treeFilter({
-		root: list,
-		filter: (element) => {
-			if (element instanceof AddRow) return { accept: true, stop: true };
-			else if (element instanceof BaseField) return { accept: false, stop: true };
-			return { accept: false };
-		},
-	})[0];
-};
 
 const buildData = async (rows, values) => {
 	let data = [];
@@ -50,6 +39,12 @@ class List extends BaseField {
 		super(options);
 
 		const root = this.root;
+		root.on(EVENT__INITIALIZED__BUTTON__ADDROW, (event) => {
+			this.#addRowButton = event.target;
+			event.stopPropagation();
+		});
+
+
 		root.on(EVENT_FIELD_INITIALIZED, (event) => {
 			const target = event.target;
 			if(target != this){
@@ -83,7 +78,7 @@ class List extends BaseField {
 		this.addValidation(async () => {
 			const { rows, min, max, readonly } = this;
 			const length = rows.length;
-			if (!readonly) {
+			if (this.#addRowButton && !readonly) {
 				if (length == max) this.#addRowButton.disabled = true;
 				else if (length < max) this.#addRowButton.disabled = false;
 			}
@@ -99,10 +94,11 @@ class List extends BaseField {
 		await super.init();
 		if (!this.#initialized) {			
 			this.#initialized = true;
-
-			this.#template = this.find("template").first().content;
+			const rowTemplate = this.find("template").first();
+			if(rowTemplate)
+				this.#template = rowTemplate.content;
+				
 			this.#container = this.find(NODENAME_LIST_ROWS).first();
-			this.#addRowButton = findAddButton(this);
 		}
 	}
 

@@ -27,17 +27,16 @@ class BaseField extends Base {
 		return ATTRIBUTES.concat(Base.observedAttributes);
 	}
 
-	constructor({initEvent = EVENT_FIELD_INITIALIZED, value = null} = {}) {
-		super();
+	constructor(options = {}) {
+		super(options);
+		const {value} = options;
 		_value(this, value);
-
-		if(initEvent)
-			this.ready.then(() => this.trigger(initEvent))
+		this.ready.then(() => this.trigger(EVENT_FIELD_INITIALIZED));
 	}
 
-	async destroy() {
-		this.trigger(EVENT_FIELD_REMOVED);
+	async destroy() {		
 		this.publishValue(null);
+		this.trigger(EVENT_FIELD_REMOVED);
 		await super.destroy();
 	}
 

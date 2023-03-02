@@ -136,6 +136,15 @@ class Form extends Component {
 			}));
 
 			await this.#validate();
+		}else{
+			return new Promise((resolve) => {
+				const handle = (event) => {
+					event.stopPropagation();
+					this.removeOn(handle, EVENT_FORM_STATE_CHANGED);
+					resolve(this.value(data));
+				}
+				this.on(EVENT_FORM_STATE_CHANGED, handle)
+			});
 		}
 	}
 
