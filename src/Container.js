@@ -65,12 +65,16 @@ class Container extends BaseField {
 
 	async updatedValue(value) {
 		await this.ready;
-		this.#value.clear();
+		const map = this.#value;
+		map.clear();
 		const fields = this.fields;
 		if (fields) {
 			await Promise.all(fields.map(field => {
 				const name = field.name;
-				return name ? field.value(valueHelper(value, field.name)) : field.value(value);
+				const fieldValue = name ? valueHelper(value, field.name) : value;
+				if(fieldValue)
+					map.set(field, fieldValue);
+				return field.value(fieldValue);
 			}));
 		}
 
@@ -81,15 +85,22 @@ class Container extends BaseField {
 	}
 
 	async childValueChanged(field, value) {
-		//console.log(`${this.nodeName}.childValueChanged:`, {field, value});
+		//console.log(`${this.nodeName}.childValueChanged(${field.name}):`, {field, value});
 		value = await value;
 		const map = this.#value;
 		if (field) {
-			if (noValue(value)) map.delete(field);
-			else map.set(field, value);
+			if (noValue(value)) {
+				//console.log(`delete ${field.name}`);
+				map.delete(field);
+			}
+			else {
+				//console.log(`set ${field.name} = ${value}`);
+				map.set(field, value);
+			}
 		
 		}
 		let data = await fieldValueMapToObject(map, this.fields);
+		//console.log("data: ",data);
 		if (Object.getOwnPropertyNames(data).length == 0) data = null;
 
 		await super.childValueChanged(field, value);

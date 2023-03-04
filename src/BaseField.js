@@ -104,6 +104,8 @@ class BaseField extends Base {
 		let updated = false;
 		const currentValue = _value(this);
 		value = arguments.length == 1 ? value : currentValue;
+		if(typeof value === "undefined")
+			value = null;
 		if(arguments.length == 1 && currentValue != value){
 			updated = true;
 			_value(this, value);
@@ -111,12 +113,13 @@ class BaseField extends Base {
 
 		updateHasValue(!noValue(value), this);
 
-		const publising= this.condition && (this.valid || updated);
+		const publising = this.condition && (this.valid || updated);
 		const publishValue = publising ? value : null
-		//console.log(`${this.nodeName}.publishValue:`, {updated, publising, publishValue})
-
-		if (this.parentField) await this.parentField.childValueChanged(this, publishValue);
-		else await this.form.childValueChanged(this, publishValue);
+		//console.log(`${this.nodeName}(${this.name}).publishValue:`, {updated, publising, publishValue});
+		if(updated){
+			if (this.parentField) await this.parentField.childValueChanged(this, publishValue);
+			else await this.form.childValueChanged(this, publishValue);
+		}
 	}
 
 	async acceptValue(value) {

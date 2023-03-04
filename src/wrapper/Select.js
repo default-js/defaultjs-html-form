@@ -32,7 +32,7 @@ export default class Text extends Wrapper {
 			)
 		);
 
-		field.trigger(EVENT_FIELD_INPUT, this.value);
+		//field.trigger(EVENT_FIELD_INPUT, this.value);
 	}
 
 	set readonly(readonly) {

@@ -34,8 +34,10 @@ class Field extends BaseField {
 		if (!this.#initialized) {
 			this.#initialized = true;
 			this.#wrapper = findWrapper(this);
-			if (this.#wrapper)
+			if (this.#wrapper){
 				this.addValidation(async () => this.#wrapper.valid);
+				this.publishValue(this.#wrapper.value);
+			}
 		}
 	}
 
@@ -58,7 +60,7 @@ class Field extends BaseField {
 		value = await value;
 		const wrapper = this.#wrapper;
 		if (wrapper){
-			const current = wrapper.value;
+			const current = wrapper.value || null;
 			if(current != value)
 				await wrapper.updatedValue(value);
 		}

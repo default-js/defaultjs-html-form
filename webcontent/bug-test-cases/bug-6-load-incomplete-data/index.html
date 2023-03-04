@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="boostrap.addons.css" />
+		<link rel="stylesheet" type="text/css" href="form.css" />
+	</head>
+	<body>
+		<p>
+			Page and container has attribute "name", but with empty or blank string.
+		</p>
+
+		<div class="container">
+			<d-form>
+				<d-page>
+					<d-field name="textfield" required>
+						<label>textfield</label>
+						<input type="text">
+					</d-field>
+					<d-field name="textfield-dependend" required condition="textfield == 'test'">
+						<label>textfield</label>
+						<input type="text">
+					</d-field>
+				</d-page>				
+	
+				<d-control>
+					<d-control-back>back</d-control-back>
+					<d-control-next>next</d-control-next>
+					<d-control-summary>sumary</d-control-summary>
+					<d-control-submit>submit</d-control-submit>
+				</d-control>
+			</d-form>
+		</div>
+		<div>
+			<button id="logData" onclick="logData()">show data</button>
+		</div>
+		<div id="log"></div>
+
+		<script type="module" src="main.js"></script>
+	</body>
+</html>

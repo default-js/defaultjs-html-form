@@ -10,12 +10,13 @@ export const updateData = async (data, name, value) => {
 	return data;
 };
 
-export const fieldValueMapToObject = async (map, fieldOrder) => {
+export const fieldValueMapToObject = async (map, fieldOrder) => {	
+	//console.log("fieldValueMapToObject: ", map, fieldOrder);
 	let data = {};
 	if (fieldOrder) {
 		for (let field of fieldOrder) {
 			const name = field.name;
-			const value = await field.value();
+			const value = map.get(field);
 			data = await updateData(data, name, value);
 		}
 	} else {

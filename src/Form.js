@@ -55,6 +55,7 @@ class Form extends Component {
 	#state = FORMSTATE_INIT;
 	#pages;
 	#value = new Map();
+	#data = {};
 	#validation = null;
 	#hasNextValidation = false;
 
@@ -127,7 +128,7 @@ class Form extends Component {
 	async value(data) {
 		await this.ready;
 		if (this.#validation) await this.#validation;
-		if (arguments.length == 0) return await fieldValueMapToObject(this.#value, this.pages);
+		if (arguments.length == 0) return this.#data;
 
 		if (this.state == FORMSTATE_INPUT) {
 			await Promise.all(this.pages.map(page => {				
@@ -264,7 +265,7 @@ class Form extends Component {
 			this.state = FORMSTATE_VALIDATING;
 			return (this.#validation = new Promise((resolved) => {
 				setTimeout(async () => {
-					const data = await fieldValueMapToObject(this.#value);
+					const data = this.#data;//await fieldValueMapToObject(this.#value);
 					
 					const valid = page ? page.validate(data) : await validateFields(data, this.pages);
 
@@ -277,21 +278,23 @@ class Form extends Component {
 		} else if (this.state == FORMSTATE_VALIDATING) {
 			this.#validation.then(async () => {
 				this.#hasNextValidation = false;
-				await this.#validate();
+				await this.#validate(page);
 			});
 		}
 	}
 
 	async childValueChanged(field, value) {
+		await this.ready;		
 		value = await value;
 		const map = this.#value;
-		//console.log("form.childValueChanged", { field, value });
+		//console.log(`form.childValueChanged(${field.name})`, { field, value });
 		if (field) {
 			if (noValue(value)) map.delete(field);
 			else map.set(field, value);
 		}
 
-		await this.ready;
+		this.#data = await fieldValueMapToObject(this.#value, this.pages);
+
 		const activePage = this.activePage;
 		if (activePage) await this.#validate(activePage);
 		else await this.#validate();
