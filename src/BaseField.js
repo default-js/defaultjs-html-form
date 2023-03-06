@@ -120,7 +120,7 @@ class BaseField extends Base {
 
 		updateHasValue(!noValue, this);
 		if (this.parentField) await this.parentField.childValueChanged(this, value);
-		else await this.form.childValueChanged(this, value);
+		else if(this.form) await this.form.childValueChanged(this, value);
 
 
 
