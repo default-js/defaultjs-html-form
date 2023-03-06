@@ -1,7 +1,8 @@
 import { EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED, EVENT_CONDITION_STATE_CHANGED, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE } from "./Constants";
 import Base from "./Base";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { noValue} from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { dataIsNoValue } from "./utils/ValueHelper";
 
 const _parent = privatePropertyAccessor("parent");
 export const _value = privatePropertyAccessor("value");
@@ -30,7 +31,7 @@ class BaseField extends Base {
 	constructor(options = {}) {
 		super(options);
 		const {value} = options;
-		_value(this, value);
+		_value(this, value || null);
 		this.ready.then(() => this.trigger(EVENT_FIELD_INITIALIZED));
 	}
 
@@ -92,7 +93,7 @@ class BaseField extends Base {
 		const condition = this.condition;
 		const hasChange = currentCondition != condition || currentValid != valid;
 		if(hasChange)
-			this.publishValue();
+			this.publishValue(_value(this));
 
 		return valid;
 	}
@@ -100,7 +101,30 @@ class BaseField extends Base {
 	async updatedValue(value) { }
 
 	async publishValue(value) {
+		//console.log(`call ${this.nodeName}(${this.name}).publishValue:`, {value});
 		await this.ready;
+		if(arguments.length == 0)
+			value = _value(this);		 
+		
+		const noValue = dataIsNoValue(value);				
+		const condition = this.condition;
+		const required = this.required;
+		value = required && noValue ? null : value;		
+		
+		if(!condition)
+			value = null;
+		else
+			_value(this, value);
+
+		//console.log(`${this.nodeName}(${this.name}).publishValue:`, {required,condition, noValue, value});
+
+		updateHasValue(!noValue, this);
+		if (this.parentField) await this.parentField.childValueChanged(this, value);
+		else await this.form.childValueChanged(this, value);
+
+
+
+		/*
 		let updated = false;
 		const currentValue = _value(this);
 		value = arguments.length == 1 ? value : currentValue;
@@ -115,11 +139,13 @@ class BaseField extends Base {
 
 		const publising = this.condition && (this.valid || updated);
 		const publishValue = publising ? value : null
-		//console.log(`${this.nodeName}(${this.name}).publishValue:`, {updated, publising, publishValue});
-		if(updated){
+		console.log(`${this.nodeName}(${this.name}).publishValue:`, {updated, publising, publishValue});
+
+		if(publising){
 			if (this.parentField) await this.parentField.childValueChanged(this, publishValue);
 			else await this.form.childValueChanged(this, publishValue);
 		}
+		*/
 	}
 
 	async acceptValue(value) {

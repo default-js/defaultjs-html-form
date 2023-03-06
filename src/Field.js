@@ -25,7 +25,7 @@ class Field extends BaseField {
 		this.on(EVENT_FIELD_INPUT, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
-			this.publishValue(event.detail);
+			this.publishValue(event.detail || null);
 		});
 	}
 

@@ -97,7 +97,7 @@ class List extends BaseField {
 			const rowTemplate = this.find("template").first();
 			if(rowTemplate)
 				this.#template = rowTemplate.content;
-				
+
 			this.#container = this.find(NODENAME_LIST_ROWS).first();
 		}
 	}
@@ -110,7 +110,9 @@ class List extends BaseField {
 	}
 
 	get rows() {
-		return Array.from(this.#container.children);
+		if(this.#container)
+			return Array.from(this.#container.children);
+		return [];
 	}
 
 	get min() {

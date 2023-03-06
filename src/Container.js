@@ -86,9 +86,12 @@ class Container extends BaseField {
 
 	async childValueChanged(field, value) {
 		//console.log(`${this.nodeName}.childValueChanged(${field.name}):`, {field, value});
-		value = await value;
-		const map = this.#value;
+		value = await value;		
+		const map = this.#value;		
+		
 		if (field) {
+			if(map.get(field) == value)
+				return;
 			if (noValue(value)) {
 				//console.log(`delete ${field.name}`);
 				map.delete(field);
@@ -96,8 +99,7 @@ class Container extends BaseField {
 			else {
 				//console.log(`set ${field.name} = ${value}`);
 				map.set(field, value);
-			}
-		
+			}		
 		}
 		let data = await fieldValueMapToObject(map, this.fields);
 		//console.log("data: ",data);
