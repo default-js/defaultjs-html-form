@@ -81,7 +81,6 @@ export default class Checkbox extends Wrapper {
 	}
 
 	updatedValue(value) {
-		if (this.field.value != this.value)
-			this.input.val(value ? value : null);
+		this.input.val(value ? value : null);
 	}
 }

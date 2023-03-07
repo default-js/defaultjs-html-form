@@ -7,6 +7,8 @@ export const dataIsNoValue = (value) => {
     const type = typeof value;
     if(type === "string" && value.trim().length == 0)
         return true;
+    if(value instanceof Date)
+        return false;
     if(value instanceof Array &&  value.length == 0)
         return true;
     if(value instanceof Set &&  value.length == 0)

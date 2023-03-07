@@ -72,7 +72,6 @@ export default class Radio extends Wrapper {
 	}
 
 	updatedValue(value) {
-		if (this.field.value != this.value)
-			this.input.val(value ? value : null);
+		this.input.val(value ? value : null);
 	}
 }
