@@ -5,6 +5,7 @@ import {
 import BaseField, {_value} from "./BaseField";
 import { findWrapper } from "./wrapper";
 import { define } from "@default-js/defaultjs-html-components";
+import { emtpyOrNoValueString, noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 
 const ATTRIBUTES = ["file-format"];
 
@@ -65,6 +66,17 @@ class Field extends BaseField {
 				await wrapper.updatedValue(value);
 		}
 		await super.updatedValue(value);
+	}
+
+	async validationStateChanged(conditionChange, validationChanged){		
+		if(conditionChange && this.condition){			
+			const wrapper = this.#wrapper;
+			const value = wrapper.value || null;
+			//console.log(`validationStateChanged(${this.name} (${conditionChange}, ${validationChanged}) -> ${value}`)
+			_value(this, value);
+		}
+		
+		return super.validationStateChanged(conditionChange, validationChanged);
 	}
 }
 

@@ -12,7 +12,7 @@ const BaseField = defaultjs.html.form.BaseField;
 class TestField extends BaseField{
 	
 	constructor(){
-		super("test-value");
+		super({value: "test-value"});
 	}	
 };
 

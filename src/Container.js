@@ -3,7 +3,7 @@ import {
 	EVENT_FIELD_INITIALIZED, 
 	EVENT_FIELD_REMOVED 
 } from "./Constants";
-import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { emtpyOrNoValueString, noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { findFields } from "./utils/NodeHelper";
 import BaseField, { _value } from "./BaseField";
 import { define } from "@default-js/defaultjs-html-components";
@@ -69,12 +69,12 @@ class Container extends BaseField {
 		map.clear();
 		const fields = this.fields;
 		if (fields) {
-			await Promise.all(fields.map(field => {
+			await Promise.all(fields.map(async (field) => {
 				const name = field.name;
 				const fieldValue = name ? valueHelper(value, field.name) : value;
-				if(fieldValue)
+				if(!noValue(fieldValue))
 					map.set(field, fieldValue);
-				return field.value(fieldValue);
+				await field.value(fieldValue);
 			}));
 		}
 
@@ -90,7 +90,11 @@ class Container extends BaseField {
 		const map = this.#value;		
 		
 		if (field) {
-			if(map.get(field) == value)
+			const hasField = map.has(field);
+			const currentValue = map.get(field) == null;
+			//console.log({name: field.name, currentValue, value, hasField})
+
+			if(hasField && currentValue == value)
 				return;
 			if (noValue(value)) {
 				//console.log(`delete ${field.name}`);
@@ -99,13 +103,13 @@ class Container extends BaseField {
 			else {
 				//console.log(`set ${field.name} = ${value}`);
 				map.set(field, value);
-			}		
-		}
+			}				
+		}	
+
 		let data = await fieldValueMapToObject(map, this.fields);
 		//console.log("data: ",data);
 		if (Object.getOwnPropertyNames(data).length == 0) data = null;
 
-		await super.childValueChanged(field, value);
 		await this.publishValue(data);
 	}
 }

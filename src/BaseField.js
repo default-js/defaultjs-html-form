@@ -80,7 +80,9 @@ class BaseField extends Base {
 		if (await this.acceptValue(value)) {
 			value = await this.normalizeValue(value) || value;
 			if (currentValue != value) {				
-				value = await this.updatedValue(value) || value;				
+				const result = await this.updatedValue(value);				
+				if(typeof result !== "undefined")
+					value = result;
 				await this.publishValue(value);
 			}
 		}
@@ -91,21 +93,26 @@ class BaseField extends Base {
 		const currentValid = this.valid;
 		const valid = await super.validate(data);
 		const condition = this.condition;
-		const hasChange = currentCondition != condition || currentValid != valid;
-		if(hasChange)
-			this.publishValue(_value(this));
+		this.validationStateChanged(currentCondition != condition,  currentValid != valid);
 
 		return valid;
+	}
+
+	async validationStateChanged(conditionChange, validationChanged){
+		const hasChange = conditionChange || validationChanged;
+		if(hasChange)
+			this.publishValue();
 	}
 
 	async updatedValue(value) { }
 
 	async publishValue(value) {
-		//console.log(`call ${this.nodeName}(${this.name}).publishValue:`, {value});
+		//console.log(`call ${this.nodeName}(${this.name}).publishValue:`, {arguments: arguments.length, value});
 		await this.ready;
 		if(arguments.length == 0)
-			value = _value(this);		 
-		
+			value = _value(this);
+
+		//console.log("work with Value:", value)		
 		const noValue = dataIsNoValue(value);				
 		const condition = this.condition;
 		const required = this.required;
@@ -116,9 +123,10 @@ class BaseField extends Base {
 		else
 			_value(this, value);
 
-		//console.log(`${this.nodeName}(${this.name}).publishValue:`, {required,condition, noValue, value});
+		//console.log(`${this.nodeName}(${this.name}).publishValue:`, {required, condition, noValue, value});
 
 		updateHasValue(!noValue, this);
+
 		if (this.parentField) await this.parentField.childValueChanged(this, value);
 		else if(this.form) await this.form.childValueChanged(this, value);
 
