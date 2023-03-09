@@ -14,24 +14,27 @@ const HTML = `<div>
 
 describe("Container Field", () => {
 	it("update value", async () => {
-		const container = create(HTML).first();
-		document.body.append(container);
+		for (let i = 0; i < 100; i++) {
+			const container = create(HTML).first();
+			document.body.append(container);
 
-        const testData = {
-            container: {
-                textfield : "test-value"
-            }
-        };
+			const testData = {
+				container: {
+					textfield: "test-value",
+				},
+			};
 
-		const form = container.find("d-form").first();
-		const field = container.find("d-container").first();
-        const textField = container.find("d-field").first();
+			const form = container.find("d-form").first();
+			const field = container.find("d-container").first();
+			const textField = container.find("d-field").first();
 
-        await textField.value(testData.container.textfield);
+			await textField.value(testData.container.textfield);
+			const fieldValue = await field.value();
+			//console.log(fieldValue);
+			expect(fieldValue).toEqual(testData.container);
+			expect(await form.value()).toEqual(testData);
 
-        expect(await field.value()).toEqual(testData.container);
-        expect(await form.value()).toEqual(testData);
-
-		container.remove();
+			container.remove();
+		}
 	});
 });

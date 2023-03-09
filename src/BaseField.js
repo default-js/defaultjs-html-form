@@ -1,7 +1,6 @@
 import { EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED, EVENT_CONDITION_STATE_CHANGED, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE } from "./Constants";
 import Base from "./Base";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-import { noValue} from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { dataIsNoValue } from "./utils/ValueHelper";
 
 const _parent = privatePropertyAccessor("parent");
@@ -31,14 +30,18 @@ class BaseField extends Base {
 	constructor(options = {}) {
 		super(options);
 		const {value} = options;
-		_value(this, value || null);
+		_value(this, value || null);		
+	}
+
+	async init(){
 		this.ready.then(() => this.trigger(EVENT_FIELD_INITIALIZED));
+		await super.init();
 	}
 
 	async destroy() {		
 		this.publishValue(null);
-		this.trigger(EVENT_FIELD_REMOVED);
 		await super.destroy();
+		this.trigger(EVENT_FIELD_REMOVED);
 	}
 
 	get parentField() {
@@ -104,7 +107,9 @@ class BaseField extends Base {
 			this.publishValue();
 	}
 
-	async updatedValue(value) { }
+	async updatedValue(value) { 
+		return value;
+	}
 
 	async publishValue(value) {
 		//console.log(`call ${this.nodeName}(${this.name}).publishValue:`, {arguments: arguments.length, value});
@@ -129,31 +134,6 @@ class BaseField extends Base {
 
 		if (this.parentField) await this.parentField.childValueChanged(this, value);
 		else if(this.form) await this.form.childValueChanged(this, value);
-
-
-
-		/*
-		let updated = false;
-		const currentValue = _value(this);
-		value = arguments.length == 1 ? value : currentValue;
-		if(typeof value === "undefined")
-			value = null;
-		if(arguments.length == 1 && currentValue != value){
-			updated = true;
-			_value(this, value);
-		}
-
-		updateHasValue(!noValue(value), this);
-
-		const publising = this.condition && (this.valid || updated);
-		const publishValue = publising ? value : null
-		console.log(`${this.nodeName}(${this.name}).publishValue:`, {updated, publising, publishValue});
-
-		if(publising){
-			if (this.parentField) await this.parentField.childValueChanged(this, publishValue);
-			else await this.form.childValueChanged(this, publishValue);
-		}
-		*/
 	}
 
 	async acceptValue(value) {
