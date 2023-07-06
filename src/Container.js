@@ -91,7 +91,7 @@ class Container extends BaseField {
 		
 		if (field) {
 			const hasField = map.has(field);
-			const currentValue = map.get(field) == null;
+			const currentValue = map.get(field);
 			//console.log({name: field.name, currentValue, value, hasField})
 
 			if(hasField && currentValue == value)
