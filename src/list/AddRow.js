@@ -1,9 +1,11 @@
 import { 
-	NODENAMES, 
+	NODENAME_LIST_ADD_ROW, 
 	EVENT_LIST_ROW_ADD
 } from "../Constants";
 import FormButton from "../FormButton";
-import defineElement from "../utils/DefineElement";
+import { define } from "@default-js/defaultjs-html-components";
+
+export const EVENT__INITIALIZED__BUTTON__ADDROW = `${NODENAME_LIST_ADD_ROW}:initialized`;
 
 const ATTRIBUTES = [];
 class AddRow extends FormButton {
@@ -12,11 +14,12 @@ class AddRow extends FormButton {
 	}
 
 	static get NODENAME(){
-		return NODENAMES.ButtonAddRow;
+		return NODENAME_LIST_ADD_ROW;
 	}
 
 	constructor() {
 		super();
+		this.ready.then(() => this.trigger(EVENT__INITIALIZED__BUTTON__ADDROW))
 	}
 
 	async init() {
@@ -25,9 +28,9 @@ class AddRow extends FormButton {
 	}
 
 	execute() {
-		this.trigger(100, EVENT_LIST_ROW_ADD);
+		this.trigger(EVENT_LIST_ROW_ADD);
 	}
 }
 
-defineElement(AddRow);
+define(AddRow);
 export default AddRow;

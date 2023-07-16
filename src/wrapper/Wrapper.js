@@ -4,6 +4,8 @@ export default class Wrapper {
 	
 	static findInput(field){ return null;}
 	
+	#defaultValue;
+	
 	constructor(field, input) {
 		this.field = field;
 		this.input = input;

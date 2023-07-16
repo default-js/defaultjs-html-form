@@ -1,9 +1,9 @@
 import { 
-	NODENAMES,
+	NODENAME_LIST_DELETE_ROW,
 	EVENT_LIST_ROW_DELETE
 } from "../Constants";
 import FormButton from "../FormButton";
-import defineElement from "../utils/DefineElement";
+import { define } from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = [];
 
@@ -13,7 +13,7 @@ class DeleteRow extends FormButton {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.ButtonDeleteRow;
+		return NODENAME_LIST_DELETE_ROW;
 	}
 
 	constructor() {
@@ -26,9 +26,9 @@ class DeleteRow extends FormButton {
 	}
 
 	execute() {
-		this.trigger(100, EVENT_LIST_ROW_DELETE);
+		this.trigger(EVENT_LIST_ROW_DELETE);
 	}
 }
 
-defineElement(DeleteRow);
+define(DeleteRow);
 export default DeleteRow;

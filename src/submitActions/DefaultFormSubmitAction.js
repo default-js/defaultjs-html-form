@@ -2,6 +2,7 @@ import {define} from "@default-js/defaultjs-html-components";
 import BaseSubmitAction from "./BaseSubmitAction";
 import SubmitActionResult, { STATE_SUCCESS, STATE_FAIL } from "./SubmitActionResult";
 import {NODENAME_SUBMIT_ACTION} from "../Constants";
+import { ExpressionResolver } from "@default-js/defaultjs-expression-language";
 
 const NODENAME = `${NODENAME_SUBMIT_ACTION}-default`;
 

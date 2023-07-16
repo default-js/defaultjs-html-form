@@ -1,92 +1,58 @@
 import { 
-	NODENAMES,
-	EVENT_FIELD_INITIALIZED,
-	EVENT_VALUE_CHANGED,
+	NODENAME_CONTAINER, 
+	EVENT_FIELD_INITIALIZED, 
+	EVENT_FIELD_REMOVED 
 } from "./Constants";
+import { emtpyOrNoValueString, noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { findFields } from "./utils/NodeHelper";
 import BaseField, { _value } from "./BaseField";
-import defineElement from "./utils/DefineElement";
-import { valueHelper } from "./utils/DataHelper";
+import { define } from "@default-js/defaultjs-html-components";
+import { valueHelper, fieldValueMapToObject } from "./utils/DataHelper";
+import { validateFields } from "./utils/ValidationHelper";
 
 const ATTRIBUTES = [];
-
-
-
-
-const refreshValue = async (self) => {
-	const data = {};
-	const fields = self.fields;
-
-	for (let field of fields) {
-		if (field.condition && field.hasValue) {
-			const name = field.name;
-			const value = await field.value();
-			if (name) valueHelper(data, name, value);
-			else Object.assign(data, value);
-		}
-	}
-
-	if (Object.getOwnPropertyNames(data).length > 0) _value(self, data);
-	else _value(self, null);
-};
-
 class Container extends BaseField {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(BaseField.observedAttributes);
 	}
 
 	static get NODENAME() {
-		return NODENAMES.Container;
+		return NODENAME_CONTAINER;
 	}
 
-	constructor(value = null) {
-		super(value);
-		this.fields = [];
-		this.on(EVENT_VALUE_CHANGED, (event) => {
+	#fields = null;
+	#value = new Map();
+
+	constructor(options) {
+		super(options);
+		const root = this.root;
+		root.on(EVENT_FIELD_INITIALIZED, (event) => {
 			const field = event.target;
 			if (field != this) {
-				event.preventDefault();
+				if (field instanceof BaseField && (!this.#fields || !this.#fields.has(field)))
+					this.#fields = null;
 				event.stopPropagation();
-
-				const chain = event.detail;
-				this.childValueChanged(field, chain);
 			}
 		});
+
+		root.on(EVENT_FIELD_REMOVED, (event) => {
+			const field = event.target;
+			if (field != this) {
+				if (field instanceof BaseField && this.#fields && this.#fields.has(field))
+					this.#fields.delete(field);
+
+				event.stopPropagation();
+			}
+		});
+
+		this.addValidation(async ({ data }) => await validateFields(data, this.fields));
 	}
 
-	async init() {
-		const ready = this.ready;
-		await super.init();
-		this.fields = findFields(this);
-		if (!ready.resolved) {
-			this.on(EVENT_FIELD_INITIALIZED, (event) => {
-				const field = event.target;
-				if (field != this) {				
-					if (field instanceof BaseField) {
-						if (this.fields.indexOf(field) < 0){
-							this.fields.push(field);
-							refreshValue(this)
-						}						
-					}
-					
-					event.preventDefault();
-					event.stopPropagation();
-				}
-			});
+	get fields() {
+		if(!this.#fields)
+			this.#fields = new Set(findFields(this));
 
-			this.validator.addCustomCheck(async ({ data, base }) => {
-				const { fields } = base;
-				if (fields) {
-					const length = fields.length;
-					for (let i = 0; i < length; i++) {
-						const field = fields[i];
-						if (field.condition && !field.valid) return false;
-					}
-				}
-
-				return true;
-			});
-		}
+		return Array.from(this.#fields);
 	}
 
 	readonlyUpdated() {
@@ -99,26 +65,54 @@ class Container extends BaseField {
 
 	async updatedValue(value) {
 		await this.ready;
+		const map = this.#value;
+		map.clear();
 		const fields = this.fields;
 		if (fields) {
-			for (let field of fields) {
-				if (field.name) await field.value(valueHelper(value, field.name));
-				else if (field instanceof Container) await field.value(value);
-			}
-
-			await refreshValue(this);
+			await Promise.all(fields.map(async (field) => {
+				const name = field.name;
+				const fieldValue = name ? valueHelper(value, field.name) : value;
+				if(!noValue(fieldValue))
+					map.set(field, fieldValue);
+				await field.value(fieldValue);
+			}));
 		}
+
+		let data = await fieldValueMapToObject(this.#value, fields);
+		if (Object.getOwnPropertyNames(data).length == 0) data = null;
+
+		return data;
 	}
 
-	async childValueChanged(field, chain) {
-		await this.ready;
+	async childValueChanged(field, value) {
+		//console.log(`${this.nodeName}.childValueChanged(${field.name}):`, {field, value});
+		value = await value;		
+		const map = this.#value;		
+		
+		if (field) {
+			const hasField = map.has(field);
+			const currentValue = map.get(field);
+			//console.log({name: field.name, currentValue, value, hasField})
 
-		await refreshValue(this);
+			if(hasField && currentValue == value)
+				return;
+			if (noValue(value)) {
+				//console.log(`delete ${field.name}`);
+				map.delete(field);
+			}
+			else {
+				//console.log(`set ${field.name} = ${value}`);
+				map.set(field, value);
+			}				
+		}	
 
-		await this.validate();
-		await this.publishValue(chain);
+		let data = await fieldValueMapToObject(map, this.fields);
+		//console.log("data: ",data);
+		if (Object.getOwnPropertyNames(data).length == 0) data = null;
+
+		await this.publishValue(data);
 	}
 }
 
-defineElement(Container);
+define(Container);
 export default Container;

@@ -13,8 +13,10 @@ export default class Text extends Wrapper {
 	}
 
 	constructor(field, input) {
-		super(field, input);
+		super(field, input);		
 	}
+
+	
 
 	init() {
 		const { field, input } = this;
@@ -30,7 +32,7 @@ export default class Text extends Wrapper {
 			)
 		);
 
-		field.trigger(EVENT_FIELD_INPUT, this.value);
+		//field.trigger(EVENT_FIELD_INPUT, this.value);
 	}
 
 	set readonly(readonly) {
@@ -65,7 +67,8 @@ export default class Text extends Wrapper {
 	}
 
 	updatedValue(value) {
+		const currentValue =  this.input.val();
 		if (this.field.value != this.value)
-			this.input.val(value ? value : null);
+			this.input.val(value ? value : currentValue);
 	}
 }

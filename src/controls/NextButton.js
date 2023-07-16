@@ -1,6 +1,6 @@
-import { NODENAMES } from "../Constants";
+import { NODENAME_CONTROL_NEXT } from "../Constants";
 import FormButton from "../FormButton";
-import defineElement from "../utils/DefineElement";
+import { define } from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = [];
 class NextButton extends FormButton {
@@ -9,7 +9,7 @@ class NextButton extends FormButton {
 	}
 	
 	static get NODENAME() {
-		return NODENAMES.NextButton;
+		return NODENAME_CONTROL_NEXT;
 	}
 
 	constructor() {
@@ -21,4 +21,4 @@ class NextButton extends FormButton {
 	}
 }
 export default NextButton;
-defineElement(NextButton);
+define(NextButton);

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="boostrap.addons.css" />
+		<link rel="stylesheet" type="text/css" href="form.css" />
+	</head>
+	<body>
+		<div class="container">
+			<h1>User Registration</h1>
+			<d-form use-summary-page>
+				<d-page>
+					<h3>page 1</h3>					
+					<d-field name="input" required>
+						<input/>
+						<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+						<d-message condition="${field1 == 'message'}">test message</d-message>
+					</d-field>
+				</d-page>
+				
+	
+				<d-control>
+					<d-control-back>back</d-control-back>
+					<d-control-next>next</d-control-next>
+					<d-control-summary>sumary</d-control-summary>
+					<d-control-submit>submit</d-control-submit>
+				</d-control>
+			</d-form>
+		</div>
+		<div>
+			<button id="load" onclick="loadData()">load data</button>
+		</div>
+
+		<script type="application/javascript" src="/browser-defaultjs-html-form.js" async></script>
+		<script type="application/javascript" src="main.js" async></script>
+	</body>
+</html>

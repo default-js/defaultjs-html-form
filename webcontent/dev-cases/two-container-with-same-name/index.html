@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" type="text/css" href="/form.css" />
+	</head>
+	<body>
+		<template id="type-a">
+			<d-container name="data" condition="type == 'type-a'">
+				<div>type-a</div>
+				<d-field name="value" required>
+					<input type="text">
+				</d-field>
+			</d-container>					
+		</template>
+		<template id="type-b">					
+			<d-container name="data" condition="type == 'type-b'">
+				<div>type-b</div>
+				<d-field name="value" required>
+					<input type="text">
+				</d-field>
+			</d-container>						
+		</template>					
+		<div>
+			<d-form class="form-horizontal" >
+				<d-page step="page">
+						<d-field name="type" required>
+							<div><label>type</label></div>								
+							<div><select>
+								<option>type-a</option>
+								<option>type-b</option>
+							</select></div>
+							
+						</d-field>
+						<d-renderer template="#type-a"></d-renderer>
+						<d-renderer template="#type-b"></d-renderer>
+						
+					</d-page>
+				<d-control>
+					<d-control-back class="btn btn-primary">back</d-control-back>
+					<d-control-next class="btn btn-primary">next</d-control-next>
+					<d-control-summary class="btn btn-primary">sumary</d-control-summary>
+					<d-control-submit class="btn btn-primary">submit</d-control-submit>
+				</d-control>
+			</d-form>
+		</div>
+		<div>
+			<button id="load" onclick="loadData()">load data</button>
+		</div>
+
+		<script type="application/javascript" src="/browser-defaultjs-html-form.js"></script>
+		<script type="application/javascript" src="browser-defaultjs-html-renderer.min.js"></script>
+		<script type="application/javascript" src="main.js"></script>
+	</body>
+</html>

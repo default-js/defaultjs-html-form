@@ -1,20 +1,10 @@
-import { 
-	EVENT_FIELD_INITIALIZED,
-	EVENT_CONDITION_STATE_CHANGED,
-	EVENT_EXECUTE_VALIDATE,
-	EVENT_ALL_PUBLISH_VALUE,
-	EVENT_VALUE_CHANGED,
-	ATTRIBUTE_NAME, 
-	ATTRIBUTE_REQUIRED, 
-	ATTRIBUTE_NOVALUE } from "./Constants";
+import { EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED, EVENT_CONDITION_STATE_CHANGED, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE } from "./Constants";
 import Base from "./Base";
-import Validator from "./Validator";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-
+import { dataIsNoValue } from "./utils/ValueHelper";
 
 const _parent = privatePropertyAccessor("parent");
 export const _value = privatePropertyAccessor("value");
-const _validator = privatePropertyAccessor("validator");
 
 const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE];
 
@@ -37,64 +27,35 @@ class BaseField extends Base {
 		return ATTRIBUTES.concat(Base.observedAttributes);
 	}
 
-	constructor(value = null) {
-		super();
-		_value(this, value);
-
-		this.on(EVENT_CONDITION_STATE_CHANGED, (event) => {
-			if (event.target == this) {
-				this.conditionUpdated();
-			}
-		});
+	constructor(options = {}) {
+		super(options);
+		const {value} = options;
+		_value(this, value || null);		
 	}
 
-	async init() {		
+	async init(){
+		this.ready.then(() => this.trigger(EVENT_FIELD_INITIALIZED));
 		await super.init();
-		const ready = this.ready;		
-		if (!ready.resolved) {
-			_parent(this, findParentField(this));
-			_validator(this, new Validator(this));			
-			
-			this.form.on(EVENT_EXECUTE_VALIDATE, async (event) => {
-				const chain = event.detail;
-				if (chain.indexOf(this) < 0) {
-					const current = this.valid;
-					const valid = await this.validate();
-					const condition = this.condition;
-					if (current != valid && condition) {
-						this.publishValue();
-					}
-				}
-			});
-
-			this.form.on(EVENT_ALL_PUBLISH_VALUE, () => {
-				this.publishValue();
-			});
-
-			ready.then(() => {
-				this.trigger(EVENT_FIELD_INITIALIZED);
-			});
-		}
-
-		ready.then(async () => {
-			await this.validate();			
-			await this.publishValue();
-		});
 	}
 
-	get validator() {
-		return _validator(this);
+	async destroy() {		
+		this.publishValue(null);
+		await super.destroy();
+		this.trigger(EVENT_FIELD_REMOVED);
 	}
 
 	get parentField() {
-		return _parent(this);
+		let parent = _parent(this);
+		if (!parent) {
+			parent = findParentField(this);
+			_parent(this, parent);
+		}
+		return parent;
 	}
 
-	conditionUpdated() {
+	async conditionUpdated() {
 		this.active = this.condition;
-		(async () => {
-			this.publishValue();
-		})();
+		return this.publishValue();
 	}
 
 	get name() {
@@ -106,40 +67,73 @@ class BaseField extends Base {
 	}
 
 	get hasValue() {
-		const value = _value(this);
-		return value != null && typeof value !== "undefined";
+		return !this.hasAttribute(ATTRIBUTE_NOVALUE);
 	}
 
 	async value(value) {
-		if (arguments.length == 0) return _value(this);
+		const {condition, valid, ready} = this;
+		//console.log(`${this.nodeName}(${this.name}).value: `, arguments, {condition, valid});
 
-		await this.ready;
+		if (arguments.length == 0)
+			return  !condition || !valid ? null : _value(this);		
+		
+		await ready;
 		const currentValue = _value(this);
 
 		if (await this.acceptValue(value)) {
-			value = await this.normalizeValue(value);
-			if (currentValue != value) {
-				_value(this, value);
-				await this.updatedValue(value);				
-				await this.validate();
-				await this.publishValue();
+			value = await this.normalizeValue(value) || value;
+			if (currentValue != value) {				
+				const result = await this.updatedValue(value);				
+				if(typeof result !== "undefined")
+					value = result;
+				await this.publishValue(value);
 			}
 		}
 	}
 
-	async validate() {
-		updateHasValue(this.hasValue, this);
-		if (!this.validator) return false;
+	async validate(data){
+		const currentCondition = this.condition;
+		const currentValid = this.valid;
+		const valid = await super.validate(data);
+		const condition = this.condition;
+		this.validationStateChanged(currentCondition != condition,  currentValid != valid);
 
-		const valid = await this.validator.validate();		
 		return valid;
 	}
 
-	async publishValue(chain = []) {
+	async validationStateChanged(conditionChange, validationChanged){
+		const hasChange = conditionChange || validationChanged;
+		if(hasChange)
+			this.publishValue();
+	}
+
+	async updatedValue(value) { 
+		return value;
+	}
+
+	async publishValue(value) {
+		//console.log(`call ${this.nodeName}(${this.name}).publishValue:`, {arguments: arguments.length, value});
 		await this.ready;
-		chain.push(this);
-		if (this.parentField) await this.parentField.childValueChanged(this, chain);
-		else this.trigger(EVENT_VALUE_CHANGED, chain);
+		if(arguments.length == 0)
+			value = _value(this);
+
+		//console.log("work with Value:", value)		
+		const noValue = dataIsNoValue(value);				
+		const condition = this.condition;
+		const required = this.required;
+		value = required && noValue ? null : value;		
+		
+		if(!condition)
+			value = null;
+		else
+			_value(this, value);
+
+		//console.log(`${this.nodeName}(${this.name}).publishValue:`, {required, condition, noValue, value});
+
+		updateHasValue(!noValue, this);
+
+		if (this.parentField) await this.parentField.childValueChanged(this, value);
+		else if(this.form) await this.form.childValueChanged(this, value);
 	}
 
 	async acceptValue(value) {
@@ -150,7 +144,6 @@ class BaseField extends Base {
 		return value;
 	}
 
-	async updatedValue() {}
-	async childValueChanged(child, chain) {}
+	async childValueChanged(field, value) {}
 }
 export default BaseField;

@@ -1,15 +1,15 @@
-import { NODENAMES } from "../Constants";
+import { NODENAME_CONTROL_BACK } from "../Constants";
 import FormButton from "../FormButton";
-import defineElement from "../utils/DefineElement";
+import { define } from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = [];
 class BackButton extends FormButton {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
-	
+
 	static get NODENAME() {
-		return NODENAMES.BackButton;
+		return NODENAME_CONTROL_BACK;
 	}
 
 	constructor() {
@@ -21,4 +21,4 @@ class BackButton extends FormButton {
 	}
 }
 export default BackButton;
-defineElement(BackButton);
+define(BackButton);

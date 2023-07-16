@@ -1,25 +1,22 @@
-import { 
-	EVENT_FIELD_INPUT,
-	EVENTHANDLE_INPUT_TIMEOUT 
-} from "../Constants";
+import { EVENT_FIELD_INPUT, EVENTHANDLE_INPUT_TIMEOUT } from "../Constants";
 import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
 
-const INPUTSELECTOR = 'input:not([type="file"]):not([type="radio"]):not([type="checkbox"]) ,input:not([type]), textarea';
+const INPUTSELECTOR = 'input:not([type="file"],[type="radio"],[type="checkbox"],[type="button"],[type="submit"],[type="reset"]),input:not([type]), textarea';
 
 const DEFAULTTYPE = "text";
 
 const text = (input) => {
-	return 	{
+	return {
 		accept: (value) => {
-			return typeof value === "string"; 
+			return typeof value === "string";
 		},
 		getValue: () => {
 			return input.value;
 		},
 		setValue: (value) => {
-			return input.value = value; 
+			return (input.value = value);
 		},
 		normalize: (value) => {
 			if (value) {
@@ -28,10 +25,10 @@ const text = (input) => {
 			}
 
 			return null;
-		}
+		},
 	};
 };
-const number = (input) =>{
+const number = (input) => {
 	return {
 		accept: (value) => {
 			return typeof value === "number";
@@ -39,7 +36,7 @@ const number = (input) =>{
 		getValue: () => {
 			return input.valueAsNumber;
 		},
-		setValue: (value) =>{
+		setValue: (value) => {
 			input.valueAsNumber = value;
 		},
 		normalize: (value) => {
@@ -49,6 +46,26 @@ const number = (input) =>{
 		},
 	};
 };
+
+const datetime = (input) => {
+	return {
+		accept: (value) => {
+			return typeof value === "string";
+		},
+		getValue: () => {
+			return input.value;
+		},
+		setValue: (value) => {
+			input.value = value;
+		},
+		normalize: (value) => {
+			if (value) return value;
+
+			return null;
+		},
+	};
+};
+
 const date = (input) => {
 	return {
 		accept: (value) => {
@@ -67,7 +84,32 @@ const date = (input) => {
 		},
 	};
 };
-const TYPES = { text, number, date, time: date, range:number };
+
+const TIMEFORMAT = new Intl.DateTimeFormat("default",  {
+  hour: "numeric",
+  minute: "numeric"
+});
+
+
+const time = (input) => {
+	return {
+		accept: (value) => {
+			return value instanceof Date;
+		},
+		getValue: () => {
+			return input.value ? new Date(`1970-01-01T${input.value}`) : null;
+		},
+		setValue: (value) => {
+			input.value = TIMEFORMAT.format(value);
+		},
+		normalize: (value) => {
+			if (value) return value;
+
+			return null;
+		},
+	};
+};
+const TYPES = { text, number, datetime,  "datetime-locale": datetime, date, time, range: number };
 
 export default class Text extends Wrapper {
 	static findInput(field) {
@@ -90,7 +132,7 @@ export default class Text extends Wrapper {
 				},
 				false,
 				true,
-				EVENTHANDLE_INPUT_TIMEOUT
+				EVENTHANDLE_INPUT_TIMEOUT,
 			),
 		);
 
@@ -110,9 +152,8 @@ export default class Text extends Wrapper {
 	}
 
 	async updatedValue(value) {
-		const currentValue =  this.type.getValue();
-		if (value != currentValue)
-			this.type.setValue(value)
+		const currentValue = this.type.getValue();
+		if (value != currentValue) this.type.setValue(value);
 	}
 
 	set readonly(readonly) {

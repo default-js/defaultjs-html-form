@@ -1,0 +1,29 @@
+<d-form class="form-horizontal" >
+    <d-page step="page">
+            <d-field name="textfield" required>
+                <div><label>type</label></div>								
+                <div><input type="text"></div>
+            </d-field>
+            <d-list name="list"> 
+                <template>
+                    <d-row>
+                        <d-delete-row>delete</d-delete-row>
+                        <div>
+                            <d-field name="text" required>
+                                <div><label>textfield</label></div>								
+                                <div><input type="text" value="test"></div>
+                            </d-field>
+                        </div>
+                    </d-row>
+                </template>
+                <d-rows></d-rows>
+                <d-add-row>add</d-add-row>
+            </d-list>            
+        </d-page>
+    <d-control>
+        <d-control-back class="btn btn-primary">back</d-control-back>
+        <d-control-next class="btn btn-primary">next</d-control-next>
+        <d-control-summary class="btn btn-primary">sumary</d-control-summary>
+        <d-control-submit class="btn btn-primary">submit</d-control-submit>
+    </d-control>
+</d-form>

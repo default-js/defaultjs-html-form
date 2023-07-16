@@ -1,9 +1,11 @@
 import { 
-	NODENAMES,  
-	ATTRIBUTE_STEP 
+	NODENAME_PAGE,  
+	ATTRIBUTE_STEP, 
+	EVENT_PAGE_INITIALIZED,
+	EVENT_PAGE_REMOVED
 } from "./Constants";
+import { define } from "@default-js/defaultjs-html-components";
 import Container from "./Container";
-import defineElement from "./utils/DefineElement";
 
 const ATTRIBUTES = [ATTRIBUTE_STEP];
 
@@ -13,15 +15,17 @@ class Page extends Container {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.Page;
+		return NODENAME_PAGE;
+	}
+	
+	constructor(options) {
+		super(options);
+		this.ready.then(() => this.trigger(EVENT_PAGE_INITIALIZED));
 	}
 
-	constructor(value) {
-		super(value);
-	}
-
-	async init() {
-		await super.init();
+	async destroy(){
+		this.trigger(EVENT_PAGE_REMOVED);
+		await super.destroy();
 	}
 
 	get step(){
@@ -30,5 +34,5 @@ class Page extends Container {
 	
 	conditionUpdated(){}
 }
-defineElement(Page);
+define(Page);
 export default Page;

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="/css/style.css" />
+	</head>
+	<body>
+		<d-form use-summary-page>
+			<d-page>
+				<h3>page 1</h3>
+				<d-field name="text" required>
+					text:
+					<input value="" />
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="number" required>
+					number:
+					<input value="" type="number"/>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="email" required>
+					email:
+					<input value="" type="email"/>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="url" required>
+					url:
+					<input value="" type="url"/>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="date" required>
+					date:
+					<input value="" type="date"/>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="time" required>
+					time:
+					<input value="" type="time"/>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="month" required>
+					month:
+					<input value="" type="month"/>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="week" required>
+					week:
+					<input value="" type="week"/>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				
+				<d-field name="textarea" required>
+					<textarea></textarea>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="singleCheckbox" required>
+					<label><input type="checkbox"> checkbox</label>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="multiCheckbox" required>
+					<label><input type="checkbox" value="value-1">value-1</label>
+					<label><input type="checkbox" value="value-2">value-2</label>
+					<label><input type="checkbox" value="value-3">value-3</label>
+					<d-validation condition="${$value.length < 3}">invalid</d-validation>
+					<d-message condition="${$value.indexOf('value-2') >= 0}">test message</d-message>
+				</d-field>
+				<d-field name="radioinput" required>
+					<label><input type="radio" value="value-1">value-1</label>
+					<label><input type="radio" value="value-2">value-2</label>
+					<label><input type="radio" value="value-3">value-3</label>
+					<d-validation condition="${$value != 'value-2'}">invalid</d-validation>
+					<d-message condition="${$value == 'value-3'}">test message</d-message>
+				</d-field>
+				<d-field name="singlefile" file-format="base64" required>
+					singlefile:
+					<input type="file"/>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="multifile" file-format="base64" file-name-target=":scope > div" required>
+					multifile:
+					<input type="file" multiple/>
+					<div></div>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="select" required>
+					<select size="4">
+						<option value="">--Please choose an option--</option>
+						<option value="value-1">value-1</option>
+						<option value="value-2">value-2</option>
+						<option>value-3</option>
+					</select>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="selectMultiple" required>
+					<select multiple size="4">
+						<option value="">--Please choose an option--</option>
+						<option value="value-1">value-1</option>
+						<option value="value-2">value-2</option>
+						<option>value-3</option>
+					</select>
+					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+			</d-page>
+
+			<d-control>
+				<d-control-back>back</d-control-back>
+				<d-control-next>next</d-control-next>
+				<d-control-summary>sumary</d-control-summary>
+				<d-control-submit>submit</d-control-submit>
+			</d-control>
+		</d-form>
+
+
+		<div>
+			<button id="load" onclick="loadData()">load data</button>
+
+		</div>
+
+		<script type="application/javascript" src="/testFunctions.js" async></script>
+		<script type="application/javascript" src="/browser-defaultjs-html-form.js" async></script>
+		<script type="application/javascript" src="main.js" async></script>
+
+
+	</body>
+</html>

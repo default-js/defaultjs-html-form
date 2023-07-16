@@ -1,6 +1,6 @@
-import { NODENAMES } from "../Constants";
+import { NODENAME_CONTROL_SUBMIT } from "../Constants";
 import FormButton from "../FormButton";
-import defineElement from "../utils/DefineElement";
+import { define } from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = [];
 class SubmitButton extends FormButton {
@@ -9,7 +9,7 @@ class SubmitButton extends FormButton {
 	}
 
 	static get NODENAME() {
-		return NODENAMES.SubmitButton;
+		return NODENAME_CONTROL_SUBMIT;
 	}
 
 	constructor() {
@@ -20,4 +20,4 @@ class SubmitButton extends FormButton {
 	}
 }
 export default SubmitButton;
-defineElement(SubmitButton);
+define(SubmitButton);
