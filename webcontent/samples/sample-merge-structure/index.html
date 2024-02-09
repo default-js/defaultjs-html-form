@@ -14,6 +14,21 @@
 		<d-form class="form-horizontal" input-mode-after-submit> 
 		<d-page>
 			<h3>TEST</h3>
+			<d-container name="container">
+				<div class="col-xs-12">
+					<h3 class="control-label">container</h3>
+				</div>
+				<d-field name="field3">
+					<div class="form-group has-feedback">
+						<div class="col-xs-12">
+							<label class="control-label">field3</label>
+						</div>
+						<div class="col-xs-12">
+							<input type="text" class="form-control" />
+						</div>
+					</div>
+				</d-field>
+			</d-container>
 			<section>
 				<d-field name="container.field1">
 					<div class="form-group has-feedback">
@@ -27,16 +42,22 @@
 				</d-field>
 			</section>
 			<section>
-				<d-field name="container.field2">
-					<div class="form-group has-feedback">
-						<div class="col-xs-12">
-							<label class="control-label">container.field2</label>
-						</div>
-						<div class="col-xs-12">
-							<input type="text" class="form-control" />
-						</div>
+				<d-container>
+					<div class="col-xs-12">
+						<h3 class="control-label">virtual container</h3>
 					</div>
-				</d-field>
+					<d-field name="container.field2">
+						<div class="form-group has-feedback">
+							<div class="col-xs-12">
+								<label class="control-label">container.field2</label>
+							</div>
+							<div class="col-xs-12">
+								<input type="text" class="form-control" />
+							</div>
+						</div>
+					</d-field>
+				</d-container>
+				
 			</section>
 		</d-page> 
 			<d-control> <d-control-back class="btn btn-primary">back</d-control-back> 

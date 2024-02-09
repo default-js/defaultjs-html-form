@@ -2,10 +2,41 @@ import { SPECIALVARS, NODENAME_LIST_ROW } from "../Constants";
 import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { _value } from "../BaseField";
 
+/**
+* Performs a deep merge of objects and returns new object. Does not modify
+* objects (immutable) and merges arrays via concatenation.
+*
+* @param {...object} objects - Objects to merge
+* @returns {object} New object with merged key/values
+*/
+function mergeDeep(...objects) {
+	const isObject = obj => obj && typeof obj === 'object';
+	
+	return objects.reduce((prev, obj) => {
+	  Object.keys(obj).forEach(key => {
+		const pVal = prev[key];
+		const oVal = obj[key];
+		
+		if (Array.isArray(pVal) && Array.isArray(oVal)) {
+		  prev[key] = pVal.concat(...oVal);
+		}
+		else if (isObject(pVal) && isObject(oVal)) {
+		  prev[key] = mergeDeep(pVal, oVal);
+		}
+		else {
+		  prev[key] = oVal;
+		}
+	  });
+	  
+	  return prev;
+	}, {});
+  }
+
+
 export const updateData = async (data, name, value) => {
 	if (!noValue(value)) {
 		if (name) valueHelper(data, name, value);
-		else Object.assign(data, value);
+		else data = mergeDeep(data, value);
 	}
 	return data;
 };
@@ -69,13 +100,13 @@ export const valueHelper = function (data, name, value) {
 
 const setValue = (remove, data, value, names) => {
 	if (noValue(data) && remove) return null;
-
+	
 	const name = names.shift();
 	if (names.length == 0) {
 		if (remove) delete data[name];
 		else data[name] = value;
 	} else {
-		if (noValue(data[name])) data[name] = {};
+		data[name] = data[name] || {};
 		setValue(remove, data[name], value, names);
 	}
 
