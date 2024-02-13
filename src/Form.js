@@ -1,4 +1,4 @@
-import { NODENAME_FORM, NODENAME_PAGE, EVENT_INITIALIZED, EVENT_PAGE_INITIALIZED, EVENT_PAGE_REMOVED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED, EVENT_SUBMIT, EVENT_SUBMIT_RESULTS, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT, FORMSTATE_INPUT, FORMSTATE_SUMMARY, FORMSTATE_VALIDATING, FORMSTATE_INIT, FORMSTATE_FINISHED } from "./Constants";
+import { NODENAME_FORM, NODENAME_PAGE, EVENT_INITIALIZED, EVENT_PAGE_INITIALIZED, EVENT_PAGE_REMOVED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED, EVENT_SUBMIT, EVENT_SUBMIT_RESULTS, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT, FORMSTATE_INPUT, FORMSTATE_SUMMARY, FORMSTATE_VALIDATING, FORMSTATE_INIT, FORMSTATE_FINISHED, EVENT_INTERNAL_START_VALIDATION, EVENT_INTERNAL_FINISH_VALIDATION } from "./Constants";
 import { Component, define } from "@default-js/defaultjs-html-components";
 import "./Message";
 import "./Message";
@@ -12,6 +12,7 @@ import DefaultFormSubmitAction from "./submitActions/DefaultFormSubmitAction";
 import SubmitActionResult, { STATE_FAIL as ACTION_SUBMIT_STATE_FAIL, STATE_SUCCESS as ACTION_SUBMIT_STATE_SUCCESS } from "./submitActions/SubmitActionResult";
 import { valueHelper, fieldValueMapToObject } from "./utils/DataHelper";
 import { validateFields } from "./utils/ValidationHelper";
+import { PromiseUtils } from "@default-js/defaultjs-common-utils";
 
 const _submitActions = privatePropertyAccessor("submitAction");
 
@@ -57,11 +58,11 @@ class Form extends Component {
 	#value = new Map();
 	#data = {};
 	#validation = null;
-	#hasNextValidation = false;
 
 	constructor() {
 		super();
 		const root = this.root;
+		
 		root.on(EVENT_PAGE_INITIALIZED, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
@@ -261,26 +262,31 @@ class Form extends Component {
 	}
 
 	#validate(page) {
-		if (this.state == FORMSTATE_INPUT) {
-			this.state = FORMSTATE_VALIDATING;
-			return (this.#validation = new Promise((resolved) => {
-				setTimeout(async () => {
-					const data = this.#data;//await fieldValueMapToObject(this.#value);
-					
-					const valid = page ? page.validate(data) : await validateFields(data, this.pages);
+			let promise = PromiseUtils.lazyPromise();
+			const action = async () => {
+				const data = this.#data;//await fieldValueMapToObject(this.#value);
+						
+				const valid = page ? await page.validate(data) : await validateFields(data, this.pages);			
+				
+				promise.resolve(valid);
+				
+				if (this.#validation == promise) {
+					this.state = FORMSTATE_INPUT;
+					this.validation = null;					
+				}
+			};
 
-					if (!this.#hasNextValidation) this.state = FORMSTATE_INPUT;
+			
+			if(this.#validation == null){
+				setTimeout(action, 10);				
+				this.state = FORMSTATE_VALIDATING;
+			}
+			else 	
+				this.#validation.then(action);
 
-					this.validation = null;
-					resolved(valid);
-				}, 10);
-			}));
-		} else if (this.state == FORMSTATE_VALIDATING) {
-			this.#validation.then(async () => {
-				this.#hasNextValidation = false;
-				await this.#validate(page);
-			});
-		}
+			this.#validation = promise;
+			return promise;
+		
 	}
 
 	async childValueChanged(field, value) {

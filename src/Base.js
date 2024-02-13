@@ -1,14 +1,4 @@
-import { NODENAME_FORM, 
-	ATTRIBUTE_ACTIVE, 
-	ATTRIBUTE_READONLY, 
-	ATTRIBUTE_EVALUATE,
-	ATTRIBUTE_CONDITION, 
-	ATTRIBUTE_CONDITION_VALID, 
-	ATTRIBUTE_CONDITION_INVALID, 
-	ATTRIBUTE_VALID, 
-	ATTRIBUTE_EDITABLE_CONDITION, 
-	ATTRIBUTE_EDITABLE
-} from "./Constants";
+import { NODENAME_FORM, ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_EVALUATE, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_VALID, ATTRIBUTE_EDITABLE_CONDITION, ATTRIBUTE_EDITABLE, EVENT_INTERNAL_START_VALIDATION, EVENT_INTERNAL_FINISH_VALIDATION } from "./Constants";
 import Component from "@default-js/defaultjs-html-components/src/Component";
 import ConditionHandle from "./handels/ConditionHandle";
 import EditableHandle from "./handels/EditableHandle";
@@ -17,9 +7,7 @@ import MessageHandle from "./handels/MessageHandle";
 import { evaluationData } from "./utils/DataHelper";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { updateActiveState, updateConditionState, updateEditableState, updateReadonlyState, updateValidState } from "./utils/StateHelper";
-
-
-
+import { UUID } from "@default-js/defaultjs-common-utils";
 
 const _form = privatePropertyAccessor("form");
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_EDITABLE_CONDITION];
@@ -28,7 +16,7 @@ class Base extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
 	}
-	
+
 	#conditionHandle;
 	#editableHandle;
 	#validationHandle;
@@ -46,7 +34,7 @@ class Base extends Component {
 		this.#validationHandle.addCustomValidation(validation);
 	}
 
-	async validate(data) {		
+	async validate(data) {
 		//console.log(`${this.nodeName}(${this.name}).validate:`, data)
 		this.attr(ATTRIBUTE_EVALUATE, "");
 		const context = Object.assign({}, data, await evaluationData(this));
@@ -56,7 +44,7 @@ class Base extends Component {
 		this.attr(ATTRIBUTE_EVALUATE, null);
 
 		await this.#messageHandle.validate(context);
-
+		
 		return this.valid;
 	}
 
@@ -88,10 +76,8 @@ class Base extends Component {
 	}
 
 	set readonly(readonly) {
-		if(!this.editable)
-			updateReadonlyState(this, true, !this.ready.resolved);
-		else
-			updateReadonlyState(this, readonly, !this.ready.resolved);
+		if (!this.editable) updateReadonlyState(this, true, !this.ready.resolved);
+		else updateReadonlyState(this, readonly, !this.ready.resolved);
 		this.readonlyUpdated();
 	}
 
@@ -103,14 +89,13 @@ class Base extends Component {
 
 	set editable(editable) {
 		updateEditableState(this, editable, !this.ready.resolved);
-		this.editableUpdated();		
+		this.editableUpdated();
 		this.readonly = !editable;
 	}
 
-	async editableUpdated() {
-	}
+	async editableUpdated() {}
 
-	set condition(condition){
+	set condition(condition) {
 		updateConditionState(this, condition);
 		this.conditionUpdated();
 	}
@@ -121,7 +106,7 @@ class Base extends Component {
 
 	async conditionUpdated() {}
 
-	set valid(valid){
+	set valid(valid) {
 		updateValidState(this, valid);
 		this.validUpdated();
 	}
@@ -130,7 +115,7 @@ class Base extends Component {
 		return this.hasAttribute(ATTRIBUTE_VALID);
 	}
 
-	async validUpdated(){}
+	async validUpdated() {}
 }
 
 export default Base;

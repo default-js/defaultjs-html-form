@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="boostrap.addons.css" />
+		<link rel="stylesheet" type="text/css" href="form.css" />
+		<style>
+			d-form {
+				position: relative;
+				
+			}
+			.loader {				
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				z-index: 1000;
+				display: flex;
+				isolation: isolate;
+				background-color: transparent;
+			}
+			.loader-backdrop{
+				background-color: black;
+				opacity: .5;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				z-index: auto;
+				pointer-events: none;
+			}
+			.loader-content {
+				background-color: white;
+				margin: auto;
+				padding: .5rem 1rem;
+				min-width: 20ch;
+				height: 3rem;
+				z-index: 1000;
+
+				text-align: center;
+
+				border: .125rem solid darkgray;
+				border-radius: 1rem;
+			}
+			d-form:not([state=validating]) .loader {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>keep input mode after submit</h1>
+			<d-form class="form-horizontal" input-mode-after-submit>
+				<div class="loader overlay">
+					<div class="loader-backdrop"></div>
+					<div class="loader-content">
+						run form validation ...
+					</div>
+				</div>
+				<d-page>
+					<h3>TEST</h3>
+					<d-container name="container">
+						<div class="col-xs-12">
+							<h3 class="control-label">container</h3>
+						</div>
+						<d-field name="field3">
+							<div class="form-group has-feedback">
+								<div class="col-xs-12">
+									<label class="control-label">field3</label>
+								</div>
+								<div class="col-xs-12">
+									<input type="text" class="form-control" />
+								</div>
+							</div>
+						</d-field>
+					</d-container>
+					<section>
+						<d-field name="container.field1">
+							<div class="form-group has-feedback">
+								<div class="col-xs-12">
+									<label class="control-label">container.field1</label>
+								</div>
+								<div class="col-xs-12">
+									<input type="text" class="form-control" />
+									<d-validation condition="new Promise((r) =&gt; {setTimeout(() =&gt;{r(true);},1000);})">timeout validation</d-validation>
+								</div>
+							</div>
+						</d-field>
+					</section>
+					<section>
+						<d-container>
+							<div class="col-xs-12">
+								<h3 class="control-label">virtual container</h3>
+							</div>
+							<d-field name="container.field2">
+								<div class="form-group has-feedback">
+									<div class="col-xs-12">
+										<label class="control-label">container.field2</label>
+									</div>
+									<div class="col-xs-12">
+										<input type="text" class="form-control" />
+									</div>
+								</div>
+							</d-field>
+						</d-container>
+					</section>
+				</d-page>
+				<d-control>
+					<d-control-back class="btn btn-primary">back</d-control-back>
+					<d-control-next class="btn btn-primary">next</d-control-next>
+					<d-control-summary class="btn btn-primary">sumary</d-control-summary>
+					<d-control-submit class="btn btn-primary">submit</d-control-submit>
+				</d-control>
+			</d-form>
+		</div>
+
+		<script type="application/javascript" src="/browser-defaultjs-html-form.js"></script>
+		<script type="application/javascript" src="main.js"></script>
+	</body>
+</html>
