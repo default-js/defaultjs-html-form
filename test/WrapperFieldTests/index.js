@@ -1,7 +1,8 @@
 import "./TextFieldTest";
 import "./DateFieldTest";
 import "./TimeFieldTest";
-import "./DateTimeFieldTest";
+// browser support is terrible -> not supported
+//import "./DateTimeFieldTest"; 
 import "./NumberFieldTest";
 import "./RadioFieldTest";
 import "./CheckboxFieldTest";

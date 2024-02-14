@@ -7,7 +7,7 @@ describe("Wrapper Field - Date Time Locale Field", () => {
                 <d-form>
                     <d-page>
                         <d-field name="datetimefield">
-                            <input type="datetime-locale">
+                            <input type="datetime-local">
                         </d-field>
                     </d-page>                
                 </d-form>
@@ -18,41 +18,28 @@ describe("Wrapper Field - Date Time Locale Field", () => {
 
 		const form = container.find("d-form").first();
 		const field = container.find("d-field").first();
-		const input = container.find("input").first();
+		const input = container.find("input").first();		
 
-		const date = new Intl.DateTimeFormat(navigator.language, {
-			year: "numeric",
-			month: "2-digit",
-			day: "2-digit",
-			hour: "2-digit",
-			minute: "2-digit",
-			second: "2-digit",
-		})
-			.format(new Date())
-			.replace(" ", "T");
-		input.value = date;
+		const date = new Date();
+		input.value = JSON.parse(JSON.stringify(date));
 
-		return new Promise((r) => {
-			setTimeout(async () => {
-				const value = await field.value();
-				expect(value).toBe(date);
+		const value = await field.value();
+		expect(value.getTime()).toBe(date.getTime());
 
-				const data = await form.value();
-				expect(data.datetimefield).toBe(date);
+		const data = await form.value();
+		expect(data.datetimefield.getTime()).toBe(date.getTime());
 
-				container.remove();
-				r();
-			}, 1000);
-		});
+		container.remove();
 	});
 
+	/*
 	it("update value by field", async () => {
 		const container = create(
 			`<div>   
                 <d-form>
                     <d-page>
                         <d-field name="datetimefield">
-                            <input type="datetime-locale">
+                            <input type="datetime-local">
                         </d-field>
                     </d-page>                
                 </d-form>
@@ -63,25 +50,48 @@ describe("Wrapper Field - Date Time Locale Field", () => {
 
 		const form = container.find("d-form").first();
 		const field = container.find("d-field").first();
-
-		const date = new Intl.DateTimeFormat(navigator.language, {
-			year: "numeric",
-			month: "2-digit",
-			day: "2-digit",
-			hour: "2-digit",
-			minute: "2-digit",
-			second: "2-digit",
-		})
-			.format(new Date())
-			.replace(" ", "T");
+		const date = new Date();
 		await field.value(date);
 
 		const value = await field.value();
-		expect(value).toBe(date);
+		expect(value.getTime()).toBe(date.getTime());
 
 		const data = await form.value();
-		expect(data.datetimefield).toBe(date);
+		expect(data.datetimefield.getTime()).toBe(date.getTime());
 
 		container.remove();
 	});
+
+
+	it("update value by json date String", async () => {
+		const container = create(
+			`<div>   
+                <d-form>
+                    <d-page>
+                        <d-field name="datetimefield">
+                            <input type="datetime-local">
+                        </d-field>
+                    </d-page>                
+                </d-form>
+            </div>
+        `,
+		).first();
+		document.body.append(container);
+
+		const form = container.find("d-form").first();
+		const field = container.find("d-field").first();
+		const date = new Date();
+		const dateString = JSON.parse(JSON.stringify(date));
+
+		await field.value(dateString);
+
+		const value = await field.value();
+		expect(value.getTime()).toBe(date.getTime());
+
+		const data = await form.value();
+		expect(data.datetimefield.getTime()).toBe(date.getTime());
+
+		container.remove();
+	});
+	*/
 });

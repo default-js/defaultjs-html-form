@@ -64,8 +64,9 @@ class Field extends BaseField {
 			const current = wrapper.value || null;
 			if(current != value)
 				await wrapper.updatedValue(value);
+			
+			await super.updatedValue(wrapper.value);
 		}
-		await super.updatedValue(value);
 	}
 
 	async validationStateChanged(conditionChange, validationChanged){		

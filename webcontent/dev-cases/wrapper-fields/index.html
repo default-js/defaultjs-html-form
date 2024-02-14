@@ -19,13 +19,13 @@
 				<d-field name="number" required>
 					number:
 					<input value="" type="number"/>
-					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-validation condition="${$value != 1}">invalid</d-validation>
 					<d-message condition="${$value == 'message'}">test message</d-message>
 				</d-field>
 				<d-field name="email" required>
 					email:
 					<input value="" type="email"/>
-					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
+					<d-validation condition="${$value != 'test@test.de'}">invalid</d-validation>
 					<d-message condition="${$value == 'message'}">test message</d-message>
 				</d-field>
 				<d-field name="url" required>
@@ -37,26 +37,26 @@
 				<d-field name="date" required>
 					date:
 					<input value="" type="date"/>
-					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
-					<d-message condition="${$value == 'message'}">test message</d-message>
 				</d-field>
 				<d-field name="time" required>
 					time:
 					<input value="" type="time"/>
-					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
-					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="datetime" required>
+					datetime:
+					<input value="" type="datetime"/>
+				</d-field>
+				<d-field name="datetimelocal" required>
+					datetime-local:
+					<input value="" type="datetime-local" autocomplete="off"/>
 				</d-field>
 				<d-field name="month" required>
 					month:
 					<input value="" type="month"/>
-					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
-					<d-message condition="${$value == 'message'}">test message</d-message>
 				</d-field>
 				<d-field name="week" required>
 					week:
 					<input value="" type="week"/>
-					<d-validation condition="${$value != 'valid'}">invalid</d-validation>
-					<d-message condition="${$value == 'message'}">test message</d-message>
 				</d-field>
 				
 				<d-field name="textarea" required>

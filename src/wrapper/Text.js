@@ -50,16 +50,16 @@ const number = (input) => {
 const datetime = (input) => {
 	return {
 		accept: (value) => {
-			return typeof value === "string";
+			return value instanceof Date || typeof value === "string" || typeof value === "number";
 		},
 		getValue: () => {
-			return input.value;
+			return input.valueAsDate;
 		},
 		setValue: (value) => {
-			input.value = value;
+			input.valueAsDate = value;
 		},
 		normalize: (value) => {
-			if (value) return value;
+			if (value) return value instanceof Date ? value : new Date(value);
 
 			return null;
 		},
@@ -69,7 +69,7 @@ const datetime = (input) => {
 const date = (input) => {
 	return {
 		accept: (value) => {
-			return value instanceof Date;
+			return value instanceof Date || typeof value === "string" || typeof value === "number";
 		},
 		getValue: () => {
 			return input.valueAsDate;
@@ -78,7 +78,7 @@ const date = (input) => {
 			input.valueAsDate = value;
 		},
 		normalize: (value) => {
-			if (value) return value;
+			if (value) return value instanceof Date ? value : new Date(value);
 
 			return null;
 		},
@@ -109,7 +109,7 @@ const time = (input) => {
 		},
 	};
 };
-const TYPES = { text, number, datetime,  "datetime-locale": datetime, date, time, range: number };
+const TYPES = { text, number, datetime:date, "datetime-local": date, date, time, range: number };
 
 export default class Text extends Wrapper {
 	static findInput(field) {
