@@ -120,7 +120,7 @@ export default class Text extends Wrapper {
 		super(field, input);
 	}
 
-	init() {
+	init() {		
 		const { field, input } = this;
 		const type = (field.attr("input-type") || input.attr("type") || DEFAULTTYPE).trim().toLowerCase();
 		this.type = (TYPES[type] || TYPES[DEFAULTTYPE])(input);
