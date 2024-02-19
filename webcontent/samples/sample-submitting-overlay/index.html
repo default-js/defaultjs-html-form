@@ -43,7 +43,7 @@
 				border: .125rem solid darkgray;
 				border-radius: 1rem;
 			}
-			d-form:not([state=validating]) .loader {
+			d-form:not([state="validating"], [state="submitting"]) .loader{
 				display: none;
 			}
 		</style>
@@ -83,7 +83,7 @@
 								</div>
 								<div class="col-xs-12">
 									<input type="text" class="form-control" />
-									<d-validation condition="new Promise((r) =&gt; {setTimeout(() =&gt;{r(true);},1000);})">timeout validation</d-validation>
+									<d-validation condition="new Promise((r) =&gt; {setTimeout(() =&gt;{r(true);},10);})">timeout validation</d-validation>
 								</div>
 							</div>
 						</d-field>
@@ -112,6 +112,10 @@
 					<d-control-summary class="btn btn-primary">sumary</d-control-summary>
 					<d-control-submit class="btn btn-primary">submit</d-control-submit>
 				</d-control>
+				<test-action></test-action>
+				<test-action></test-action>
+				<test-action></test-action>
+				<test-action></test-action>
 			</d-form>
 		</div>
 

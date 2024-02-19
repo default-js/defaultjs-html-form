@@ -33,12 +33,14 @@ export const FORMSTATE_INIT = "init";
 export const FORMSTATE_VALIDATING = "validating";
 export const FORMSTATE_INPUT = "input";
 export const FORMSTATE_SUMMARY = "summary";
+export const FORMSTATE_SUBMITTING = "submitting";
 export const FORMSTATE_FINISHED = "finished";
 export const FORMSTATES = {
 	init: FORMSTATE_INIT,
 	validating: FORMSTATE_VALIDATING,
 	input: FORMSTATE_INPUT,
 	summary: FORMSTATE_SUMMARY,
+	submitting: FORMSTATE_SUBMITTING,
 	finished: FORMSTATE_FINISHED,
 };
 
