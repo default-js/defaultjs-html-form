@@ -6,7 +6,6 @@ import Page from "./Page";
 import "./Control";
 import "./ProgressBar";
 import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
-import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import BaseSubmitAction from "./submitActions/BaseSubmitAction";
 import DefaultFormSubmitAction from "./submitActions/DefaultFormSubmitAction";
 import SubmitActionResult, { STATE_FAIL as ACTION_SUBMIT_STATE_FAIL, STATE_SUCCESS as ACTION_SUBMIT_STATE_SUCCESS } from "./submitActions/SubmitActionResult";
@@ -14,7 +13,6 @@ import { valueHelper, fieldValueMapToObject } from "./utils/DataHelper";
 import { validateFields } from "./utils/ValidationHelper";
 import { PromiseUtils } from "@default-js/defaultjs-common-utils";
 
-const _submitActions = privatePropertyAccessor("submitAction");
 
 const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT];
 
@@ -43,6 +41,13 @@ const executeActions = async (actions, data) => {
 	return results;
 };
 
+/**
+ * form class
+ *
+ * @class Form
+ * @typedef {Form}
+ * @extends {Component}
+ */
 class Form extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
@@ -58,7 +63,13 @@ class Form extends Component {
 	#value = new Map();
 	#data = {};
 	#validation = null;
+	#submitActions = null;
 
+	/**
+	 * Creates an instance of Form.
+	 *
+	 * @constructor
+	 */
 	constructor() {
 		super();
 		const root = this.root;
@@ -80,6 +91,12 @@ class Form extends Component {
 		this.ready.then(() => this.trigger(EVENT_INITIALIZED));
 	}
 
+	/**
+	 * init form component
+	 *
+	 * @async
+	 * @returns {Promise<void>}
+	 */
 	async init() {
 		await super.init();
 		if (!this.#initialized) {
@@ -95,16 +112,31 @@ class Form extends Component {
 		}
 	}
 
+	/**
+	 * get pages of form
+	 *
+	 * @readonly
+	 * @type {Page[]}
+	 */
 	get pages() {
 		if (!this.#pages) this.#pages = Array.from(this.root.find(NODENAME_PAGE));
 
 		return this.#pages;
 	}
 
+	/**
+	 * form state
+	 *
+	 * @type {string}
+	 */
 	get state() {
 		return this.#state;
 	}
 
+	
+	/**
+	 * form state
+	 */
 	set state(state) {
 		const actual = this.#state;
 		if (state != FORMSTATE_VALIDATING) {
@@ -120,18 +152,35 @@ class Form extends Component {
 		this.attr(ATTRIBUTE_STATE, state);
 	}
 
+	/**
+	 * is form valid
+	 * 
+	 * @readonly
+	 * @type {boolean}
+	 */
 	get valid() {
 		for (let page of this.pages) if (page.condition && !page.valid) return false;
 
 		return true;
 	}
 
+	/**
+	 * get or set value of form
+	 *
+	 * @async
+	 * @param {?object} data - form data
+	 * @returns {Promise<object>|Promise<void>}
+	 * 
+	 * @example 
+	 * await form.value() // returns the current value of form
+	 * await form.value({test:"value"}) // set value to form
+	 * 
+	 */
 	async value(data) {
 		await this.ready;
 		if (this.#validation) await this.#validation;
 		if (arguments.length == 0) return this.#data;
 
-		console.log(data, this.state);
 		if (this.state == FORMSTATE_INPUT) {
 			await Promise.all(
 				this.pages.map((page) => {
@@ -153,12 +202,22 @@ class Form extends Component {
 		}
 	}
 
+	/**
+	 * get current active page
+	 *
+	 * @type {Page}
+	 */
 	get activePage() {
 		if (0 <= this.activePageIndex && this.activePageIndex < this.pages.length) return this.pages[this.activePageIndex];
-
+		
 		return null;
 	}
 
+	/**
+	 * set current active page
+	 * 
+	 * @type {Page}
+	 */
 	set activePage(page) {
 		const current = this.activePage;
 		if (page != current || this.state != FORMSTATE_INPUT) {
@@ -167,11 +226,18 @@ class Form extends Component {
 			page.active = true;
 			if (this.state != FORMSTATE_INPUT) this.state = FORMSTATE_INPUT;
 
-			this.scrollIntoView();
+			if(current)
+				this.scrollIntoView();
 			this.trigger(EVENT_SITE_CHANGED);
 		}
 	}
 
+	/**
+	 * first valid previous page of current active page
+	 *
+	 * @readonly
+	 * @type {Page}
+	 */
 	get prevPage() {
 		return (async () => {
 			const pages = this.pages;
@@ -186,6 +252,12 @@ class Form extends Component {
 		})();
 	}
 
+	/**
+	 * get next valid page of current active page
+	 * 
+	 * @readonly
+	 * @type {Page}
+	 */
 	get nextPage() {
 		return (async () => {
 			const pages = this.pages;
@@ -201,6 +273,12 @@ class Form extends Component {
 		})();
 	}
 
+	/**
+	 * change active page to first valid previous page
+	 *
+	 * @async
+	 * @returns {Promise<void>}
+	 */
 	async toPrevPage() {
 		if (this.state != FORMSTATE_INPUT) {
 			this.state = FORMSTATE_INPUT;
@@ -210,6 +288,12 @@ class Form extends Component {
 		}
 	}
 
+	/**
+	 * change active page to next vaild page
+	 *
+	 * @async
+	 * @returns {Promise<void>}
+	 */
 	async toNextPage() {
 		const next = await this.nextPage;
 		if (next) {
@@ -222,14 +306,25 @@ class Form extends Component {
 		}
 	}
 
+	/**
+	 * switch form into summary state
+	 *
+	 * @async
+	 * @returns {Promise<void>}
+	 */
 	async summary() {
 		this.state = FORMSTATE_SUMMARY;
 	}
 
+	/**
+	 * get all form submit actions
+	 *
+	 * @readonly
+	 * @type {DefaultFormSubmitAction[]}
+	 */
 	get submitActions() {
-		let actions = _submitActions(this);
-		if (!actions) {
-			actions = [];
+		if (!this.#submitActions) {
+			const actions = [];
 			let endpoint = this.attr(ATTRIBUTE_ENDPOINT);
 			if (endpoint) {
 				const method = this.attr(ATTRIBUTE_METHOD) || "post";
@@ -240,12 +335,18 @@ class Form extends Component {
 			for (let child of childs) {
 				if (child instanceof BaseSubmitAction) actions.push(child);
 			}
-			_submitActions(this, actions);
+			this.#submitActions = actions;
 		}
 
-		return actions;
+		return this.#submitActions;
 	}
 
+	/**
+	 * submit form
+	 *
+	 * @async
+	 * @returns {Promise<void>}
+	 */
 	async submit() {
 		const currentState = this.state;
 		this.state = FORMSTATE_SUBMITTING;
@@ -263,7 +364,7 @@ class Form extends Component {
 
 		this.state = this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? currentState : FORMSTATE_FINISHED;
 	}
-	
+
 	async #validate(page) {
 		const promise = PromiseUtils.lazyPromise();
 		const action = async () => {

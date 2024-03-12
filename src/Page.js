@@ -9,6 +9,13 @@ import Container from "./Container";
 
 const ATTRIBUTES = [ATTRIBUTE_STEP];
 
+/**
+ * page class
+ *
+ * @class Page
+ * @typedef {Page}
+ * @extends {Container}
+ */
 class Page extends Container {
 	static get observedAttributes() {
 		return ATTRIBUTES.concat(Container.observedAttributes);

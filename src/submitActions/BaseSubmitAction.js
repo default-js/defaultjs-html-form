@@ -8,6 +8,13 @@ import { EVENT_INITIALIZE_SUBMIT_ACTION, NODENAME_FORM, ATTRIBUTE_CONDITION } fr
 const _form = privatePropertyAccessor("form");
 
 // logic
+/**
+ * BaseSubmitAction class
+ *
+ * @class BaseSubmitAction
+ * @typedef {BaseSubmitAction}
+ * @extends {Component}
+ */
 class BaseSubmitAction extends Component {
 	
 	static STATES = {

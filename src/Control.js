@@ -99,10 +99,10 @@ class Control extends Component {
 
 			if (hasNextPage || (!activePage.valid && activePageIndex + 1 < pages.length)) {
 				next.active = true;
-				next.disabled = !activePage.valid;
+				next.disabled = activePage ? !activePage.valid : true;
 			} else if (useSummaryPage && state == FORMSTATE_INPUT) {
 				summary.active = true;
-				summary.disabled = !activePage.valid;
+				summary.disabled = activePage ? !activePage.valid : true;
 			} else {
 				submit.active = true;
 				submit.disabled = !form.valid;

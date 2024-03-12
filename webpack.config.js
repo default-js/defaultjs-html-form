@@ -49,6 +49,7 @@ module.exports = (env, argv) => {
         })(),
         devServer: {
             open: true,
+			port: 3000,
 			allowedHosts: "all",
 			client: {
 				overlay: true,

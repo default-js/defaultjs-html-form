@@ -3,6 +3,14 @@ import { Component } from "@default-js/defaultjs-html-components";
 
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_DISABLED];
 
+/**
+ * basic form button class
+ * @date 3/13/2024 - 12:18:27 AM
+ *
+ * @class FormButton
+ * @typedef {FormButton}
+ * @extends {Component}
+ */
 class FormButton extends Component {
 	static get observedAttributes() {
 		return ATTRIBUTES;
