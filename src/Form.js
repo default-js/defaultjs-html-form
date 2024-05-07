@@ -265,7 +265,7 @@ class Form extends Component {
 			if (pages) {
 				for (let i = start; i < pages.length; i++) {
 					const page = pages[i];
-					await this.#validate(page);
+					await page.validate(this.#data);
 					if (page.condition) return page;
 				}
 			}
@@ -371,13 +371,13 @@ class Form extends Component {
 			const data = this.#data; //await fieldValueMapToObject(this.#value);
 
 			const valid = page ? await page.validate(data) : await validateFields(data, this.pages);
-
+		
 			promise.resolve(valid);
 
 			if (this.#validation == promise) {
 				this.state = FORMSTATE_INPUT;
 				this.#validation = null;
-			}
+			}	
 		};
 
 		if (this.#validation == null) {
