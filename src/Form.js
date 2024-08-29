@@ -5,13 +5,13 @@ import "./Message";
 import Page from "./Page";
 import "./Control";
 import "./ProgressBar";
-import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import ValueHelper, { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import BaseSubmitAction from "./submitActions/BaseSubmitAction";
 import DefaultFormSubmitAction from "./submitActions/DefaultFormSubmitAction";
 import SubmitActionResult, { STATE_FAIL as ACTION_SUBMIT_STATE_FAIL, STATE_SUCCESS as ACTION_SUBMIT_STATE_SUCCESS } from "./submitActions/SubmitActionResult";
 import { valueHelper, fieldValueMapToObject } from "./utils/DataHelper";
 import { validateFields } from "./utils/ValidationHelper";
-import { PromiseUtils } from "@default-js/defaultjs-common-utils";
+import { ObjectUtils, PromiseUtils } from "@default-js/defaultjs-common-utils";
 
 
 const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT];
@@ -347,16 +347,19 @@ class Form extends Component {
 	 * @async
 	 * @returns {Promise<void>}
 	 */
-	async submit() {
+	async submit(data) {
 		const currentState = this.state;
 		this.state = FORMSTATE_SUBMITTING;
-		const data = await this.value();
-		const valid = await validateFields(data, this.pages);
+		let formdata = await this.value();
+		const valid = await validateFields(formdata, this.pages);
 		if (!valid) return;
+		
+		if(data)
+			formdata = ObjectUtils.merge(formdata, data)
 
 		const actions = this.submitActions;
 		if (actions) {
-			const results = await executeActions(actions, data);
+			const results = await executeActions(actions, formdata);
 			this.trigger(EVENT_SUBMIT_RESULTS, results);
 		}
 

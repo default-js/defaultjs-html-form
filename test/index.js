@@ -3,3 +3,4 @@ import "./DomTests";
 import "./ContainerFieldTests";
 import "./WrapperFieldTests";
 import "./FormCustomSubmitActionTest";
+import "./MultifieldSameNameTest.js";

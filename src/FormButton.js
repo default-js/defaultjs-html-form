@@ -22,6 +22,9 @@ class FormButton extends Component {
 	constructor() {
 		super();
 
+		this.attr("tabindex","0")
+			.attr("role", "button");
+
 		this.on("click", (event) => {
 			event.preventDefault();
 			event.stopPropagation();

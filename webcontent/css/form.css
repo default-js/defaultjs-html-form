@@ -42,7 +42,6 @@ d-step[active][readonly] {
 	background: orange;
 }
 
-,
 d-step[readonly] {
 	background: darkgray;
 }
