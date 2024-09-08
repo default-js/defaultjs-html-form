@@ -23,13 +23,17 @@ class ConditionHandle {
         const current = base.condition;
         
         //console.log(`condition(${base.name})`, condition, data);        
-        
-        condition = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
+        try{
+            condition = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
+        } catch(e){
+            condition = false;
+        }
+
         if(condition != current)
             base.condition = condition
 
         //console.log(`condition(${base.name}) result:`, condition);
-        return condition;
+        return condition;       
     }
 };
 

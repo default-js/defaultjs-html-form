@@ -7,7 +7,7 @@
 		<link rel="stylesheet" type="text/css" href="/form.css" />
 	</head>
 	<body>
-			<d-form class="form-horizontal" endpoint="/api/test/${loginname}" method="post" use-summary-page>
+			<d-form class="form-horizontal" use-summary-page>
 				<d-progress-bar>
 					<div class="progress"></div>
 					<d-step name="page">page</d-step>
@@ -49,9 +49,10 @@
 		</div>
 		<div>
 			<button id="load" onclick="loadData()">load data</button>
+			<button id="debug-console">debug-console</button>
 		</div>
+		
 
-		<script type="application/javascript" src="/browser-defaultjs-html-form.js" async></script>
-		<script type="application/javascript" src="main.js" async></script>
+		<script type="module" src="main.js" async></script>
 	</body>
 </html>

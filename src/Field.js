@@ -2,10 +2,9 @@ import {
 	NODENAME_FIELD, 
 	EVENT_FIELD_INPUT 
 } from "./Constants";
-import BaseField, {_value} from "./BaseField";
+import BaseField from "./BaseField";
 import { findWrapper } from "./wrapper";
 import { define } from "@default-js/defaultjs-html-components";
-import { emtpyOrNoValueString, noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 
 const ATTRIBUTES = ["file-format"];
 
@@ -74,7 +73,7 @@ class Field extends BaseField {
 			const wrapper = this.#wrapper;
 			const value = wrapper.value || null;
 			//console.log(`validationStateChanged(${this.name} (${conditionChange}, ${validationChanged}) -> ${value}`)
-			_value(this, value);
+			this.rawValue(value);
 		}
 		
 		return super.validationStateChanged(conditionChange, validationChanged);

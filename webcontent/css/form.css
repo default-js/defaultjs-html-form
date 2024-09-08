@@ -68,6 +68,11 @@ d-control {
 	display: flex;
 }
 
+d-form[state=validating] d-control{
+	visibility: hidden;
+	display: none;
+}
+
 d-add-row,
 d-delete-row,
 d-control-back,

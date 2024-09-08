@@ -20,10 +20,7 @@ class FormButton extends Component {
 	#form;
 
 	constructor() {
-		super();
-
-		this.attr("tabindex","0")
-			.attr("role", "button");
+		super();	
 
 		this.on("click", (event) => {
 			event.preventDefault();
@@ -34,6 +31,7 @@ class FormButton extends Component {
 	}
 
 	async init() {
+		this.attr("tabindex","0").attr("role", "button");
 		await super.init();
 		if (this.#initialized) {
 			this.active = false;

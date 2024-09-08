@@ -1,6 +1,5 @@
 import { SPECIALVARS, NODENAME_LIST_ROW } from "../Constants";
 import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
-import { _value } from "../BaseField";
 
 /**
 * Performs a deep merge of objects and returns new object. Does not modify
@@ -74,12 +73,12 @@ export const rebuildDataByFields = async (fields) => {
 export const evaluationData = async (base) => {
 	await base.ready;
 	const data = {};
-	data[SPECIALVARS.CURRENTVALUE] = _value(base);
+	data[SPECIALVARS.CURRENTVALUE] = await base.rawValue();
 
 	let row = base.parent(NODENAME_LIST_ROW);
 	let temp = data;
 	while (row) {
-		temp[SPECIALVARS.CURRENTLISTROW] = await _value(row);
+		temp[SPECIALVARS.CURRENTLISTROW] = await row.rawValue();
 		temp = temp[SPECIALVARS.CURRENTLISTROW];
 		row = row.parent(NODENAME_LIST_ROW);
 	}

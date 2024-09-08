@@ -4,7 +4,6 @@ import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/
 import { dataIsNoValue } from "./utils/ValueHelper";
 
 const _parent = privatePropertyAccessor("parent");
-export const _value = privatePropertyAccessor("value");
 
 const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE];
 
@@ -28,12 +27,12 @@ const updateHasValue = (hasValue, field) => {
  * @class BaseField
  * @typedef {BaseField}
  * @extends {Base}
- * @example 
+ * @example
  * class CustomField extend BaseField{
  * 	constructor(option = {}){
  * 		super(option);
  * 	}
- * 
+ *
  * 	async init(){
  * 		await super.init();
  * 		//your custom code
@@ -45,6 +44,8 @@ class BaseField extends Base {
 		return ATTRIBUTES.concat(Base.observedAttributes);
 	}
 
+	#value = null;
+
 	/**
 	 * Creates an instance of BaseField.
 	 *
@@ -53,8 +54,8 @@ class BaseField extends Base {
 	 */
 	constructor(options = {}) {
 		super(options);
-		const {value} = options;
-		_value(this, value || null);		
+		const { value } = options;
+		this.#value = value;
 	}
 
 	/**
@@ -62,31 +63,31 @@ class BaseField extends Base {
 	 *
 	 * @async
 	 * @returns {Promise<void>}
-	 * 
-	 * @example 
+	 *
+	 * @example
 	 * class CustomField extend BaseField{
 	 * 	constructor(option = {}){
 	 * 		super(option);
 	 * 	}
-	 * 
+	 *
 	 * 	async init(){
 	 * 		await super.init();
 	 * 		//your custom code
 	 * 	}
 	 * }
 	 */
-	async init(){
+	async init() {
 		this.ready.then(() => this.trigger(EVENT_FIELD_INITIALIZED));
 		await super.init();
 	}
 
 	/**
-	 * Is called by destroying the component. 
+	 * Is called by destroying the component.
 	 *
 	 * @async
 	 * @returns {Promise<void>}
 	 */
-	async destroy() {		
+	async destroy() {
 		this.publishValue(null);
 		await super.destroy();
 		this.trigger(EVENT_FIELD_REMOVED);
@@ -149,32 +150,48 @@ class BaseField extends Base {
 	}
 
 	/**
+	 * Get or set the raw value to field. (only for internal use)
+	 *
+	 * @async
+	 * @param {*} value
+	 * @returns {Promise<*>|Promise<void>}
+	 *
+	 * @example
+	 * await field.rawValue("value") // set the value of to "value"
+	 * await field.rawValue() // returns the current value of field
+	 */
+	async rawValue(value) {
+		if (arguments.length === 0) return this.#value;
+		else this.#value = await value;
+	}
+
+	/**
 	 * Get or set value to field.
 	 *
 	 * @async
 	 * @param {*} value
 	 * @returns {Promise<*>|Promise<void>}
-	 * 
+	 *
 	 * @example
 	 * await field.value("value") // set the value of to "value"
 	 * await field.value() // returns the current value of field
 	 */
 	async value(value) {
-		const {condition, valid, ready} = this;
+		const { condition, valid, ready } = this;
 		//console.log(`${this.nodeName}(${this.name}).value: `, arguments, {condition, valid});
+		const currentValue = await this.rawValue();
 
-		if (arguments.length == 0)
-			return  !condition || !valid ? null : _value(this);		
-		
+		if (arguments.length == 0) return !condition || !valid ? null : currentValue;
+
 		await ready;
-		const currentValue = _value(this);
+		const accepted = await this.acceptValue(value);
+		if (accepted) {
+			value = (await this.normalizeValue(value)) || value;
+			if (currentValue != value) {
+				const result = await this.updatedValue(value);
+				if (typeof result !== "undefined") value = result;
 
-		if (await this.acceptValue(value)) {
-			value = await this.normalizeValue(value) || value;
-			if (currentValue != value) {				
-				const result = await this.updatedValue(value);				
-				if(typeof result !== "undefined")
-					value = result;
+				//await this.rawValue(value);
 				await this.publishValue(value);
 			}
 		}
@@ -187,12 +204,12 @@ class BaseField extends Base {
 	 * @param {object} data
 	 * @returns {Promise<boolean>}
 	 */
-	async validate(data){
+	async validate(data) {
 		const currentCondition = this.condition;
 		const currentValid = this.valid;
 		const valid = await super.validate(data);
 		const condition = this.condition;
-		this.validationStateChanged(currentCondition != condition,  currentValid != valid);
+		this.validationStateChanged(currentCondition != condition, currentValid != valid);
 
 		return valid;
 	}
@@ -205,10 +222,9 @@ class BaseField extends Base {
 	 * @param {boolean} validationChanged
 	 * @returns {Promise<void>}
 	 */
-	async validationStateChanged(conditionChange, validationChanged){
+	async validationStateChanged(conditionChange, validationChanged) {
 		const hasChange = conditionChange || validationChanged;
-		if(hasChange)
-			this.publishValue();
+		if (hasChange) this.publishValue();
 	}
 
 	/**
@@ -218,7 +234,7 @@ class BaseField extends Base {
 	 * @param {*} value
 	 * @returns {Promise<*>}
 	 */
-	async updatedValue(value) { 
+	async updatedValue(value) {
 		return value;
 	}
 
@@ -232,31 +248,26 @@ class BaseField extends Base {
 	async publishValue(value) {
 		//console.log(`call ${this.nodeName}(${this.name}).publishValue:`, {arguments: arguments.length, value});
 		await this.ready;
-		if(arguments.length == 0)
-			value = _value(this);
+		if (arguments.length === 0) value = await this.rawValue();
+		else await this.rawValue(value);
 
-		//console.log("work with Value:", value)		
-		const noValue = dataIsNoValue(value);				
+		//console.log("work with Value:", value)
+		const noValue = dataIsNoValue(value);
 		const condition = this.condition;
 		const required = this.required;
-		value = required && noValue ? null : value;		
-		
-		if(!condition)
-			value = null;
-		else
-			_value(this, value);
+		value = (required && noValue) || !condition ? null : value;
 
 		//console.log(`${this.nodeName}(${this.name}).publishValue:`, {required, condition, noValue, value});
 
 		updateHasValue(!noValue, this);
 
 		if (this.parentField) await this.parentField.childValueChanged(this, value);
-		else if(this.form) await this.form.childValueChanged(this, value);
+		else if (this.form) await this.form.childValueChanged(this, value);
 	}
 
 	/**
 	 * is called to check if the value is accepted. Can be override!
-	 * 
+	 *
 	 * @async
 	 * @param {*} value
 	 * @returns {boolean}
@@ -267,7 +278,7 @@ class BaseField extends Base {
 
 	/**
 	 * is called to normalize value for field.
-	 * 
+	 *
 	 * @async
 	 * @param {*} value
 	 * @returns {Promise<*>}

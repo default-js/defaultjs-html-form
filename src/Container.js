@@ -84,6 +84,7 @@ class Container extends BaseField {
 		return data;
 	}
 
+
 	async childValueChanged(field, value) {
 		//console.log(`${this.nodeName}.childValueChanged(${field.name}):`, {field, value});
 		value = await value;		
@@ -104,12 +105,11 @@ class Container extends BaseField {
 				//console.log(`set ${field.name} = ${value}`);
 				map.set(field, value);
 			}				
-		}	
+		}
 
 		let data = await fieldValueMapToObject(map, this.fields);
 		//console.log("data: ",data);
 		if (Object.getOwnPropertyNames(data).length == 0) data = null;
-
 		await this.publishValue(data);
 	}
 }
