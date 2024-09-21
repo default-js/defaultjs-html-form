@@ -1,7 +1,7 @@
-import "../index";
+import "../../index.js";
 import { define } from "@default-js/defaultjs-html-components";
-import BaseSubmitAction from "../src/submitActions/BaseSubmitAction";
-import { EVENT_SUBMIT_RESULTS } from "../src/Constants";
+import BaseSubmitAction from "../../src/submitActions/BaseSubmitAction";
+import { EVENT_SUBMIT_RESULTS } from "../../src/Constants";
 
 
 describe("Custom Form Submit Action Tests", () => {

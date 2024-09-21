@@ -1,4 +1,30 @@
-import { NODENAME_FORM, NODENAME_PAGE, EVENT_INITIALIZED, EVENT_PAGE_INITIALIZED, EVENT_PAGE_REMOVED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED, EVENT_SUBMIT, EVENT_SUBMIT_RESULTS, ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT, FORMSTATE_INPUT, FORMSTATE_SUMMARY, FORMSTATE_VALIDATING, FORMSTATE_INIT, FORMSTATE_FINISHED, FORMSTATE_SUBMITTING } from "./Constants";
+import { 
+	/** Nodenames */
+	NODENAME_FORM, 
+	NODENAME_PAGE, 
+	/**Events */
+	EVENT_INITIALIZED, 
+	EVENT_PAGE_INITIALIZED, 
+	EVENT_PAGE_REMOVED, 
+	EVENT_FORM_STATE_CHANGED, 
+	EVENT_SITE_CHANGED, 
+	EVENT_SUBMIT, 
+	EVENT_SUBMIT_RESULTS,
+	/**Attribute */ 
+	ATTRIBUTE_NAME, 
+	ATTRIBUTE_USE_SUMMARY_PAGE, 
+	ATTRIBUTE_SUBMIT_ACTION__CUSTOM_SUBMITTED_EVENT,
+	ATTRIBUTE_SUBMIT_ACTION__REQUEST_METHOD, 
+	ATTRIBUTE_SUBMIT_ACTION__REQUEST_ENDPOINT, 
+	ATTRIBUTE_STATE, 
+	ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT, 
+	/**Formstates */
+	FORMSTATE_INPUT, 
+	FORMSTATE_SUMMARY, 
+	FORMSTATE_VALIDATING, 
+	FORMSTATE_INIT, 
+	FORMSTATE_FINISHED, 
+	FORMSTATE_SUBMITTING } from "./Constants";
 import { Component, define } from "@default-js/defaultjs-html-components";
 import "./Message";
 import "./Message";
@@ -14,7 +40,13 @@ import { validateFields } from "./utils/ValidationHelper";
 import { ObjectUtils, PromiseUtils } from "@default-js/defaultjs-common-utils";
 
 
-const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_ENDPOINT, ATTRIBUTE_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT];
+const ATTRIBUTES = [ATTRIBUTE_NAME, 
+	ATTRIBUTE_USE_SUMMARY_PAGE, 
+	ATTRIBUTE_SUBMIT_ACTION__CUSTOM_SUBMITTED_EVENT, 
+	ATTRIBUTE_SUBMIT_ACTION__REQUEST_ENDPOINT, 
+	ATTRIBUTE_SUBMIT_ACTION__REQUEST_METHOD, 
+	ATTRIBUTE_STATE, 
+	ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT];
 
 const readonly = (form, readonly) => {
 	for (let page of form.pages) {
@@ -325,9 +357,9 @@ class Form extends Component {
 	get submitActions() {
 		if (!this.#submitActions) {
 			const actions = [];
-			let endpoint = this.attr(ATTRIBUTE_ENDPOINT);
+			const endpoint = this.attr(ATTRIBUTE_SUBMIT_ACTION__REQUEST_ENDPOINT);
 			if (endpoint) {
-				const method = this.attr(ATTRIBUTE_METHOD) || "post";
+				const method = this.attr(ATTRIBUTE_SUBMIT_ACTION__REQUEST_METHOD) || "post";
 				this.append(new DefaultFormSubmitAction(endpoint, method));
 			}
 
@@ -363,7 +395,11 @@ class Form extends Component {
 			this.trigger(EVENT_SUBMIT_RESULTS, results);
 		}
 
-		this.trigger(EVENT_SUBMIT, data);
+		this.trigger(EVENT_SUBMIT, formdata);
+
+		const customSubmittedEvent = (this.attr(ATTRIBUTE_SUBMIT_ACTION__CUSTOM_SUBMITTED_EVENT) || "").trim();
+		if(customSubmittedEvent.length > 0)
+			this.trigger(customSubmittedEvent, formdata);
 
 		this.state = this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? currentState : FORMSTATE_FINISHED;
 	}

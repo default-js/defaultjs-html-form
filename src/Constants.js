@@ -91,11 +91,12 @@ export const SPECIALVARS = {
 };
 
 //ATTRIBUTES
-
 export const ATTRIBUTE_NAME = "name";
-export const ATTRIBUTE_ENDPOINT = "endpoint";
-export const ATTRIBUTE_METHOD = "method";
+export const ATTRIBUTE_SUBMIT_ACTION__CUSTOM_SUBMITTED_EVENT = "custom-submitted-event";
+export const ATTRIBUTE_SUBMIT_ACTION__REQUEST_ENDPOINT = "endpoint";
+export const ATTRIBUTE_SUBMIT_ACTION__REQUEST_METHOD = "method";
 export const ATTRIBUTE_STATE = "state";
+
 
 export const ATTRIBUTE_STEP = "step";
 export const ATTRIBUTE_USE_SUMMARY_PAGE = "use-summary-page";
