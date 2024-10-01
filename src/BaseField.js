@@ -1,4 +1,9 @@
-import { EVENT_FIELD_INITIALIZED, EVENT_FIELD_REMOVED, EVENT_CONDITION_STATE_CHANGED, ATTRIBUTE_NAME, ATTRIBUTE_REQUIRED, ATTRIBUTE_NOVALUE } from "./Constants";
+import { EVENT_FIELD_INITIALIZED, 
+	EVENT_FIELD_REMOVED, 
+	EVENT_VALUE_UPDATED,
+	ATTRIBUTE_NAME, 
+	ATTRIBUTE_REQUIRED, 
+	ATTRIBUTE_NOVALUE } from "./Constants";
 import Base from "./Base";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { dataIsNoValue } from "./utils/ValueHelper";
@@ -56,6 +61,10 @@ class BaseField extends Base {
 		super(options);
 		const { value } = options;
 		this.#value = value;
+		this.root.on(EVENT_VALUE_UPDATED, (event) => {
+			event.stopPropagation();
+			event.preventDefault();
+		});
 	}
 
 	/**
@@ -235,6 +244,7 @@ class BaseField extends Base {
 	 * @returns {Promise<*>}
 	 */
 	async updatedValue(value) {
+		this.trigger(EVENT_VALUE_UPDATED, value)
 		return value;
 	}
 

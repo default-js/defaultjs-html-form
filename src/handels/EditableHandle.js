@@ -9,18 +9,23 @@ class EditableHandle {
 		this.#base = base;
 	}
 
+	async init(){
+	}
+
 	get condition() {
-		if (this.#condition == null) this.#condition = this.#base.attr(ATTRIBUTE_EDITABLE_CONDITION) || "";
+		if (this.#condition == null) this.#condition = (this.#base.attr(ATTRIBUTE_EDITABLE_CONDITION) || "").trim();
 
 		return this.#condition;
 	}
 
 	async validate(data) {
 		let editable = true;
-		const current = this.#base.editable;
-
+		const base = this.#base;
+		const current = base.editable;
+		const condition = this.condition;
+		//console.log("validate editable:", {condition, data, base});
 		try {
-			editable = this.condition ? await ExpressionResolver.resolve(this.condition, data, false) : true;
+			editable = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
 		} catch (e) {
 			editable = false;
 		}

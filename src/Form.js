@@ -221,9 +221,9 @@ class Form extends Component {
 				}),
 			);
 
-			return this.#validate();
+			await this.#validate();
 		} else {
-			return new Promise((resolve) => {
+			return await new Promise((resolve) => {
 				const handle = (event) => {
 					event.stopPropagation();
 					this.removeOn(handle, EVENT_FORM_STATE_CHANGED);
@@ -402,6 +402,10 @@ class Form extends Component {
 			this.trigger(customSubmittedEvent, formdata);
 
 		this.state = this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? currentState : FORMSTATE_FINISHED;
+	}
+
+	async validate(){
+		await this.#validate();
 	}
 
 	async #validate(page) {

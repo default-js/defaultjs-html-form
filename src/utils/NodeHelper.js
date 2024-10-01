@@ -1,6 +1,12 @@
 import BaseField from "../BaseField";
-import Validation from "../Validation";
 
+/**
+ * 
+ * @param {object} option 
+ * @param {HTMLElement} option.root 
+ * @param {Function} option.filter 
+ * @returns 
+ */
 export const treeFilter = ({ root, filter }) => {
 	let elements = [];
 	root.children.forEach((element) => {
@@ -28,15 +34,4 @@ export const findFields = (root) => {
 	});
 };
 
-export const findValidations = (root) => {
-	return treeFilter({
-		root,
-		filter: (element) => {
-			if (root != element) {
-				if (element instanceof BaseField) return { accept: false, stop: true };
-				else if (element instanceof Validation) return { accept: true, stop: true };
-			}
-			return { accept: false };
-		},
-	});
-};
+

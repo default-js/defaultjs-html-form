@@ -57,6 +57,7 @@ class Container extends BaseField {
 
 	readonlyUpdated() {
 		const { readonly, fields } = this;
+		//console.log("readonlyUpdated:", { readonly, fields })
 		if (fields)
 			for (let field of fields) {
 				field.readonly = readonly;

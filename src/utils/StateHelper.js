@@ -3,6 +3,7 @@ import {
 	EVENT_CONDITION_STATE_CHANGED,
 	EVENT_ACTIVE_STATE_CHANGED,
 	EVENT_EDITABLE_STATE_CHANGED,
+	EVENT_READONLY_STATE_CHANGED,
 	ATTRIBUTE_ACTIVE, 
 	ATTRIBUTE_VALID, 
 	ATTRIBUTE_INVALID, 
@@ -48,13 +49,14 @@ export const updateActiveState = (target, active, initial = false) => {
 };
 
 export const updateReadonlyState = (target, readonly, initial = false) => {
+	//console.log("updateReadonlyState", {target, readonly})
 	const oldState = target.readonly;
 	if (readonly) 
 		target.attr(ATTRIBUTE_READONLY, "");
 	else
 		target.attr(ATTRIBUTE_READONLY, null);
 	
-	if (oldState != readonly || initial) target.trigger(EVENT_EDITABLE_STATE_CHANGED);
+	if (oldState != readonly || initial) target.trigger(EVENT_READONLY_STATE_CHANGED);
 };
 
 export const updateEditableState = (target, editable, initial = false) => {

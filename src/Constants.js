@@ -1,7 +1,7 @@
 export const HTML_TAG_PREFIX = "d-";
 export const TRIGGER_TIMEOUT = 10;
 export const EVENTHANDLE_TIMEOUT = 10;
-export const EVENTHANDLE_INPUT_TIMEOUT = 50 * EVENTHANDLE_TIMEOUT;
+export const EVENTHANDLE_INPUT_TIMEOUT = 10 * EVENTHANDLE_TIMEOUT;
 
 export const NODENAME_FORM = `${HTML_TAG_PREFIX}form`;
 export const NODENAME_SUBMIT_ACTION = `${HTML_TAG_PREFIX}submit-action`;
@@ -60,6 +60,7 @@ export const EVENT_SUBMIT_RESULTS = `${EVENT_PREFIX}submit-results`;
 export const EVENT_EXECUTE_VALIDATE = `${EVENT_PREFIX}execute-validate`;
 export const EVENT_CONDITION_STATE_CHANGED = `${EVENT_PREFIX}condition-state-changed`;
 export const EVENT_ALL_PUBLISH_VALUE = `${EVENT_PREFIX}all-publish-value`;
+export const EVENT_VALUE_UPDATED = `${EVENT_PREFIX}field-value-updated`;
 export const EVENT_VALUE_CHANGED = `${EVENT_PREFIX}field-value-changed`;
 export const EVENT_SITE_CHANGED = `${EVENT_PREFIX}site-changed`;
 export const EVENT_FORM_STATE_CHANGED = `${EVENT_PREFIX}state-changed`;
@@ -74,7 +75,7 @@ export const EVENT_FIELD_REMOVED = `${EVENT_PREFIX}field-removed`;
 export const EVENT_PAGE_INITIALIZED = `${EVENT_PREFIX}page-initialized`;
 export const EVENT_PAGE_REMOVED = `${EVENT_PREFIX}page-removed`;
 
-export const EVENT_VALIDATION_INITIALIZED = `${EVENT_PREFIX}validation-initialized`;
+//export const EVENT_VALIDATION_INITIALIZED = `${EVENT_PREFIX}validation-initialized`;
 export const EVENT_VALIDATION_REMOVED = `${EVENT_PREFIX}validation-removed`;
 
 export const EVENT_MESSAGE_INITIALIZED = `${EVENT_PREFIX}message-initialized`;
@@ -83,6 +84,7 @@ export const EVENT_MESSAGE_REMOVED = `${EVENT_PREFIX}message-removed`;
 export const EVENT_ACTIVE_STATE_CHANGED = `${EVENT_PREFIX}active-state-changed`;
 export const EVENT_VALID_STATE_CHANGED = `${EVENT_PREFIX}valid-state-changed`;
 export const EVENT_EDITABLE_STATE_CHANGED = `${EVENT_PREFIX}editable-state-changed`;
+export const EVENT_READONLY_STATE_CHANGED = `${EVENT_PREFIX}readonly-state-changed`;
 
 
 export const SPECIALVARS = {
@@ -118,3 +120,4 @@ export const ATTRIBUTE_CONDITION_INVALID = "condition-invalid";
 export const ATTRIBUTE_MIN = "min";
 export const ATTRIBUTE_MAX = "max";
 export const ATTRIBUTE_PROGRESS = "progress";
+export const ATTRIBUTE_FOR = "for";

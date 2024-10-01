@@ -119,3 +119,41 @@ const getValue = (data, names) => {
 	const name = names.shift();
 	return getValue(data[name], names);
 };
+
+/**
+ * @function addAllToArray
+ * 
+ *  Merge a source set into a target set
+ *
+ * @param {Array<*>} aTarget
+ * @param {Iterable<*>} aSource
+ *
+ * @returns {Set<*>} returns the target set
+ */
+export const addAllToArray = (aTarget, aSource) => {
+	if (aSource != null) {
+		for (let source of aSource) aTarget.push(source);
+	}
+
+	return aTarget;
+};
+
+/**
+ * @function addAllToSet
+ * 
+ *  Merge a source set into a target set
+ *
+ * @param {Set<*>} aTarget
+ * @param {Iterable<*>} aSource
+ *
+ * @returns {Set<*>} returns the target set
+ */
+export const addAllToSet = (aTarget, aSource) => {
+	if (aSource != null) {
+		for (let source of aSource){
+			aTarget.add(source);
+		}
+	}
+
+	return aTarget;
+};

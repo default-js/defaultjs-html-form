@@ -27,7 +27,6 @@ class Message extends Component {
 
 	async init() {
 		await super.init();
-		this.trigger(EVENT_MESSAGE_INITIALIZED);
 	}
 
 	async destroy(){

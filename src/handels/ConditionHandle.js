@@ -10,6 +10,9 @@ class ConditionHandle {
         this.#base = base;
     }
 
+    async init(){
+    }
+
     get condition(){
         if(!this.#condition)
             this.#condition = this.#base.attr(ATTRIBUTE_CONDITION) || false;

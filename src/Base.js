@@ -7,7 +7,6 @@ import MessageHandle from "./handels/MessageHandle";
 import { evaluationData } from "./utils/DataHelper";
 import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { updateActiveState, updateConditionState, updateEditableState, updateReadonlyState, updateValidState } from "./utils/StateHelper";
-import { UUID } from "@default-js/defaultjs-common-utils";
 
 const _form = privatePropertyAccessor("form");
 const ATTRIBUTES = [ATTRIBUTE_ACTIVE, ATTRIBUTE_READONLY, ATTRIBUTE_CONDITION, ATTRIBUTE_CONDITION_VALID, ATTRIBUTE_CONDITION_INVALID, ATTRIBUTE_EDITABLE_CONDITION];
@@ -17,9 +16,15 @@ class Base extends Component {
 		return ATTRIBUTES;
 	}
 
+	/** @type {boolean} */
+	#initialized = false;
+	/** @type {ConditionHandle} */
 	#conditionHandle;
-	#editableHandle;
-	#validationHandle;
+	/** @type {EditableHandle} */
+	#editableHandle;	
+	/** @type {ValidationHandle} */
+	#validationHandle;	
+	/** @type {MessageHandle}*/
 	#messageHandle;
 
 	constructor() {
@@ -28,6 +33,33 @@ class Base extends Component {
 		this.#conditionHandle = new ConditionHandle(this);
 		this.#editableHandle = new EditableHandle(this);
 		this.#validationHandle = new ValidationHandle(this);
+	}
+
+	async init() {
+		await super.init();
+		if (!this.#initialized) {
+			this.#initialized = true;
+			await this.#conditionHandle.init();
+			await this.#messageHandle.init();
+			await this.#validationHandle.init();
+			await this.#editableHandle.init();
+		}
+	}
+
+	get id() {
+		return (super.id || "").trim();
+	}
+
+	get name() {
+		return (super.name || "").trim();
+	}
+
+	get validationHandle() {
+		return this.#validationHandle;
+	}
+
+	get messageHandle() {
+		return this.#messageHandle;
 	}
 
 	addValidation(validation) {
@@ -44,7 +76,7 @@ class Base extends Component {
 		this.attr(ATTRIBUTE_EVALUATE, null);
 
 		await this.#messageHandle.validate(context);
-		
+
 		return this.valid;
 	}
 
@@ -76,8 +108,9 @@ class Base extends Component {
 	}
 
 	set readonly(readonly) {
-		if (!this.editable) updateReadonlyState(this, true, !this.ready.resolved);
-		else updateReadonlyState(this, readonly, !this.ready.resolved);
+		//console.log("change readonly: ", {readonly, editable: this.editable, this: this});
+		updateReadonlyState(this, !this.editable ?  true : readonly, !this.ready.resolved);
+
 		this.readonlyUpdated();
 	}
 
@@ -88,6 +121,7 @@ class Base extends Component {
 	}
 
 	set editable(editable) {
+		//console.log("change editable: ", editable, this);
 		updateEditableState(this, editable, !this.ready.resolved);
 		this.editableUpdated();
 		this.readonly = !editable;
