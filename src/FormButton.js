@@ -33,10 +33,10 @@ class FormButton extends Component {
 	async init() {
 		this.attr("tabindex","0").attr("role", "button");
 		await super.init();
-		if (this.#initialized) {
+		if (this.#initialized) {			
+			this.#initialized = true;
 			this.active = false;
 			this.disabled = false;
-			this.#initialized = true;
 		}
 	}
 

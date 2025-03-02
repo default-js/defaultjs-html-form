@@ -121,3 +121,4 @@ export const ATTRIBUTE_MIN = "min";
 export const ATTRIBUTE_MAX = "max";
 export const ATTRIBUTE_PROGRESS = "progress";
 export const ATTRIBUTE_FOR = "for";
+export const ATTRIBUTE_VALUE = "value";

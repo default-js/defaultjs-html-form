@@ -1,30 +1,31 @@
-import { 
+import {
 	/** Nodenames */
-	NODENAME_FORM, 
-	NODENAME_PAGE, 
+	NODENAME_FORM,
+	NODENAME_PAGE,
 	/**Events */
-	EVENT_INITIALIZED, 
-	EVENT_PAGE_INITIALIZED, 
-	EVENT_PAGE_REMOVED, 
-	EVENT_FORM_STATE_CHANGED, 
-	EVENT_SITE_CHANGED, 
-	EVENT_SUBMIT, 
+	EVENT_INITIALIZED,
+	EVENT_PAGE_INITIALIZED,
+	EVENT_PAGE_REMOVED,
+	EVENT_FORM_STATE_CHANGED,
+	EVENT_SITE_CHANGED,
+	EVENT_SUBMIT,
 	EVENT_SUBMIT_RESULTS,
-	/**Attribute */ 
-	ATTRIBUTE_NAME, 
-	ATTRIBUTE_USE_SUMMARY_PAGE, 
+	/**Attribute */
+	ATTRIBUTE_NAME,
+	ATTRIBUTE_USE_SUMMARY_PAGE,
 	ATTRIBUTE_SUBMIT_ACTION__CUSTOM_SUBMITTED_EVENT,
-	ATTRIBUTE_SUBMIT_ACTION__REQUEST_METHOD, 
-	ATTRIBUTE_SUBMIT_ACTION__REQUEST_ENDPOINT, 
-	ATTRIBUTE_STATE, 
-	ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT, 
+	ATTRIBUTE_SUBMIT_ACTION__REQUEST_METHOD,
+	ATTRIBUTE_SUBMIT_ACTION__REQUEST_ENDPOINT,
+	ATTRIBUTE_STATE,
+	ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT,
 	/**Formstates */
-	FORMSTATE_INPUT, 
-	FORMSTATE_SUMMARY, 
-	FORMSTATE_VALIDATING, 
-	FORMSTATE_INIT, 
-	FORMSTATE_FINISHED, 
-	FORMSTATE_SUBMITTING } from "./Constants";
+	FORMSTATE_INPUT,
+	FORMSTATE_SUMMARY,
+	FORMSTATE_VALIDATING,
+	FORMSTATE_INIT,
+	FORMSTATE_FINISHED,
+	FORMSTATE_SUBMITTING,
+} from "./Constants";
 import { Component, define } from "@default-js/defaultjs-html-components";
 import "./Message";
 import "./Message";
@@ -39,14 +40,7 @@ import { valueHelper, fieldValueMapToObject } from "./utils/DataHelper";
 import { validateFields } from "./utils/ValidationHelper";
 import { ObjectUtils, PromiseUtils } from "@default-js/defaultjs-common-utils";
 
-
-const ATTRIBUTES = [ATTRIBUTE_NAME, 
-	ATTRIBUTE_USE_SUMMARY_PAGE, 
-	ATTRIBUTE_SUBMIT_ACTION__CUSTOM_SUBMITTED_EVENT, 
-	ATTRIBUTE_SUBMIT_ACTION__REQUEST_ENDPOINT, 
-	ATTRIBUTE_SUBMIT_ACTION__REQUEST_METHOD, 
-	ATTRIBUTE_STATE, 
-	ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT];
+const ATTRIBUTES = [ATTRIBUTE_NAME, ATTRIBUTE_USE_SUMMARY_PAGE, ATTRIBUTE_SUBMIT_ACTION__CUSTOM_SUBMITTED_EVENT, ATTRIBUTE_SUBMIT_ACTION__REQUEST_ENDPOINT, ATTRIBUTE_SUBMIT_ACTION__REQUEST_METHOD, ATTRIBUTE_STATE, ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT];
 
 const readonly = (form, readonly) => {
 	for (let page of form.pages) {
@@ -55,15 +49,19 @@ const readonly = (form, readonly) => {
 	}
 };
 
-const executeActions = async (actions, data) => {
+const executeActions = async (actions, data, context) => {
 	const results = [];
 	for (let action of actions) {
 		const accept = await action.accept(data);
 		if (accept) {
 			try {
-				const result = (await action.execute(data)) || new SubmitActionResult(action, ACTION_SUBMIT_STATE_SUCCESS);
+				const result = (await action.execute(data, context)) || new SubmitActionResult(action, ACTION_SUBMIT_STATE_SUCCESS, null, data, context);
 				results.push(result);
 				if (result.state == ACTION_SUBMIT_STATE_FAIL) return results;
+				if(typeof result.data !== "undefined" && result.data != null)
+					data = result.data;
+				if(typeof result.context !== "undefined" && result.data != context)
+					data = result.data;
 			} catch (e) {
 				results.push(new SubmitActionResult(action, ACTION_SUBMIT_STATE_FAIL, e));
 				return results;
@@ -165,7 +163,6 @@ class Form extends Component {
 		return this.#state;
 	}
 
-	
 	/**
 	 * form state
 	 */
@@ -186,7 +183,7 @@ class Form extends Component {
 
 	/**
 	 * is form valid
-	 * 
+	 *
 	 * @readonly
 	 * @type {boolean}
 	 */
@@ -202,11 +199,11 @@ class Form extends Component {
 	 * @async
 	 * @param {?object} data - form data
 	 * @returns {Promise<object>|Promise<void>}
-	 * 
-	 * @example 
+	 *
+	 * @example
 	 * await form.value() // returns the current value of form
 	 * await form.value({test:"value"}) // set value to form
-	 * 
+	 *
 	 */
 	async value(data) {
 		await this.ready;
@@ -241,13 +238,13 @@ class Form extends Component {
 	 */
 	get activePage() {
 		if (0 <= this.activePageIndex && this.activePageIndex < this.pages.length) return this.pages[this.activePageIndex];
-		
+
 		return null;
 	}
 
 	/**
 	 * set current active page
-	 * 
+	 *
 	 * @type {Page}
 	 */
 	set activePage(page) {
@@ -258,8 +255,7 @@ class Form extends Component {
 			page.active = true;
 			if (this.state != FORMSTATE_INPUT) this.state = FORMSTATE_INPUT;
 
-			if(current)
-				this.scrollIntoView();
+			if (current) this.scrollIntoView();
 			this.trigger(EVENT_SITE_CHANGED);
 		}
 	}
@@ -286,7 +282,7 @@ class Form extends Component {
 
 	/**
 	 * get next valid page of current active page
-	 * 
+	 *
 	 * @readonly
 	 * @type {Page}
 	 */
@@ -379,17 +375,16 @@ class Form extends Component {
 	 * @async
 	 * @returns {Promise<void>}
 	 */
-	async submit(data) {
+	async submit({ data = null, actions = [], context = {} } = {}) {
 		const currentState = this.state;
 		this.state = FORMSTATE_SUBMITTING;
 		let formdata = await this.value();
 		const valid = await validateFields(formdata, this.pages);
 		if (!valid) return;
-		
-		if(data)
-			formdata = ObjectUtils.merge(formdata, data)
 
-		const actions = this.submitActions;
+		if (data) formdata = ObjectUtils.merge(formdata, data);
+
+		actions = actions.concat(this.submitActions);
 		if (actions) {
 			const results = await executeActions(actions, formdata);
 			this.trigger(EVENT_SUBMIT_RESULTS, results);
@@ -398,13 +393,12 @@ class Form extends Component {
 		this.trigger(EVENT_SUBMIT, formdata);
 
 		const customSubmittedEvent = (this.attr(ATTRIBUTE_SUBMIT_ACTION__CUSTOM_SUBMITTED_EVENT) || "").trim();
-		if(customSubmittedEvent.length > 0)
-			this.trigger(customSubmittedEvent, formdata);
+		if (customSubmittedEvent.length > 0) this.trigger(customSubmittedEvent, formdata);
 
 		this.state = this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? currentState : FORMSTATE_FINISHED;
 	}
 
-	async validate(){
+	async validate() {
 		await this.#validate();
 	}
 
@@ -414,13 +408,13 @@ class Form extends Component {
 			const data = this.#data; //await fieldValueMapToObject(this.#value);
 
 			const valid = page ? await page.validate(data) : await validateFields(data, this.pages);
-		
+
 			promise.resolve(valid);
 
 			if (this.#validation == promise) {
 				this.state = FORMSTATE_INPUT;
 				this.#validation = null;
-			}	
+			}
 		};
 
 		if (this.#validation == null) {

@@ -32,7 +32,7 @@ class DefaultFormSubmitAction extends BaseSubmitAction {
 			body: JSON.stringify(data),
 		});		
 			
-		return new SubmitActionResult(this, response.ok ? STATE_SUCCESS : STATE_FAIL, response);		
+		return new SubmitActionResult(this, response.ok ? STATE_SUCCESS : STATE_FAIL, response, data, context);		
 	}
 };
 

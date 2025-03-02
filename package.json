@@ -1,7 +1,7 @@
 {
 	"name": "@default-js/defaultjs-html-form",
 	"buildname": "defaultjs-html-form",
-	"version": "2.5.26",
+	"version": "2.6.26",
 	"description": "a formular engine to support multi page, list, condition of visual, validations, messages depends on data and custom field. The result of an filled form would be a valid json. Ready to send so any rest services.",
 	"main": "./index.js",
 	"scripts": {
@@ -28,7 +28,7 @@
 		"karma-safari-launcher": "^1.0.0",
 		"karma-sourcemap-loader": "^0.3.8",
 		"karma-webpack": "^5.0.0",
-		"puppeteer": "^16.1.1",
+		"puppeteer": "^24.3.0",
 		"replace-in-file-webpack-plugin": "^1.0.6",
 		"terser-webpack-plugin": "^5.3.1",
 		"webpack": "^5.74.0",

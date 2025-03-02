@@ -16,12 +16,51 @@ import {
 	NODENAME_CONTROL_SUMMARY
 } from "./Constants";
 import { Component, define } from "@default-js/defaultjs-html-components";
+import FormButton from "./FormButton";
 import "./controls";
 
+
 const BUTTONDUMMY = {
-	active: true,
-	disabled: true,
+	active: false,
+	disabled: false,
 };
+
+class SubmitWrapper{
+
+	#submits;
+	#active = false;
+	#disabled = false;
+
+	/**
+	 * 
+	 * @param {Array<FormButton>} theSubmits 
+	 */
+	constructor(theSubmits){
+		this.#submits = theSubmits;
+		this.#submits.forEach(button => {
+			button.active = this.#active;
+			button.disabled = this.#disabled;
+		});
+	}
+
+	get active(){
+		return this.#active;
+	}
+
+	set active(aValue){
+		this.#active = aValue
+		this.#submits.forEach(button =>	button.active = this.#active);
+	}
+
+	get disabled(){
+		return this.#disabled;
+	}
+
+	set disabled(aValue){
+		this.#disabled = aValue
+		this.#submits.forEach(button =>	button.disabled = this.#disabled);
+	}
+}
 
 const ATTRIBUTES = [];
 class Control extends Component {
@@ -47,17 +86,16 @@ class Control extends Component {
 	async init() {
 		await super.init();
 		if (!this.#initialized) {
+			this.#initialized = true;
 			this.#form = this.parent(NODENAME_FORM);
 			this.#back = this.find(NODENAME_CONTROL_BACK).first() || BUTTONDUMMY;
 			this.#next = this.find(NODENAME_CONTROL_NEXT).first() || BUTTONDUMMY;
 			this.#summary = this.find(NODENAME_CONTROL_SUMMARY).first() || BUTTONDUMMY;
-			this.#submit = this.find(NODENAME_CONTROL_SUBMIT).first() || BUTTONDUMMY;
+			this.#submit = new SubmitWrapper(this.find(NODENAME_CONTROL_SUBMIT) || [BUTTONDUMMY]);
 
 			this.#form.on([EVENT_INITIALIZED, EVENT_FORM_STATE_CHANGED, EVENT_SITE_CHANGED], () => {
 				this.update();
 			});
-
-			this.#initialized = true;
 		}
 	}
 
@@ -69,7 +107,7 @@ class Control extends Component {
 		const back = this.#back;
 		const next = this.#next;
 		const summary = this.#summary;
-		const submit = this.#submit
+		const submit = this.#submit;
 
 		// basic control setup
 		back.active = true;
