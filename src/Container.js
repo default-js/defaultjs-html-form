@@ -5,7 +5,7 @@ import {
 } from "./Constants";
 import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { findFields } from "./utils/NodeHelper";
-import BaseField, { _value } from "./BaseField";
+import BaseField from "./BaseField";
 import { define } from "@default-js/defaultjs-html-components";
 import { valueHelper, fieldValueMapToObject } from "./utils/DataHelper";
 import { validateFields } from "./utils/ValidationHelper";

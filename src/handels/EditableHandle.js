@@ -26,7 +26,7 @@ class EditableHandle {
 		//console.log("validate editable:", {condition, data, base});
 		try {
 			editable = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
-		} catch (e) {
+		} catch {
 			editable = false;
 		}
 

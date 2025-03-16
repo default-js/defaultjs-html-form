@@ -2,7 +2,7 @@ import {
 	NODENAME_LIST_ROW
 } from "../Constants";
 import Container from "../Container";
-import DeleteRow from "./DeleteRow";
+import "./DeleteRow";
 
 const ATTRIBUTES = [];
 class ListRow extends Container {

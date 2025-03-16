@@ -1,4 +1,4 @@
-import { NODENAME_CONTROL_SUBMIT, ATTRIBUTE_CONDITION, ATTRIBUTE_VALUE } from "../Constants";
+import { NODENAME_CONTROL_SUBMIT, ATTRIBUTE_CONDITION } from "../Constants";
 import FormButton from "../FormButton";
 import BaseSubmitAction from "../submitActions/BaseSubmitAction";
 import { define } from "@default-js/defaultjs-html-components";

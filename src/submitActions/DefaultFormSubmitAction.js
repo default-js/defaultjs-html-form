@@ -17,7 +17,7 @@ class DefaultFormSubmitAction extends BaseSubmitAction {
 		this.method = method;
 	}
 
-	async execute(data) {		
+	async execute(data = {}, context = {}) {		
 		let endpoint = this.endpoint;
 		endpoint = await ExpressionResolver.resolveText(endpoint, data, endpoint);
 		const url = new URL(endpoint, location);

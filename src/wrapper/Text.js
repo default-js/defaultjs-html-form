@@ -46,7 +46,7 @@ const number = (input) => {
 		},
 	};
 };
-
+/*
 const datetime = (input) => {
 	return {
 		accept: (value) => {
@@ -64,7 +64,7 @@ const datetime = (input) => {
 			return null;
 		},
 	};
-};
+};*/
 
 const date = (input) => {
 	return {

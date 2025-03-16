@@ -11,7 +11,7 @@ import {
 	ATTRIBUTE_MIN, 
 	ATTRIBUTE_MAX } from "./Constants";
 import { define } from "@default-js/defaultjs-html-components/index.js";
-import BaseField, { _value } from "./BaseField.js";
+import BaseField from "./BaseField.js";
 import "./list/DeleteRow.js";
 import "./list/Rows.js";
 import "./list/Row.js";

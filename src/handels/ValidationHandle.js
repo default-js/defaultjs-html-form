@@ -1,8 +1,8 @@
 import { EVENT_VALIDATION_REMOVED, NODENAME_VALIDATION } from "../Constants";
 import { addAllToSet } from "../utils/DataHelper";
 import { findValidations } from "../utils/ValidationHelper";
-import Base from "../Base";
-import Validation from "../Validation";
+import "../Base";
+import "../Validation";
 
 
 

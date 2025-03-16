@@ -3,14 +3,11 @@ import {
 } from "../Constants";
 import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
-import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
-
-const _value = privatePropertyAccessor("value");
 
 const INPUTSELECTOR = 'input[type="file"]';
 
 const readFile = (file, readFnName) => {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		const reader = new FileReader();
 		reader.addEventListener("loadend", () => {
 			resolve({
@@ -67,6 +64,8 @@ export default class File extends Wrapper {
 		super(field, input);
 	}
 
+	#value=null;
+
 	async init() {
 		const { field, input } = this;
 		this.multiple = input.multiple;
@@ -116,9 +115,9 @@ export default class File extends Wrapper {
 	}
 
 	updatedValue(value) {
-		const currentValue = _value(this);
+		const currentValue = this.#value;
 		if (value != currentValue) {
-			_value(this, value)
+			this.#value = value;
 			if(!value)			
 				this.input.value = null;
 
@@ -140,7 +139,7 @@ export default class File extends Wrapper {
 	}
 
 	get value() {
-		return _value(this);
+		return this.#value;
 	}
 
 	get valid() {

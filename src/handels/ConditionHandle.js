@@ -28,7 +28,7 @@ class ConditionHandle {
         //console.log(`condition(${base.name})`, condition, data);        
         try{
             condition = condition ? await ExpressionResolver.resolve(condition, data, false) : true;
-        } catch(e){
+        } catch{
             condition = false;
         }
 

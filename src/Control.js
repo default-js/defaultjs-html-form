@@ -6,7 +6,6 @@ import {
 	NODENAME_CONTROL,
 	NODENAME_CONTROL_BACK,
 	NODENAME_CONTROL_NEXT,
-	NODENAME_CONTROL_CANCEL,
 	NODENAME_CONTROL_SUBMIT, 
 	NODENAME_FORM,
 	EVENT_INITIALIZED,
@@ -15,7 +14,7 @@ import {
 	NODENAME_CONTROL_SUMMARY
 } from "./Constants";
 import { Component, define } from "@default-js/defaultjs-html-components";
-import FormButton from "./FormButton";
+import "./FormButton";
 import "./controls";
 
 

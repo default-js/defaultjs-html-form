@@ -1,7 +1,7 @@
 {
 	"name": "@default-js/defaultjs-html-form",
 	"buildname": "defaultjs-html-form",
-	"version": "2.6.28",
+	"version": "2.6.29",
 	"description": "a formular engine to support multi page, list, condition of visual, validations, messages depends on data and custom field. The result of an filled form would be a valid json. Ready to send so any rest services.",
 	"main": "./index.js",
 	"scripts": {
@@ -16,8 +16,11 @@
 	"author": "Frank Schüler",
 	"license": "MIT",
 	"devDependencies": {
+		"@eslint/js": "^9.22.0",
 		"clean-webpack-plugin": "^1.0.1",
 		"copy-webpack-plugin": "^11.0.0",
+		"eslint": "^9.22.0",
+		"globals": "^16.0.0",
 		"http-server": "^14.1.0",
 		"karma": "^6.3.4",
 		"karma-chrome-launcher": "^3.1.0",
