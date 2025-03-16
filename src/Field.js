@@ -32,9 +32,11 @@ class Field extends BaseField {
 	async init() {
 		await super.init();
 		if (!this.#initialized) {
+			
 			this.#initialized = true;
 			this.#wrapper = findWrapper(this);
 			if (this.#wrapper){
+				await this.#wrapper.init();
 				this.addValidation(async () => this.#wrapper.valid);
 				this.publishValue(this.#wrapper.value);
 			}

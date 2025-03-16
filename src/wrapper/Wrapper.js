@@ -17,13 +17,12 @@ export default class Wrapper {
 	constructor(field, input) {
 		this.field = field;
 		this.input = input;
-		this.init();
 	}
 
 	/**
-	 * 
+	 * @async
 	 */
-	init() { }
+	async init() { }
 
 	
 
