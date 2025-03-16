@@ -2,7 +2,6 @@ import {ExpressionResolver} from "@default-js/defaultjs-expression-language";
 import {Component, define} from "@default-js/defaultjs-html-components";
 import { 
 	NODENAME_MESSAGE,
-	EVENT_MESSAGE_INITIALIZED,
 	EVENT_MESSAGE_REMOVED
 } from "./Constants";
 

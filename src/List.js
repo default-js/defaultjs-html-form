@@ -1,13 +1,24 @@
-import { NODENAME_LIST, NODENAME_LIST_ROWS, NODENAME_LIST_ROW, NODENAME_LIST_ADD_ROW, NODENAME_LIST_DELETE_ROW, EVENT_FIELD_INITIALIZED, EVENT_LIST_ROW_ADD, EVENT_LIST_ROW_DELETE, ATTRIBUTE_MIN, ATTRIBUTE_MAX } from "./Constants";
-import { treeFilter } from "./utils/NodeHelper";
-import { define } from "@default-js/defaultjs-html-components";
-import BaseField, { _value } from "./BaseField";
-import Row from "./list/Row";
-import AddRow, {EVENT__INITIALIZED__BUTTON__ADDROW} from "./list/AddRow";
-import "./list/DeleteRow";
-import "./list/Rows";
-import { validateFields } from "./utils/ValidationHelper";
-import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { 
+	//NODE NAMES
+	NODENAME_LIST, 
+	NODENAME_LIST_ROWS, 
+	NODENAME_LIST_ROW, 
+	//EVENT NAMES
+	EVENT_FIELD_INITIALIZED, 
+	EVENT_LIST_ROW_ADD, 
+	EVENT_LIST_ROW_DELETE, 
+	//ATTRIBUTE NAMES
+	ATTRIBUTE_MIN, 
+	ATTRIBUTE_MAX } from "./Constants";
+import { define } from "@default-js/defaultjs-html-components/index.js";
+import BaseField, { _value } from "./BaseField.js";
+import "./list/DeleteRow.js";
+import "./list/Rows.js";
+import "./list/Row.js";
+import "./list/AddRow.js";
+import {EVENT__INITIALIZED__BUTTON__ADDROW} from "./list/AddRow.js";
+import { validateFields } from "./utils/ValidationHelper.js";
+import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper.js";
 
 const ATTRIBUTES = [ATTRIBUTE_MIN, ATTRIBUTE_MAX];
 

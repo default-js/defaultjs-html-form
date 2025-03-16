@@ -3,7 +3,7 @@ import {
 	EVENT_FIELD_INITIALIZED, 
 	EVENT_FIELD_REMOVED 
 } from "./Constants";
-import { emtpyOrNoValueString, noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
+import { noValue } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { findFields } from "./utils/NodeHelper";
 import BaseField, { _value } from "./BaseField";
 import { define } from "@default-js/defaultjs-html-components";

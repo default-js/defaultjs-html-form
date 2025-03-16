@@ -277,10 +277,10 @@ class BaseField extends Base {
 
 	/**
 	 * is called to check if the value is accepted. Can be override!
-	 *
+	 * 
 	 * @async
 	 * @param {*} value
-	 * @returns {boolean}
+	 * @returns {Promise<boolean>}
 	 */
 	async acceptValue(value) {
 		return true;

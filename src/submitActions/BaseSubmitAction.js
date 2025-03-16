@@ -1,5 +1,4 @@
 import Component from "@default-js/defaultjs-html-components/src/Component";
-import { privatePropertyAccessor } from "@default-js/defaultjs-common-utils/src/PrivateProperty";
 import { ExpressionResolver } from "@default-js/defaultjs-expression-language";
 import SubmitActionResult, { STATE_FAIL, STATE_SUCCESS } from "./SubmitActionResult";
 import { EVENT_INITIALIZE_SUBMIT_ACTION, NODENAME_FORM, ATTRIBUTE_CONDITION } from "../Constants";
