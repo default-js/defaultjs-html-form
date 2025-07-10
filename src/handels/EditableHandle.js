@@ -13,7 +13,7 @@ class EditableHandle {
 	}
 
 	get condition() {
-		if (this.#condition == null) this.#condition = (this.#base.attr(ATTRIBUTE_EDITABLE_CONDITION) || "").trim();
+		if (this.#condition == null) this.#condition = (this.#base.attr(ATTRIBUTE_EDITABLE_CONDITION) || "").trim() || false;
 
 		return this.#condition;
 	}
