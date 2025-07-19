@@ -36,6 +36,9 @@ class Base extends Component {
 	/** @type {MessageHandle}*/
 	#messageHandle;
 
+	#readonly = false;
+	#editable = true;
+
 	constructor() {
 		super();
 		this.#messageHandle = new MessageHandle(this);
@@ -113,27 +116,27 @@ class Base extends Component {
 	async activeUpdated() {}
 
 	get readonly() {
-		return this.hasAttribute(ATTRIBUTE_READONLY);
+		return this.#readonly;
 	}
 
 	set readonly(readonly) {
 		//console.log("change readonly: ", {readonly, editable: this.editable, this: this});
-		updateReadonlyState(this, !this.editable ?  true : readonly, !this.ready.resolved);
-
+		this.#readonly = readonly || !this.editable;
+		updateReadonlyState(this, this.#readonly, !this.ready.resolved);
 		this.readonlyUpdated();
 	}
-
+	
 	async readonlyUpdated() {}
 
 	get editable() {
-		return this.hasAttribute(ATTRIBUTE_EDITABLE);
+		return this.#editable;
 	}
 
 	set editable(editable) {
 		//console.log("change editable: ", editable, this);
+		this.#editable = editable;
 		updateEditableState(this, editable, !this.ready.resolved);
 		this.editableUpdated();
-		this.readonly = !editable;
 	}
 
 	async editableUpdated() {}
