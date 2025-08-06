@@ -34,7 +34,7 @@ const number = (input) => {
 			return typeof value === "number";
 		},
 		getValue: () => {
-			return input.valueAsNumber;
+			return Number.isNaN(input.valueAsNumber) ? null : input.valueAsNumber;
 		},
 		setValue: (value) => {
 			input.valueAsNumber = value;
