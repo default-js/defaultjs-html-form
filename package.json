@@ -1,7 +1,7 @@
 {
 	"name": "@default-js/defaultjs-html-form",
 	"buildname": "defaultjs-html-form",
-	"version": "2.6.33",
+	"version": "2.6.34",
 	"description": "a formular engine to support multi page, list, condition of visual, validations, messages depends on data and custom field. The result of an filled form would be a valid json. Ready to send so any rest services.",
 	"main": "./index.js",
 	"scripts": {

@@ -37,7 +37,7 @@ class Base extends Component {
 	#messageHandle;
 
 	#readonly = false;
-	#editable = true;
+	#editable = false;
 
 	constructor() {
 		super();
