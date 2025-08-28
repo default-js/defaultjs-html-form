@@ -35,6 +35,13 @@ export const FORMSTATE_INPUT = "input";
 export const FORMSTATE_SUMMARY = "summary";
 export const FORMSTATE_SUBMITTING = "submitting";
 export const FORMSTATE_FINISHED = "finished";
+
+
+/**
+ * FORMSTATES 
+ * @readonly
+ * @enum {String}
+ */
 export const FORMSTATES = {
 	init: FORMSTATE_INIT,
 	validating: FORMSTATE_VALIDATING,

@@ -25,6 +25,7 @@ import {
 	FORMSTATE_INIT,
 	FORMSTATE_FINISHED,
 	FORMSTATE_SUBMITTING,
+	FORMSTATES,
 } from "./Constants";
 import { Component, define } from "@default-js/defaultjs-html-components";
 import "./Message";
@@ -49,21 +50,38 @@ const readonly = (form, readonly) => {
 	}
 };
 
-const executeActions = async (actions, data, context) => {
+/**
+ * @typedef {Object} FormResultOption
+ *
+ * @property {FORMSTATES} state
+ *
+ */
+
+
+/**
+ * Description placeholder
+ *
+ * @async
+ * @param {BaseSubmitAction} actions
+ * @param {Object} data
+ * @param {Object} context
+ * @param {FormResultOption} resultOption
+ * @returns {Array<SubmitActionResult>}
+ */
+const executeActions = async (actions, data, context, resultOption) => {
 	const results = [];
+
 	for (let action of actions) {
 		const accept = await action.accept(data);
 		if (accept) {
 			try {
-				const result = (await action.execute(data, context)) || new SubmitActionResult(action, ACTION_SUBMIT_STATE_SUCCESS, null, data, context);
+				const result = (await action.execute(data, context, resultOption)) || new SubmitActionResult(action, ACTION_SUBMIT_STATE_SUCCESS, null, data, context, resultOption);
 				results.push(result);
 				if (result.state == ACTION_SUBMIT_STATE_FAIL) return results;
-				if(typeof result.data !== "undefined" && result.data != null)
-					data = result.data;
-				if(typeof result.context !== "undefined" && result.data != context)
-					data = result.data;
+				if (typeof result.data !== "undefined" && result.data != null) data = result.data;
+				if (typeof result.context !== "undefined" && result.data != context) data = result.data;
 			} catch (e) {
-				results.push(new SubmitActionResult(action, ACTION_SUBMIT_STATE_FAIL, e));
+				results.push(new SubmitActionResult(action, ACTION_SUBMIT_STATE_FAIL, e, data, context, resultOption));
 				return results;
 			}
 		}
@@ -384,18 +402,25 @@ class Form extends Component {
 
 		if (data) formdata = ObjectUtils.merge(formdata, data);
 
+		/**
+		 * @type {FormResultOption}
+		 */
+		const resultOption = {
+			state: this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? FORMSTATE_INPUT : FORMSTATE_FINISHED,
+		};
+
 		actions = actions.concat(this.submitActions);
 		if (actions) {
-			const results = await executeActions(actions, formdata, context);
+			const results = await executeActions(actions, formdata, context, resultOption);
 			this.trigger(EVENT_SUBMIT_RESULTS, results);
 		}
+
+		this.state = resultOption.state;
 
 		this.trigger(EVENT_SUBMIT, formdata);
 
 		const customSubmittedEvent = (this.attr(ATTRIBUTE_SUBMIT_ACTION__CUSTOM_SUBMITTED_EVENT) || "").trim();
 		if (customSubmittedEvent.length > 0) this.trigger(customSubmittedEvent, formdata);
-
-		this.state = this.hasAttribute(ATTRIBUTE_INPUT_MODE_AFTER_SUBMIT) ? currentState : FORMSTATE_FINISHED;
 	}
 
 	async validate() {

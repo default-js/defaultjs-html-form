@@ -46,10 +46,14 @@ class BaseSubmitAction extends Component {
 	}
 
 	/**
-	 * Override this function!
+	 * @abstract
+	 * @param {*} data 
+	 * @param {*} context 
+	 * @param {import("../Form").FormResultOption} formResultOption 
+	 * @returns {SubmitActionResult}
 	 */
-	async execute(data = {}, context = {}) {
-		return new SubmitActionResult(STATE_FAIL, "not implemented", null, data, context);
+	async execute(data = {}, context = {}, formResultOption) {
+		return new SubmitActionResult(STATE_FAIL, "not implemented", null, data, context, formResultOption);
 	}
 }
 export default BaseSubmitAction;
