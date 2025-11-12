@@ -1,3 +1,4 @@
+import { emtpyOrNoValueString } from "@default-js/defaultjs-common-utils/src/ValueHelper";
 import { EVENT_FIELD_INPUT } from "../Constants";
 import { toTimeoutHandle } from "../utils/EventHelper";
 import Wrapper from "./Wrapper";
@@ -12,7 +13,7 @@ const readFile = (file, readFnName) => {
 			() => {
 				resolve({
 					name: file.name,
-					type: file.type,
+					type: emtpyOrNoValueString(file.type) ?	"application/octet-stream" : file.type,
 					size: file.size,
 					data: reader.result,
 				});
