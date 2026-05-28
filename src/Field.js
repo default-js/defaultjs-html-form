@@ -25,7 +25,7 @@ class Field extends BaseField {
 		this.on(EVENT_FIELD_INPUT, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
-			this.publishValue(event.detail || null);
+			this.publishValue(event.detail);
 		});
 	}
 
@@ -62,7 +62,7 @@ class Field extends BaseField {
 		value = await value;
 		const wrapper = this.#wrapper;
 		if (wrapper){
-			const current = wrapper.value || null;
+			const current = wrapper.value;
 			if(current != value)
 				await wrapper.updatedValue(value);
 			
@@ -73,7 +73,7 @@ class Field extends BaseField {
 	async validationStateChanged(conditionChange, validationChanged){		
 		if(conditionChange && this.condition){			
 			const wrapper = this.#wrapper;
-			const value = wrapper.value || null;
+			const value = wrapper.value == null  || typeof wrapper.value === 'undefined' ?  null : wrapper.value;
 			//console.log(`validationStateChanged(${this.name} (${conditionChange}, ${validationChanged}) -> ${value}`)
 			this.rawValue(value);
 		}

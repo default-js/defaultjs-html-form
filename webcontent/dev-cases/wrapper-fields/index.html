@@ -22,6 +22,11 @@
 					<d-validation condition="${$value != 1}">invalid</d-validation>
 					<d-message condition="${$value == 'message'}">test message</d-message>
 				</d-field>
+				<d-field name="number" required>
+					number (0):
+					<input value="0" type="number"/>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
 				<d-field name="email" required>
 					email:
 					<input value="" type="email"/>

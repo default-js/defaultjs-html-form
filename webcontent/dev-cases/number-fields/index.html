@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="/css/style.css" />
+	</head>
+	<body>
+		<d-form use-summary-page>
+			<d-page>
+				<h3>page 1</h3>
+				<d-field name="number" required>
+					number:
+					<input value="" type="number"/>
+					<d-validation condition="${$value != 1}">invalid</d-validation>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+				<d-field name="number" required>
+					number (default=0):
+					<input value="0" type="number"/>
+					<d-message condition="${$value == 'message'}">test message</d-message>
+				</d-field>
+			</d-page>
+
+			<d-control>
+				<d-control-back>back</d-control-back>
+				<d-control-next>next</d-control-next>
+				<d-control-summary>sumary</d-control-summary>
+				<d-control-submit>submit</d-control-submit>
+			</d-control>
+		</d-form>
+
+
+		<div>
+			<button id="load" onclick="loadData()">load data</button>
+
+		</div>
+
+		<script type="application/javascript" src="/testFunctions.js" async></script>
+		<script type="application/javascript" src="/browser-defaultjs-html-form.js" async></script>
+		<script type="application/javascript" src="main.js" async></script>
+
+
+	</body>
+</html>

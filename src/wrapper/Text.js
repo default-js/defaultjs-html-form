@@ -40,7 +40,7 @@ const number = (input) => {
 			input.valueAsNumber = value;
 		},
 		normalize: (value) => {
-			if (!noValue(value) && !Number.isNaN(value)) return value;
+			if (!Number.isNaN(value)) return value;
 
 			return null;
 		},
