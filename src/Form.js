@@ -226,7 +226,7 @@ class Form extends Component {
 	async value(data) {
 		await this.ready;
 		if (this.#validation) await this.#validation;
-		if (arguments.length == 0) return this.#data;
+		if (arguments.length == 0) return structuredClone(this.#data);
 
 		if (this.state == FORMSTATE_INPUT) {
 			await Promise.all(

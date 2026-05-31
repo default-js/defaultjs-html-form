@@ -190,7 +190,7 @@ class BaseField extends Base {
 		//console.log(`${this.nodeName}(${this.name}).value: `, arguments, {condition, valid});
 		const currentValue = await this.rawValue();
 
-		if (arguments.length == 0) return !condition || !valid ? null : currentValue;
+		if (arguments.length == 0) return !condition || !valid ? null : structuredClone(currentValue);
 
 		await ready;
 		const accepted = await this.acceptValue(value);
